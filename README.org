@@ -1,8 +1,6 @@
 Export WaniKani data to an Anki deck.
 Includes all user data.
 Uses [[https://community.wanikani.com/t/API-V2-Alpha-Documentation/18987][WaniKani API v2.0 alpha]] (updated to spec as of 2017-08-04).
-
-
 * Features
 ** Export radicals, kanji, vocabulary
 - meanings
@@ -50,19 +48,20 @@ TODO: Provide example of updating base data.
 User data is cached. This allows for only updated data to be retrieved
 from WaniKani, reducing data transfer costs.
 
-Typically a server will remove old user caches over time, say after a few months.
+Typically a server will remove old user caches over time, say after a
+few months.
 * Future Plans
 ** Support vocabulary audio and example sentences.
 See issue [[https://github.com/holocronweaver/wanikani2anki/issues/3][#3]].
 
-WaniKani API V2 is supposedly going to support vocabulary audio and example
-sentences in the future. See: https://community.wanikani.com/t/API-V2-Alpha-Documentation/18987/67
+WaniKani API V2 is supposedly going to support vocabulary audio and
+example sentences in the future. See related [[https://community.wanikani.com/t/API-V2-Alpha-Documentation/18987/67][WaniKani form post]].
 
 Meanwhile, this content can be obtained by scraping the site.
 
 Since this content rarely changes and is user-independent, updates can
 be done very infrequently, maybe once or twice a year.
 ** Update Anki decks.
-Need to figure out how to update Anki decks without disrupting SRS divergence
-between Anki and WaniKani.
+Need to figure out how to update Anki decks without disrupting SRS
+divergence between Anki and WaniKani.
 ** Support export filters.
