@@ -6,13 +6,13 @@ https://community.wanikani.com/t/API-V2-Alpha-Documentation/18987
 
 * Features
 ** Export radicals, kanji, vocabulary
-*** meanings
-*** readings
-*** user meanings
-*** all user notes
-*** SRS status (optional)
-*** TODO: vocabulary audio
-*** TODO: example sentences
+- meanings
+- readings
+- user meanings
+- all user notes
+- SRS status (optional)
+- TODO: vocabulary audio
+- TODO: example sentences
 ** TODO: Update Anki Deck
 This feature is not yet implemented! See Issue #1.
 
@@ -22,8 +22,8 @@ collection and wish to update their Anki deck to keep it in sync.
 This feature is not yet implemented! See Issue #2.
 
 Filter what content gets exported from WaniKani.
-*** burned items
-*** low success items
+- burned items
+- low success items
 * Instructions
 ** TODO: Create Anki Deck
 ** TODO: Update Anki Deck
@@ -52,7 +52,7 @@ User data is cached. This allows for only updated data to be retrieved
 from WaniKani, reducing data transfer costs.
 
 Typically a server will remove old user caches over time, say after a few months.
-* TODO
+* Future Plans
 ** Support vocabulary audio and example sentences.
 WaniKani API V2 is supposedly going to support vocabulary audio and example
 sentences in the future. See: https://community.wanikani.com/t/API-V2-Alpha-Documentation/18987/67
