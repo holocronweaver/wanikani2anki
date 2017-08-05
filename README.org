@@ -1,8 +1,7 @@
 Export WaniKani data to an Anki deck.
 Includes all user data.
-Uses WaniKani API v2.0 alpha (2017-08-04).
+Uses [[https://community.wanikani.com/t/API-V2-Alpha-Documentation/18987][WaniKani API v2.0 alpha]] (updated to spec as of 2017-08-04).
 
-https://community.wanikani.com/t/API-V2-Alpha-Documentation/18987
 
 * Features
 ** Export radicals, kanji, vocabulary
