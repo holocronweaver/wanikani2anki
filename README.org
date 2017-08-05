@@ -14,12 +14,12 @@ https://community.wanikani.com/t/API-V2-Alpha-Documentation/18987
 - TODO: vocabulary audio
 - TODO: example sentences
 ** TODO: Update Anki Deck
-This feature is not yet implemented! See Issue #1.
+*Not yet implemented!* See Issue [#1](https://github.com/holocronweaver/wanikani2anki/issues/1).
 
 After an initial export to Anki, the user may update their WaniKani
 collection and wish to update their Anki deck to keep it in sync.
 ** TODO: Filters
-This feature is not yet implemented! See Issue #2.
+*Not yet implemented!* See Issue [#2](https://github.com/holocronweaver/wanikani2anki/issues/2).
 
 Filter what content gets exported from WaniKani.
 - burned items
@@ -54,6 +54,8 @@ from WaniKani, reducing data transfer costs.
 Typically a server will remove old user caches over time, say after a few months.
 * Future Plans
 ** Support vocabulary audio and example sentences.
+See issue [#3](https://github.com/holocronweaver/wanikani2anki/issues/3).
+
 WaniKani API V2 is supposedly going to support vocabulary audio and example
 sentences in the future. See: https://community.wanikani.com/t/API-V2-Alpha-Documentation/18987/67
 
