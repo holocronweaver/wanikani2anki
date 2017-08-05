@@ -3,3 +3,65 @@ Includes all user data.
 Uses WaniKani API v2.0 alpha (2017-08-04).
 
 https://community.wanikani.com/t/API-V2-Alpha-Documentation/18987
+
+* Features
+** Export radicals, kanji, vocabulary
+*** meanings
+*** readings
+*** user meanings
+*** all user notes
+*** SRS status (optional)
+*** TODO: vocabulary audio
+*** TODO: example sentences
+** TODO: Update Anki Deck
+This feature is not yet implemented! See Issue #1.
+
+After an initial export to Anki, the user may update their WaniKani
+collection and wish to update their Anki deck to keep it in sync.
+** TODO: Filters
+This feature is not yet implemented! See Issue #2.
+
+Filter what content gets exported from WaniKani.
+*** burned items
+*** low success items
+* Instructions
+** TODO: Create Anki Deck
+** TODO: Update Anki Deck
+** TODO: Change Card Type / Merge Into Existing Deck
+If you have an existing Japanese Anki deck, you may have pre-existing
+card templates you wish to reuse. Alternatively, you may not like the
+provided card template and wish to create your own.
+
+You can convert the exported WaniKani card type to any card type you
+want from within Anki. This requires mapping fields from one card type
+to another.
+
+Another option is to edit the WaniKani card.
+
+Note that the mapping will need to be repeated in the future if you
+re-export WaniKani to Anki to keep your deck synchronized with any
+changes.
+* WaniKani
+** Base Data
+Non-user specific data rarely changes and is thus cached separate from
+user data. Typically this data should be updated periodically while
+the server is idle, say once a week.
+TODO: Provide example of updating base data.
+** User Data
+User data is cached. This allows for only updated data to be retrieved
+from WaniKani, reducing data transfer costs.
+
+Typically a server will remove old user caches over time, say after a few months.
+* TODO
+** Support vocabulary audio and example sentences.
+WaniKani API V2 is supposedly going to support vocabulary audio and example
+sentences in the future. See: https://community.wanikani.com/t/API-V2-Alpha-Documentation/18987/67
+
+Meanwhile, this content can be obtained by scraping the site.
+
+Since this content rarely changes and is user-independent, updates can
+be done very infrequently, maybe once or twice a year.
+** Update Anki decks.
+Need to figure out how to update Anki decks without disrupting SRS divergence
+between Anki and WaniKani.
+** Support export filters.
