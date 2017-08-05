@@ -7,13 +7,10 @@ Uses [[https://community.wanikani.com/t/API-V2-Alpha-Documentation/18987][WaniKa
 - readings
 - user meanings
 - all user notes
-- SRS status (optional)^
+- SRS status (optional)[fn::Decks are first ordered by ascending WaniKani level, then by radicals + kanji + vocabulary.]
 - TODO: vocabulary audio
 - TODO: example sentences
 - WaniKani level number
-
-^ Decks are first ordered by ascending WaniKani level, then by
-radicals + kanji + vocabulary.
 ** TODO: Update Anki Deck
 *Not yet implemented!* See Issue [[https://github.com/holocronweaver/wanikani2anki/issues/1][#1]].
 
