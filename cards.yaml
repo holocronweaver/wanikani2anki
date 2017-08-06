@@ -1,0 +1,21 @@
+# <div class="ja {{type}}">
+# {{#character}}{{character}}{{/character}}
+# {{#image}}<img src="{{image}}"/>{{/image}}
+# </div>
+
+radicals:
+kanji:
+vocabulary:
+  fields:
+    - name: Characters
+    - name: Meanings
+    - name: Readings
+  templates:
+    - name: Meaning and Reading
+      qfmt: |
+        <div class="ja kanji">{{Characters}}</div>
+      afmt: |
+        {{FrontSide}}
+        <hr id=answer>
+        {{#Meanings}}<div class="meanings">Meanings: {{Meanings}}</div>{{/Meanings}}
+        {{#Readings}}<div class="readings">Readings: {{Readings}}</div>{{/Readings}}

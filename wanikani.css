@@ -1,0 +1,40 @@
+/* Based on CSS suggested by Dennis Martinez on his
+wanikanitoanki.com website. */
+
+.card {
+  font-family: arial;
+  font-size: 40px;
+  text-align: center;
+  color: black;
+  background-color: white;
+}
+
+.ja {
+  color: #fff;
+  font-size: 6em;
+  font-weight: normal;
+  line-height: 1.6em;
+}
+
+.radical {
+  background-color: #00a0f1;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.25) inset;
+  text-shadow: 5px 5px 0 #0093dd;
+}
+
+.kanji {
+  background-color: #f100a0;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.25) inset;
+  text-shadow: 5px 5px 0 #dd0093;
+}
+
+.vocabulary {
+  background-color: #a000f1;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.25) inset;
+  text-shadow: 5px 5px 0 #9300dd;
+}
+
+.small {
+  margin-top: 2em;
+  font-size: 0.5em;
+}
