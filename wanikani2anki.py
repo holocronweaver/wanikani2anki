@@ -51,23 +51,12 @@ for subject in ('radical', 'kanji', 'vocabulary'):
             '/{}?subject_type={}'.format(subjectable, subject), headers, path)
         subdata['data'].sort(key=lambda x: x['data']['subject_id'])
 
-        # with open('debug.txt', 'w') as f:
-        #     for item in subdata['data']:
-        #         f.write(str(item['data']['subject_id']) + '\n')
-        #     # for item in data[subject]['data']:
-        #     #     f.write(str(item['id']) + '\n')
-
         datumiter = iter(data[subject]['data'])
         datum = next(datumiter)
         for subdatum in subdata['data']:
             while datum['id'] != subdatum['data']['subject_id']:
                 try: datum = next(datumiter)
                 except StopIteration: print('Error: Could not find subject id {}. Aborting.'.format(subdatum['data']['subject_id']))
-
-                # msg = """id of subject '{}' not equal to\n\tsubject_id of subjectable '{}'. Aborting!""".format(subject, subjectable)
-                # print(data[subject]['data'][i])
-                # print(subdata['data'][i]['data'])
-                # raise Exception(msg)
             datum['data'].update(subdatum['data'])
 
 print(data['vocabulary']['data'][0])
