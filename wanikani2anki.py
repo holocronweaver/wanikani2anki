@@ -3,13 +3,14 @@
 # License, v2.0. If a copy of the MPL was not distributed with this
 # file, you can obtain one at http://mozilla.org/MPL/2.0/.
 """
+TODO: Translate WaniKani SRS to Anki SRS.
 TODO: User-independent cache.
 TODO: Per-user cache.
-TODO: One model per subject.
 TODO: Consider in long term serializing Anki deck instead of WaniKani JSON.
 """
 import yaml
 
+from translators import *
 from wanikani import *
 
 wk = WaniKani()
@@ -44,8 +45,7 @@ for subject in ('radical', 'kanji', 'vocabulary'):
 
     # Merge subjectable data into subject data to recreate unified
     # object data of WaniKani API V1.
-    # for subjectable in ('study_materials', 'review_statistics', 'assignments'):
-    for subjectable in ('review_statistics', 'assignments'):
+    for subjectable in ('study_materials', 'review_statistics', 'assignments'):
         subdata = wk.get(
             '{}-{}'.format(subject, subjectable),
             '/{}?subject_type={}'.format(subjectable, subject), headers, path)
@@ -60,6 +60,7 @@ for subject in ('radical', 'kanji', 'vocabulary'):
             datum['data'].update(subdatum['data'])
 
 print(data['vocabulary']['data'][0])
+# print(next(x for x in data['radical']['data'] if x['id'] == 8762))
 
 with open('cards.yaml', 'r') as f:
     cards = f.read()
@@ -67,15 +68,17 @@ with open('cards.yaml', 'r') as f:
 with open('wanikani.css','r') as f:
     css = f.read()
 
-model = genanki.Model(
-    1108933879,
-    'WaniKani',
-    fields=cards['fields'],
-    templates=cards['templates'],
-    css=css)
+models = {}
+for subject, model in cards.items():
+    models[subject] = genanki.Model(
+        model['id'],
+        'WaniKani ' + subject.title(),
+        fields=model['fields'],
+        templates=model['templates'],
+        css=css)
 
 deck = genanki.Deck(
-    1970043342,
+    1970043342, # random.randrange(1 << 30, 1 << 31)
     'WaniKani')
 
 filename = path + 'WaniKani.apkg'
@@ -83,21 +86,49 @@ if os.path.isfile(filename):
     os.remove(filename)
 
 for subject in ('radical', 'kanji', 'vocabulary'):
-    characters_key = 'character' if subject != 'vocabulary' else 'characters'
-    for datum in data[subject]['data']:
-        try:
-            characters = datum['data'][characters_key]
-            if not characters: characters = 'FIXME'
-            meaning = next(m['meaning'] for m in datum['data']['meanings'] if m['primary'])
-            if subject != 'radical':
-                reading = next(m['reading'] for m in datum['data']['readings'] if m['primary'])
-            else:
-                reading = 'none'
-        except Exception:
-            print(datum['data'])
-            raise
-        fields = [characters, meaning, reading]
-        note = genanki.Note(model=model, fields=fields)
-        deck.add_note(note)
+    data[subject]['data'] = sorted(
+        data[subject]['data'], key=lambda x: x['data']['level'])
+
+datum_iter = {
+    'radical': iter(data['radical']['data']),
+    'kanji': iter(data['kanji']['data']),
+    'vocabulary': iter(data['vocabulary']['data']),
+}
+datum_dict = {
+    'radical': next(datum_iter['radical']),
+    'kanji': next(datum_iter['kanji']),
+    'vocabulary': next(datum_iter['vocabulary']),
+}
+for level in range(1,61):
+    for subject in ('radical', 'kanji', 'vocabulary'):
+    # for subject in ('radical',):
+        model = models[subject]
+        translator = translators[subject]
+        datum = datum_dict[subject]
+        while True:
+            try:
+                field_dict = translator(datum['data'])
+                fields = [field_dict[field['name']] for field in model.fields]
+            except Exception:
+                print(datum['data'])
+                print('Failed to translate the above WaniKani data.')
+                raise
+            # if fields[2] == '':
+            #     continue
+            #     # print(datum)
+            #     # print(fields)
+            #     # exit()
+            note = genanki.Note(model=model, fields=fields)
+            deck.add_note(note)
+
+            try:
+                datum = next(datum_iter[subject])
+                if datum['data']['level'] != level:
+                    datum_dict[subject] = datum
+                    break
+            except StopIteration:
+                print('Done with {}.'.format(subject))
+                break
+
 
 genanki.Package(deck).write_to_file(filename)

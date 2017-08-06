@@ -1,21 +1,64 @@
-# <div class="ja {{type}}">
-# {{#character}}{{character}}{{/character}}
-# {{#image}}<img src="{{image}}"/>{{/image}}
-# </div>
-
-radicals:
-kanji:
-vocabulary:
+radical:
+  id: 1108933879 # random.randrange(1 << 30, 1 << 31)
   fields:
     - name: Characters
     - name: Meanings
-    - name: Readings
+    - name: Note
+    - name: Level
   templates:
-    - name: Meaning and Reading
+    - name: Meanings
       qfmt: |
-        <div class="ja kanji">{{Characters}}</div>
+        <div class="ja radical">{{Characters}}</div>
       afmt: |
         {{FrontSide}}
         <hr id=answer>
-        {{#Meanings}}<div class="meanings">Meanings: {{Meanings}}</div>{{/Meanings}}
-        {{#Readings}}<div class="readings">Readings: {{Readings}}</div>{{/Readings}}
+        <div class="meanings">{{Meanings}}</div>
+        {{#Note}}<div class="note">{{hint:Note}}</div>{{/Note}}
+kanji:
+  id: 2027530507
+  fields:
+    - name: Characters
+    - name: Meanings
+    - name: Meaning Note
+    - name: Onyomi
+    - name: Kunyomi
+    - name: Nanori
+    - name: Reading Note
+    - name: Level
+  templates:
+    - name: Meanings and Readings
+      qfmt: |
+        <div class="ja kanji">{{Characters}}</div>
+        {{type:Kunyomi}}
+      afmt: |
+        {{FrontSide}}
+        <hr id=answer>
+        <div class="meanings">{{Meanings}}</div>
+        {{#Meaning Note}}<div class="note">{{hint:Meaning Note}}</div>{{/Meaning Note}}
+        <hr id=answer>
+        {{#Onyomi}}<div class="readings">On'yomi: {{Onyomi}}</div>{{/Onyomi}}
+        {{#Kunyomi}}<div class="readings">Kun'yomi: {{Kunyomi}}</div>{{/Kunyomi}}
+        {{#Nanori}}<div class="readings">Nanori: {{Nanori}}</div>{{/Nanori}}
+        {{#Reading Note}}<div class="note">{{hint:Reading Note}}</div>{{/Reading Note}}
+vocabulary:
+  id: 1893293633
+  fields:
+    - name: Characters
+    - name: Meanings
+    - name: Meaning Note
+    - name: Readings
+    - name: Reading Note
+    - name: Level
+  templates:
+    - name: Meanings and Readings
+      qfmt: |
+        <div class="ja vocabulary">{{Characters}}</div>
+        {{type:Readings}}
+      afmt: |
+        {{FrontSide}}
+        <hr id=answer>
+        <div class="meanings">{{Meanings}}</div>
+        {{#Meaning Note}}<div class="note">{{hint:Meaning Note}}</div>{{/Meaning Note}}
+        <hr id=answer>
+        <div class="readings">{{Readings}}</div>
+        {{#Reading Note}}<div class="note">{{hint:Reading Note}}</div>{{/Reading Note}}
