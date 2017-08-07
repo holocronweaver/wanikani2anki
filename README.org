@@ -15,9 +15,10 @@ Each card has the following data (when relevant):
 - TODO: example sentences
 - WaniKani level number
 
-^ Decks are first ordered by ascending WaniKani level, then by
-radicals + kanji + vocabulary. If you don't export the WaniKani SRS
-status, then by default you will learn cards in the deck order.
+^ Anik deck retains WaniKani ordering. Cards are first ordered by
+ascending WaniKani level, then by radicals -> kanji -> vocabulary. If
+you don't export the WaniKani SRS status, then by default you will
+learn cards in the deck order.
 ** TODO: Update Anki Deck
 *Not yet implemented!* See Issue [[https://github.com/holocronweaver/wanikani2anki/issues/1][#1]].
 
@@ -29,6 +30,8 @@ collection and wish to update their Anki deck to keep it in sync.
 Filter what content gets exported from WaniKani.
 - burned items
 - low success items
+** Multiple Ways to Use
+Includes a website, Python library, and CLI.
 * Instructions
 ** TODO: Create Anki Deck
 ** TODO: Update Anki Deck
@@ -73,3 +76,10 @@ be done very infrequently, maybe once or twice a year.
 Need to figure out how to update Anki decks without disrupting SRS
 divergence between Anki and WaniKani.
 ** Support export filters.
+* Notice
+This software is meant to aid your studies. If you find WaniKani
+useful, support it by buying a subscription!
+
+The author is in no way associated with the maintainers of Tofugu or
+WaniKani. Just a happy user who wants offline access, greater
+customizability, and more control over their data.

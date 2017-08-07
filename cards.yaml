@@ -8,12 +8,18 @@ radical:
   templates:
     - name: Meanings
       qfmt: |
-        <div class="ja radical">{{Characters}}</div>
+        <div class="ja radical">
+        <a href="http://tangorin.com/general/{{Characters}}">{{Characters}}</a>
+        </div>
+        <div class="radical-divider">Radical <b>Meaning</b></div>
       afmt: |
         {{FrontSide}}
-        <hr id=answer>
+        <div class="small">Meaning</div>
         <div class="meanings">{{Meanings}}</div>
-        {{#Note}}<div class="note">{{hint:Note}}</div>{{/Note}}
+        {{#Note}}
+        <div class="small">Note</div>
+        <div class="note">{{hint:Note}}</div>
+        {{/Note}}
 kanji:
   id: 2027530507
   fields:
@@ -28,18 +34,27 @@ kanji:
   templates:
     - name: Meanings and Readings
       qfmt: |
-        <div class="ja kanji">{{Characters}}</div>
+        <div class="ja kanji"><a href="http://tangorin.com/kanji/{{Characters}}">{{Characters}}</a></div>
+        <div class="kanji-divider">Kanji <b>Reading</b></div>
         {{type:Kunyomi}}
       afmt: |
         {{FrontSide}}
-        <hr id=answer>
+        <div class="small">Meanings</div>
         <div class="meanings">{{Meanings}}</div>
-        {{#Meaning Note}}<div class="note">{{hint:Meaning Note}}</div>{{/Meaning Note}}
-        <hr id=answer>
-        {{#Onyomi}}<div class="readings">On'yomi: {{Onyomi}}</div>{{/Onyomi}}
-        {{#Kunyomi}}<div class="readings">Kun'yomi: {{Kunyomi}}</div>{{/Kunyomi}}
-        {{#Nanori}}<div class="readings">Nanori: {{Nanori}}</div>{{/Nanori}}
-        {{#Reading Note}}<div class="note">{{hint:Reading Note}}</div>{{/Reading Note}}
+        {{#Meaning Note}}
+        <div class="small">Meaning Note</div>
+        <div class="note">{{hint:Meaning Note}}</div>
+        {{/Meaning Note}}
+        <div class="small">Readings</div>
+        <div class="readings"><center><table>
+        {{#Onyomi}}<tr><th>On'yomi</th><th>{{Onyomi}}</th></tr>{{/Onyomi}}
+        {{#Kunyomi}}<tr><th>Kun'yomi</th><th>{{Kunyomi}}</th></tr>{{/Kunyomi}}
+        {{#Nanori}}<tr><th>Nanori</th><th>{{Nanori}}</th></tr>{{/Nanori}}
+        </table></center></div>
+        {{#Reading Note}}
+        <div class="small">Reading Note</div>
+        <div class="note">{{hint:Reading Note}}</div>
+        {{/Reading Note}}
 vocabulary:
   id: 1893293633
   fields:
@@ -52,13 +67,22 @@ vocabulary:
   templates:
     - name: Meanings and Readings
       qfmt: |
-        <div class="ja vocabulary">{{Characters}}</div>
+        <div class="ja vocabulary">
+        <a href="http://tangorin.com/general/{{Characters}}">{{Characters}}</a>
+        </div>
+        <div class="kanji-divider">Vocabulary <b>Reading</b></div>
         {{type:Readings}}
       afmt: |
         {{FrontSide}}
-        <hr id=answer>
+        <div class="small">Meanings</div>
         <div class="meanings">{{Meanings}}</div>
-        {{#Meaning Note}}<div class="note">{{hint:Meaning Note}}</div>{{/Meaning Note}}
-        <hr id=answer>
+        {{#Meaning Note}}
+        <div class="small">Meaning Note</div>
+        <div class="note">{{hint:Meaning Note}}</div>
+        {{/Meaning Note}}
+        <div class="small">Readings</div>
         <div class="readings">{{Readings}}</div>
-        {{#Reading Note}}<div class="note">{{hint:Reading Note}}</div>{{/Reading Note}}
+        {{#Reading Note}}
+        <div class="small">Reading Note</div>
+        <div class="note">{{hint:Reading Note}}</div>
+        {{/Reading Note}}
