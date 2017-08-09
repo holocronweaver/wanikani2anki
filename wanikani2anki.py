@@ -5,6 +5,7 @@
 """
 TODO: Translate WaniKani SRS to Anki SRS.
 TODO: On first run generate deck, note and card IDs. Cache for use on subsequent runs.
+TODO: Create web interface and core Python library.
 TODO: Consider in long term serializing Anki deck instead of WaniKani JSON.
 """
 import yaml
@@ -15,41 +16,50 @@ from wanikani import *
 wk = WaniKani()
 
 general_cache_path = 'cache/general/'
-if not os.isdir(general_cache_path): os.makedirs(general_cache_path)
+if not os.path.isdir(general_cache_path): os.makedirs(general_cache_path)
 
 # username = input('Username: ')
 username = 'bbucommander'
 userpath = 'cache/users/{}/'.format(username)
 
-headers = {}
-apikey = ''
-apikeypath = userpath + '/apikey.txt'
-if os.path.isfile(apikeypath):
-    with open(apikeypath, 'r') as f:
-        apikey = f.readline().strip()
-        headers['Authorization'] = 'Token token=' + apikey
+user = {}
+userfile = userpath + '/user.json'
+if os.path.isfile(userfile):
+    with open(userfile, 'r') as f:
+        user = json.load(f)
 else:
-    apikey = input('WaniKani API V2 key (not V1!): ')
+    user['apikey'] = input('WaniKani API V2 key (not V1!): ')
 
-try: user = wk.get_from_api('userdata', '/user', headers)
+headers = {}
+headers['Authorization'] = 'Token token=' + user['apikey']
+
+try: user['wanikani'] = wk.get_from_api('userdata', '/user', headers)
 except URLError:
-    print('Invalid API V2 key: ' + apikey)
-    print('Please double check the key. It is stored in: ' + apikeypath)
+    #TODO: Check URL error to determine exact cause, i.e. net down, etc.
+    print('Invalid API V2 key: ' + user['apikey'])
+    print('Please double check the key. It is stored in: ' + user['apikey'])
     exit()
 
-if username != user['data']['username']:
-    print("Notice: local username '{}' does not match WaniKani database '{}'.".format(username, user['data']['username']))
+if username != user['wanikani']['data']['username']:
+    print('Warning: username mismatch!')
+    print("Locally cached username: '{}'".format(username))
+    print("Username reported by WaniKani: '{}'.".format(user['wanikani']['data']['username']))
+    response = ''
+    while (response != 'y' and response != 'n'):
+        response = input('Do you wish to continue? [Y/N] ')
+        response = response.lower()
+    if response == 'n': exit()
 
-if not os.path.isfile(apikeypath):
+if not os.path.isfile(userfile):
     if not os.path.isdir(userpath):
         os.makedirs(userpath)
-    with open(apikeypath, 'w+') as f:
-        f.write(apikey)
+    with open(userfile, 'w+') as f:
+        json.dump(user, f)
 
 print("""Fetching information for
       user:  {username}
       level: {level}
-    """.format(**user['data']))
+    """.format(**user['wanikani']['data']))
 
 data = {}
 for subject in ('radical', 'kanji', 'vocabulary'):
