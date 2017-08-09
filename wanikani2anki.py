@@ -4,10 +4,8 @@
 # file, you can obtain one at http://mozilla.org/MPL/2.0/.
 """
 TODO: Translate WaniKani SRS to Anki SRS.
-TODO: User-independent cache.
-TODO: Per-user cache.
-TODO: Consider in long term serializing Anki deck instead of WaniKani JSON.
 TODO: On first run generate deck, note and card IDs. Cache for use on subsequent runs.
+TODO: Consider in long term serializing Anki deck instead of WaniKani JSON.
 """
 import yaml
 
@@ -16,22 +14,35 @@ from wanikani import *
 
 wk = WaniKani()
 
+general_cache_path = 'cache/general/'
+
+# username = input('Username: ')
+username = 'bbucommander'
+userpath = 'cache/users/{}/'.format(username)
+
 headers = {}
 apikey = ''
-if os.path.isfile('apikey.txt'):
-    with open('apikey.txt', 'r') as f:
+apikeypath = userpath + '/apikey.txt'
+if os.path.isfile(apikeypath):
+    with open(apikeypath, 'r') as f:
         apikey = f.readline().strip()
         headers['Authorization'] = 'Token token=' + apikey
 else:
     apikey = input('WaniKani API V2 key (not V1!): ')
 
 try: user = wk.get_from_api('userdata', '/user', headers)
-except URLError: print('Invalid API V2 key!'); exit()
+except URLError:
+    print('Invalid API V2 key: ' + apikey)
+    print('Please double check the key. It is stored in: ' + apikeypath)
+    exit()
 
-path = 'cache/{}/'.format(user['data']['username'])
+if username != user['data']['username']:
+    print("Notice: local username '{}' does not match WaniKani database '{}'.".format(username, user['data']['username']))
 
-if not os.path.isfile('apikey.txt'):
-    with open('apikey.txt', 'w+') as f:
+if not os.path.isfile(apikeypath):
+    if not os.path.isdir(userpath):
+        os.makedirs(userpath)
+    with open(apikeypath, 'w+') as f:
         f.write(apikey)
 
 print("""Fetching information for
@@ -41,7 +52,7 @@ print("""Fetching information for
 
 data = {}
 for subject in ('radical', 'kanji', 'vocabulary'):
-    data[subject] = wk.get(subject, '/subjects?type={}'.format(subject), headers, path)
+    data[subject] = wk.get(subject + '-subjects', '/subjects?type={}'.format(subject), headers, general_cache_path)
     data[subject]['data'].sort(key=lambda x: x['id'])
 
     # Merge subjectable data into subject data to recreate unified
@@ -49,7 +60,7 @@ for subject in ('radical', 'kanji', 'vocabulary'):
     for subjectable in ('study_materials', 'review_statistics', 'assignments'):
         subdata = wk.get(
             '{}-{}'.format(subject, subjectable),
-            '/{}?subject_type={}'.format(subjectable, subject), headers, path)
+            '/{}?subject_type={}'.format(subjectable, subject), headers, userpath)
         subdata['data'].sort(key=lambda x: x['data']['subject_id'])
 
         datumiter = iter(data[subject]['data'])
@@ -83,7 +94,8 @@ deck = genanki.Deck(
     'WaniKani')
 # TODO: adjust genanki deck srs settings.
 
-filename = path + 'WaniKani.apkg'
+filename = userpath + 'WaniKani.apkg'
+#TODO: periodically cleanup old decks
 if os.path.isfile(filename):
     os.remove(filename)
 
