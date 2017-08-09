@@ -4,10 +4,11 @@
 # file, you can obtain one at http://mozilla.org/MPL/2.0/.
 """
 TODO: Translate WaniKani SRS to Anki SRS.
-TODO: On first run generate deck, note and card IDs. Cache for use on subsequent runs.
+TODO: Generate non-user specific note & card IDs. Do not cache.
 TODO: Create web interface and core Python library.
 TODO: Consider in long term serializing Anki deck instead of WaniKani JSON.
 """
+import random
 import yaml
 
 from translators import *
@@ -29,6 +30,13 @@ if os.path.isfile(userfile):
         user = json.load(f)
 else:
     user['apikey'] = input('WaniKani API V2 key (not V1!): ')
+    def generate_id() : return random.randrange(1 << 30, 1 << 31)
+    user['ids'] = {
+        'deck': generate_id(),
+        'radical': generate_id(),
+        'kanji': generate_id(),
+        'vocabulary': generate_id(),
+    }
 
 headers = {}
 headers['Authorization'] = 'Token token=' + user['apikey']
@@ -94,14 +102,14 @@ with open('wanikani.css','r') as f:
 models = {}
 for subject, model in cards.items():
     models[subject] = genanki.Model(
-        model['id'],
+        user['ids'][subject],
         'WaniKani ' + subject.title(),
         fields=model['fields'],
         templates=model['templates'],
         css=css)
 
 deck = genanki.Deck(
-    1970043342, # random.randrange(1 << 30, 1 << 31)
+    user['ids']['deck'],
     'WaniKani')
 # TODO: adjust genanki deck srs settings.
 
@@ -145,6 +153,8 @@ for level in range(1,61):
             #     # print(datum)
             #     # print(fields)
             #     # exit()
+
+            #TODO: Create note ids using subject (i.e. non-user specific) data.
 
             note = genanki.Note(model=model, fields=fields)
             deck.add_note(note)
