@@ -58,3 +58,21 @@ translators = {
     'kanji': get_kanji,
     'vocabulary': get_vocabulary
 }
+
+def srs_translator(data, wanikani):
+    """Translate WaniKani SRS data to Anki SRS data."""
+    wk_srs_stage = data['srs_stage'] if 'srs_stage' in data else 0
+    anki_srs = {}
+    if wk_srs_stage == 0: # new
+        anki_srs['stage'] = 0
+    elif wk_srs_stage < 3: # learning
+        #TODO: Probably should set deck learning steps to match WaniKani.
+        anki_srs['stage'] = 1
+    elif wk_srs_stage < 9: # review
+        anki_srs['stage'] = 2
+        anki_srs['interval'] = wanikani.srs_stage_to_days[wk_srs_stage]
+    else: # burned
+        anki_srs['stage'] = 2
+        #TODO: Let user customize this, and maybe other stage translations.
+        anki_srs['interval'] = 365000 # 100 years! =)
+    return anki_srs

@@ -7,6 +7,7 @@ TODO: Translate WaniKani SRS to Anki SRS.
 TODO: User-independent cache.
 TODO: Per-user cache.
 TODO: Consider in long term serializing Anki deck instead of WaniKani JSON.
+TODO: On first run generate deck, note and card IDs. Cache for use on subsequent runs.
 """
 import yaml
 
@@ -80,6 +81,7 @@ for subject, model in cards.items():
 deck = genanki.Deck(
     1970043342, # random.randrange(1 << 30, 1 << 31)
     'WaniKani')
+# TODO: adjust genanki deck srs settings.
 
 filename = path + 'WaniKani.apkg'
 if os.path.isfile(filename):
@@ -107,8 +109,10 @@ for level in range(1,61):
         datum = datum_dict[subject]
         while True:
             try:
-                field_dict = translator(datum['data'])
-                fields = [field_dict[field['name']] for field in model.fields]
+                fields_dict = translator(datum['data'])
+                fields = [fields_dict[field['name']] for field in model.fields]
+
+                srs = srs_translator(datum['data'], wk)
             except Exception:
                 print(datum['data'])
                 print('Failed to translate the above WaniKani data.')
@@ -118,6 +122,7 @@ for level in range(1,61):
             #     # print(datum)
             #     # print(fields)
             #     # exit()
+
             note = genanki.Note(model=model, fields=fields)
             deck.add_note(note)
 

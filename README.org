@@ -83,3 +83,47 @@ useful, support it by buying a subscription!
 The author is in no way associated with the maintainers of Tofugu or
 WaniKani. Just a happy user who wants offline access, greater
 customizability, and more control over their data.
+* Notes
+** WaniKani SRS
+WaniKani has 10 SRS stages: new, 4H, 8H, 24H, 3D, 1W, 2W
+(master), 1M (enlighten), 4M (burn), burned.
+
+These map to Anki fairly well: new, 4H + 8H (learning), 24H to 4M
+(review). Burning doesn't exist in Anki without addons, but intervals
+eventually become enormous (years). Burning can be effectively
+mimicked by periodically setting the intervals of all cards with
+intervals greater than, say, 1 year, to 100 years.
+** Anki SRS
+Anki SRS has the following progression stages: new, learning, and review.
+*** New
+A card that has not been seen before. After its introduction, new
+cards transition to the learning stage.
+*** Learning
+A short stage that transitions new cards into your regular review
+queue. It does this by exposing you to the card for the first time,
+then repeating the card a number of times over relatively short,
+steadily increasing time intervals until all learning steps have been
+completed. Once all learning steps are complete, the card graduates to
+the review stage.
+
+By default there are two learning steps, 1 minute and 10 minutes.
+*** Review
+Review involves several parameters. Some are deck-wide constants,
+others are per-card variables whose initial values are provided by
+deck settings.
+
+Each card has an *interval*, the number of days between reviews.
+
+After each review, the interval is updated:
+
+new interval = ease * (easy bonus) * (interval modifier) * (old interval)
+
+Card defaults: interval = 1, ease = 250%.
+Constant defaults: easy bonus = 130%, interval modifier = 100%.
+These default can be user modified.
+
+*Interval modifier* is purely for user customization and does notihng by
+default. Anki doc suggests using this SuperMemo formula to calculate a
+desired modifier:
+
+interval modifier = log(desired retention%) / log(current retention%)
