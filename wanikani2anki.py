@@ -15,6 +15,7 @@ from wanikani import *
 wk = WaniKani()
 
 general_cache_path = 'cache/general/'
+if not os.isdir(general_cache_path): os.makedirs(general_cache_path)
 
 # username = input('Username: ')
 username = 'bbucommander'
