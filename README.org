@@ -84,6 +84,13 @@ The author is in no way associated with the maintainers of Tofugu or
 WaniKani. Just a happy user who wants offline access, greater
 customizability, and more control over their data.
 * Notes
+** links
+- [[https://www.wanikani.com/api][V1 API]]
+- [[https://github.com/ankidroid/Anki-Android/wiki/Database-Structure][Database structure]]
+- [[http://decks.wikia.com/wiki/Anki_APKG_format_documentation][APKG format]]
+- [[https://github.com/ankidroid/Anki-Android/wiki/Advanced-formatting][advanced card formatting]]
+- [[http://wanakana.com/docs/global.html][WanaKana]] - keyboard API ([[https://community.wanikani.com/t/Need-help-with-JavaScript-in-Anki/16514][useful post]])
+- [[https://www.reddit.com/r/LearnJapanese/comments/41wxll/complete_genki_deck_for_anki_with_internal_ime/][Wanki deck]] - Anki deck: Genki + complex WaniKani-like card style
 ** WaniKani SRS
 WaniKani has 10 SRS stages: new, 4H, 8H, 24H, 3D, 1W, 2W
 (master), 1M (enlighten), 4M (burn), burned.
@@ -127,3 +134,9 @@ default. Anki doc suggests using this SuperMemo formula to calculate a
 desired modifier:
 
 interval modifier = log(desired retention%) / log(current retention%)
+* Alternatives
+| project                    | WaniKani API version | interface  | language | description                                                                                                                                     |
+|----------------------------+----------------------+------------+----------+-------------------------------------------------------------------------------------------------------------------------------------------------|
+| [[https://github.com/dennmart/wanikani-to-anki][wanikani-to-anki]] ([[www.wanikanitoanki.com][website]]) |                    1 | website    | Ruby     | Easy to use. Creates raw CSV file for Anki, not a deck. User must make and style cards themselves (considerable work!). Limited export options. |
+| [[https://github.com/nigelkerr/wanikani2anki][wanikani2anki]]              |                    1 | Anki addon | Python   | Same name, but very different! Anki addon, uses Anki's built-in Python interface with WaniKani API v1.                                          |
+| [[https://github.com/dendriticspine/WaniAnki-Python][WaniKani-Python]]            |                    1 | scripts    | Python   | Includes Kanji stroke order.                                                                               |
