@@ -1,4 +1,4 @@
-Export WaniKani data to an Anki deck.
+Export WaniKani data to an Anki deck using Python 3.
 
 Uses [[https://community.wanikani.com/t/API-V2-Alpha-Documentation/18987][WaniKani API v2.0 alpha]] (updated to spec as of 2017-08-04).
 
@@ -33,6 +33,8 @@ Filter what content gets exported from WaniKani.
 ** Multiple Ways to Use
 Includes a website, Python library, and CLI.
 * Instructions
+** TODO: Installation
+Depends genanki.
 ** TODO: Create Anki Deck
 ** TODO: Update Anki Deck
 ** TODO: Change Card Type / Merge Into Existing Deck
@@ -135,8 +137,9 @@ desired modifier:
 
 interval modifier = log(desired retention%) / log(current retention%)
 * Alternatives
-| Project                    | WaniKani API version | Interface  | Language | Description                                                                                                                                     |
-|----------------------------+----------------------+------------+----------+-------------------------------------------------------------------------------------------------------------------------------------------------|
-| [[https://github.com/dennmart/wanikani-to-anki][wanikani-to-anki]] ([[www.wanikanitoanki.com][website]]) |                    1 | website    | Ruby     | Easy to use. Creates raw CSV file for Anki, not a deck. User must make and style cards themselves (considerable work!). Limited export options. |
-| [[https://github.com/nigelkerr/wanikani2anki][wanikani2anki]]              |                    1 | Anki addon | Python   | Same name, but very different! Anki addon, uses Anki's built-in Python interface.                                                               |
-| [[https://github.com/dendriticspine/WaniAnki-Python][WaniKani-Python]]            |                    1 | scripts    | Python   | Includes Kanji stroke order.                                                                                                                    |
+| Project                      | WaniKani API version | Interface        | Language | Description                                                                                                                                     |
+|------------------------------+----------------------+------------------+----------+-------------------------------------------------------------------------------------------------------------------------------------------------|
+| wanikani2anki (this project) |                    2 | scripts, library | Python   | Simple interfaces, lots of customization options. Library makes it easy to create highly customized decks.                                      |
+| [[https://github.com/dennmart/wanikani-to-anki][wanikani-to-anki]] ([[www.wanikanitoanki.com][website]])   |                    1 | website          | Ruby     | Easy to use. Creates raw CSV file for Anki, not a deck. User must make and style cards themselves (considerable work!). Limited export options. |
+| [[https://github.com/nigelkerr/wanikani2anki][wanikani2anki]]                |                    1 | Anki addon       | Python   | Same name, but very different! Anki addon, uses Anki's built-in Python interface.                                                               |
+| [[https://github.com/dendriticspine/WaniAnki-Python][WaniKani-Python]]              |                    1 | scripts          | Python   | Includes Kanji stroke order. Script interface split between mobile and desktop. Simple, but not very flexible.                                  |
