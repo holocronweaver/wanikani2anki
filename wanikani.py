@@ -6,11 +6,11 @@ import os
 from urllib.error import *
 from urllib.request import *
 
-import genanki
+import lib.genanki.genanki as genanki
 
 class WaniKani:
     rooturl = 'https://www.wanikani.com/api/v2'
-
+    subjects = ('radical', 'kanji', 'vocabulary')
     srs_stage_to_days = [0, 4/24, 8/24, 1, 3, 7, 14, 28, 56]
 
     def get_json(self, request, description):

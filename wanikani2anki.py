@@ -5,6 +5,7 @@
 """
 TODO: Translate WaniKani SRS to Anki SRS.
 TODO: Generate non-user specific note & card IDs. Do not cache.
+TODO: Match Wanki deck.
 TODO: Create web interface and core Python library.
 TODO: Consider in long term serializing Anki deck instead of WaniKani JSON.
 """
@@ -13,6 +14,10 @@ import yaml
 
 from translators import *
 from wanikani import *
+
+def generate_id():
+    """Generate a 32-bit ID useful for Anki."""
+    return random.randrange(1 << 30, 1 << 31)
 
 wk = WaniKani()
 
@@ -30,13 +35,11 @@ if os.path.isfile(userfile):
         user = json.load(f)
 else:
     user['apikey'] = input('WaniKani API V2 key (not V1!): ')
-    def generate_id() : return random.randrange(1 << 30, 1 << 31)
     user['ids'] = {
         'deck': generate_id(),
-        'radical': generate_id(),
-        'kanji': generate_id(),
-        'vocabulary': generate_id(),
+        'options': generate_id(),
     }
+    user['ids'].update({subject:generate_id() for subject in wk.subjects})
 
 headers = {}
 headers['Authorization'] = 'Token token=' + user['apikey']
@@ -70,7 +73,7 @@ print("""Fetching information for
     """.format(**user['wanikani']['data']))
 
 data = {}
-for subject in ('radical', 'kanji', 'vocabulary'):
+for subject in wk.subjects:
     data[subject] = wk.get(subject + '-subjects', '/subjects?type={}'.format(subject), headers, general_cache_path)
     data[subject]['data'].sort(key=lambda x: x['id'])
 
@@ -90,7 +93,7 @@ for subject in ('radical', 'kanji', 'vocabulary'):
                 except StopIteration: print('Error: Could not find subject id {}. Aborting.'.format(subdatum['data']['subject_id']))
             datum['data'].update(subdatum['data'])
 
-print(data['vocabulary']['data'][0])
+# print(data['vocabulary']['data'][0])
 # print(next(x for x in data['radical']['data'] if x['id'] == 8762))
 
 with open('cards.yaml', 'r') as f:
@@ -108,37 +111,37 @@ for subject, model in cards.items():
         templates=model['templates'],
         css=css)
 
+options = genanki.OptionsGroup(user['ids']['options'], 'WaniKani')
 deck = genanki.Deck(
     user['ids']['deck'],
-    'WaniKani')
+    'WaniKani',
+    options)
 # TODO: adjust genanki deck srs settings.
+
+deck.options = options
 
 filename = userpath + 'WaniKani.apkg'
 #TODO: periodically cleanup old decks
 if os.path.isfile(filename):
     os.remove(filename)
 
-for subject in ('radical', 'kanji', 'vocabulary'):
+for subject in wk.subjects:
     data[subject]['data'] = sorted(
         data[subject]['data'], key=lambda x: x['data']['level'])
 
-datum_iter = {
-    'radical': iter(data['radical']['data']),
-    'kanji': iter(data['kanji']['data']),
-    'vocabulary': iter(data['vocabulary']['data']),
-}
-datum_dict = {
-    'radical': next(datum_iter['radical']),
-    'kanji': next(datum_iter['kanji']),
-    'vocabulary': next(datum_iter['vocabulary']),
-}
+datum_iter = {subject:iter(data[subject]['data']) for subject in wk.subjects}
+datum_dict = {subject:next(datum_iter[subject]) for subject in wk.subjects}
 for level in range(1,61):
-    for subject in ('radical', 'kanji', 'vocabulary'):
+    for subject in wk.subjects:
     # for subject in ('radical',):
         model = models[subject]
         translator = translators[subject]
         datum = datum_dict[subject]
         while True:
+            if datum['data']['level'] != level:
+                datum_dict[subject] = datum
+                break
+
             try:
                 fields_dict = translator(datum['data'])
                 fields = [fields_dict[field['name']] for field in model.fields]
@@ -154,19 +157,19 @@ for level in range(1,61):
             #     # print(fields)
             #     # exit()
 
-            #TODO: Create note ids using subject (i.e. non-user specific) data.
+            #TODO: Create note ids using subject (i.e. non-user
+            # specific) data.
 
             note = genanki.Note(model=model, fields=fields)
             deck.add_note(note)
 
             try:
                 datum = next(datum_iter[subject])
-                if datum['data']['level'] != level:
-                    datum_dict[subject] = datum
-                    break
             except StopIteration:
-                print('Done with {}.'.format(subject))
+                # Some levels within 51-60 contain no radicals.
                 break
 
 
+print('Writing deck...')
 genanki.Package(deck).write_to_file(filename)
+print('All done')
