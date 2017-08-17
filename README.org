@@ -84,7 +84,7 @@ The author is in no way associated with the maintainers of Tofugu or
 WaniKani. Just a happy user who wants offline access, greater
 customizability, and more control over their data.
 * Notes
-** links
+** Links
 - [[https://www.wanikani.com/api][V1 API]]
 - [[https://github.com/ankidroid/Anki-Android/wiki/Database-Structure][Database structure]]
 - [[http://decks.wikia.com/wiki/Anki_APKG_format_documentation][APKG format]]
@@ -135,7 +135,7 @@ desired modifier:
 
 interval modifier = log(desired retention%) / log(current retention%)
 * Alternatives
-| project                    | WaniKani API version | interface  | language | description                                                                                                                                     |
+| Project                    | WaniKani API version | Interface  | Language | Description                                                                                                                                     |
 |----------------------------+----------------------+------------+----------+-------------------------------------------------------------------------------------------------------------------------------------------------|
 | [[https://github.com/dennmart/wanikani-to-anki][wanikani-to-anki]] ([[www.wanikanitoanki.com][website]]) |                    1 | website    | Ruby     | Easy to use. Creates raw CSV file for Anki, not a deck. User must make and style cards themselves (considerable work!). Limited export options. |
 | [[https://github.com/nigelkerr/wanikani2anki][wanikani2anki]]              |                    1 | Anki addon | Python   | Same name, but very different! Anki addon, uses Anki's built-in Python interface with WaniKani API v1.                                          |
