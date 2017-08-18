@@ -3,12 +3,14 @@
 # License, v2.0. If a copy of the MPL was not distributed with this
 # file, you can obtain one at http://mozilla.org/MPL/2.0/.
 """
-TODO: Translate WaniKani SRS to Anki SRS.
+TODO: mention in genanki documentation that deck ID is POSIX epoch second timestamp, used for determining relative due dates of cards
 TODO: Generate non-user specific note & card IDs. Do not cache.
 TODO: Match Wanki deck.
+TODO: Double check WaniKani SRS to Anki SRS translation.
 TODO: Create web interface and core Python library.
 TODO: Consider in long term serializing Anki deck instead of WaniKani JSON.
 """
+from datetime import datetime
 import random
 import yaml
 
@@ -18,6 +20,7 @@ from wanikani import *
 def generate_id():
     """Generate a 32-bit ID useful for Anki."""
     return random.randrange(1 << 30, 1 << 31)
+    # return datetime.now().timestamp()
 
 wk = WaniKani()
 
@@ -120,11 +123,7 @@ deck = genanki.Deck(
 
 deck.options = options
 
-filename = userpath + 'WaniKani.apkg'
-#TODO: periodically cleanup old decks
-if os.path.isfile(filename):
-    os.remove(filename)
-
+# Sort subject data by level to make building deck in level-order easier.
 for subject in wk.subjects:
     data[subject]['data'] = sorted(
         data[subject]['data'], key=lambda x: x['data']['level'])
@@ -139,6 +138,7 @@ for level in range(1,61):
         datum = datum_dict[subject]
         while True:
             if datum['data']['level'] != level:
+                # Note: Some levels 51-60 contain no radicals.
                 datum_dict[subject] = datum
                 break
 
@@ -149,27 +149,41 @@ for level in range(1,61):
                 srs = srs_translator(datum['data'], wk)
             except Exception:
                 print(datum['data'])
-                print('Failed to translate the above WaniKani data.')
+                print('Failed to translate the above WaniKani data. Aborting.')
                 raise
-            # if fields[2] == '':
-            #     continue
-            #     # print(datum)
-            #     # print(fields)
-            #     # exit()
 
             #TODO: Create note ids using subject (i.e. non-user
             # specific) data.
 
             note = genanki.Note(model=model, fields=fields)
+
+            note.level = srs['stage']
+            if note.level == 0: # new
+                pass
+            elif note.level == 1: # learning
+                note.due = srs['due'].timestamp()
+                note.interval = srs['interval']
+                note.reps_til_grad = srs['reps_til_grad']
+            elif note.level == 2: # review
+                due = srs['due'] - deck.creation_time
+                note.due = due.days
+                note.interval = srs['interval']
+                note.ease = 2500
+            else:
+                raise ValueError('Illegal SRS level: ' + note.level)
+
             deck.add_note(note)
 
             try:
                 datum = next(datum_iter[subject])
             except StopIteration:
-                # Some levels within 51-60 contain no radicals.
                 break
 
 
 print('Writing deck...')
+filename = userpath + 'WaniKani.apkg'
+#TODO: periodically cleanup old decks
+if os.path.isfile(filename):
+    os.remove(filename)
 genanki.Package(deck).write_to_file(filename)
 print('All done')

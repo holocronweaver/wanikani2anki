@@ -88,7 +88,7 @@ customizability, and more control over their data.
 * Notes
 ** Links
 - [[https://www.wanikani.com/api][V1 API]]
-- [[https://github.com/ankidroid/Anki-Android/wiki/Database-Structure][Database structure]]
+- [[https://github.com/ankidroid/Anki-Android/wiki/Database-Structure][Database structure]] (and [[https://godoc.org/github.com/flimzy/anki][more notes]])
 - [[http://decks.wikia.com/wiki/Anki_APKG_format_documentation][APKG format]]
 - [[https://github.com/ankidroid/Anki-Android/wiki/Advanced-formatting][advanced card formatting]]
 - [[http://wanakana.com/docs/global.html][WanaKana]] - keyboard API ([[https://community.wanikani.com/t/Need-help-with-JavaScript-in-Anki/16514][useful post]])
@@ -131,7 +131,7 @@ Card defaults: interval = 1, ease = 250%.
 Constant defaults: easy bonus = 130%, interval modifier = 100%.
 These default can be user modified.
 
-*Interval modifier* is purely for user customization and does notihng by
+*Interval modifier* is purely for user customization and does nothing by
 default. Anki doc suggests using this SuperMemo formula to calculate a
 desired modifier:
 

@@ -12,6 +12,7 @@ class WaniKani:
     rooturl = 'https://www.wanikani.com/api/v2'
     subjects = ('radical', 'kanji', 'vocabulary')
     srs_stage_to_days = [0, 4/24, 8/24, 1, 3, 7, 14, 28, 56]
+    timestamp_fmt = '%Y-%m-%dT%H:%M:%SZ'
 
     def get_json(self, request, description):
         """Make a GET request and return resulting JSON."""
