@@ -14,14 +14,11 @@ from datetime import datetime
 import random
 import yaml
 
+from anki import Anki
 from translators import *
 from wanikani import *
 
-def generate_id():
-    """Generate a 32-bit ID useful for Anki."""
-    return random.randrange(1 << 30, 1 << 31)
-    # return datetime.now().timestamp()
-
+anki = Anki()
 wk = WaniKani()
 
 general_cache_path = 'cache/general/'
@@ -39,10 +36,11 @@ if os.path.isfile(userfile):
 else:
     user['apikey'] = input('WaniKani API V2 key (not V1!): ')
     user['ids'] = {
-        'deck': generate_id(),
-        'options': generate_id(),
+        'deck': anki.generate_id(),
+        'options': anki.generate_id(),
     }
-    user['ids'].update({subject:generate_id() for subject in wk.subjects})
+    user['ids'].update(
+        {subject:anki.generate_id() for subject in wk.subjects})
 
 headers = {}
 headers['Authorization'] = 'Token token=' + user['apikey']
