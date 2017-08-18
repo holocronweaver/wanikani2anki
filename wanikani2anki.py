@@ -3,11 +3,11 @@
 # License, v2.0. If a copy of the MPL was not distributed with this
 # file, you can obtain one at http://mozilla.org/MPL/2.0/.
 """
-TODO: mention in genanki documentation that deck ID is POSIX epoch second timestamp, used for determining relative due dates of cards
-TODO: Generate non-user specific note & card IDs. Do not cache.
+TODO: mention in genanki documentation that deck ID is POSIX epoch second timestamp, used for determining relative due dates of cards.
 TODO: Match Wanki deck.
-TODO: Double check WaniKani SRS to Anki SRS translation.
 TODO: Create web interface and core Python library.
+TODO: Double check WaniKani SRS to Anki SRS translation.
+TODO: Ensure deck updates properly.
 TODO: Consider in long term serializing Anki deck instead of WaniKani JSON.
 """
 from datetime import datetime
@@ -113,13 +113,16 @@ for subject, model in cards.items():
         css=css)
 
 options = genanki.OptionsGroup(user['ids']['options'], 'WaniKani')
+options.new_steps = [1, 10, 4 * 60, 8 * 60]
+options.new_cards_per_day = 20
+options.max_reviews_per_day = 200
+options.starting_ease = 2250
+
 deck = genanki.Deck(
     user['ids']['deck'],
     'WaniKani',
     options)
-# TODO: adjust genanki deck srs settings.
-
-deck.options = options
+deck.description = r'Your personalized WaniKani Anki deck. \nGenerated on {}.'.format(deck.creation_time.date().isoformat())
 
 # Sort subject data by level to make building deck in level-order easier.
 for subject in wk.subjects:
@@ -154,6 +157,8 @@ for level in range(1,61):
             # specific) data.
 
             note = genanki.Note(model=model, fields=fields)
+            note.guid = genanki.guid_for(
+                *[fields_dict['Characters'], subject])
 
             note.level = srs['stage']
             if note.level == 0: # new
@@ -166,7 +171,7 @@ for level in range(1,61):
                 due = srs['due'] - deck.creation_time
                 note.due = due.days
                 note.interval = srs['interval']
-                note.ease = 2500
+                note.ease = deck.options.starting_ease
             else:
                 raise ValueError('Illegal SRS level: ' + note.level)
 
