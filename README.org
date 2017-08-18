@@ -121,21 +121,48 @@ Review involves several parameters. Some are deck-wide constants,
 others are per-card variables whose initial values are provided by
 deck settings.
 
-Each card has an *interval*, the number of days between reviews.
+Each card has an *interval*, the integer number of days between reviews.
 
-After each review, the interval is updated:
+After each review, the interval is updated based on the user rated difficulty:
 
-new interval = ease * (easy bonus) * (interval modifier) * (old interval)
+Again: new interval = (new interval factor) * (old interval)
+Hard: new interval = 1.2 * (interval modifier) * (fuzz) * (old interval)
+Good: new interval = ease * (interval modifier) * (fuzz) * (old interval)
+Easy: new interval = ease * (easy bonus) * (interval modifier) * (fuzz) * (old interval)
 
-Card defaults: interval = 1, ease = 250%.
-Constant defaults: easy bonus = 130%, interval modifier = 100%.
-These default can be user modified.
+Note that 'Again' returns the card to the Learning stage. In that case
+the new interval is used once the card regraduates to Review.
 
-*Interval modifier* is purely for user customization and does nothing by
-default. Anki doc suggests using this SuperMemo formula to calculate a
-desired modifier:
+Card defaults (variable): interval = 1, ease = 250%.
+Deck defaults (constant): easy bonus = 130%, interval modifier = 100%, new interval factor = 0%, max interval = 100 years
+These defaults can be user modified. The minimum interval is always 1.
+
+A card's *ease* may change depending on how a user rates a question:
+- Again: Ease is descreased by 20 percentage points.
+- Hard: Ease is decreasing by 15 percentage points, current interval
+  multiplied by 1.2 instead of ease.
+- Good: Ease is unchanged.
+- Easy: Ease is increaded by 15 percentage points.
+Ease can never be lower than 130%.
+
+*Easy bonus* is only applied if user rates a question as 'Easy'.
+
+*Interval modifier* is purely for user customization and does nothing
+by default. It is not applied for 'Again'. Anki doc suggests using
+this SuperMemo formula to calculate a desired modifier:
 
 interval modifier = log(desired retention%) / log(current retention%)
+                  = log(desired retention% - current retention%)
+
+*Fuzz* is a random modifier, presumably close to 1.0, which Anki
+applies to cards to prevent cards reviewed together and given the same
+rating from all appearing together in the next review. It cannot be
+user controlled.
+
+Anki has more SRS algorithms than those described here, such as
+special handling of overdue and leech cards, but the above applies to
+common 'regular' reviews. For more detail, see the official [[https://apps.ankiweb.net/docs/manual.html#what-spaced-repetition-algorithm-does-anki-use][Anki SRS
+algorithm documentation]].
 * Alternatives
 | Project                      | WaniKani API version | Interface        | Language | Description                                                                                                                                     |
 |------------------------------+----------------------+------------------+----------+-------------------------------------------------------------------------------------------------------------------------------------------------|
