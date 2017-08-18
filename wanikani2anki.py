@@ -1,192 +1,141 @@
-#! /usr/bin/env python3
 # This Source Code Form is subject to the terms of the Mozilla Public
 # License, v2.0. If a copy of the MPL was not distributed with this
 # file, you can obtain one at http://mozilla.org/MPL/2.0/.
-"""
-TODO: mention in genanki documentation that deck ID is POSIX epoch second timestamp, used for determining relative due dates of cards.
-TODO: Match Wanki deck.
-TODO: Create web interface and core Python library.
-TODO: Double check WaniKani SRS to Anki SRS translation.
-TODO: Ensure deck updates properly.
-TODO: Consider in long term serializing Anki deck instead of WaniKani JSON.
-"""
-from datetime import datetime
-import random
-import yaml
+from functools import reduce
+from datetime import datetime, timedelta
 
-from anki import Anki
-from translators import *
-from wanikani import *
+import lib.genanki.genanki as genanki
 
-anki = Anki()
-wk = WaniKani()
+class WaniKani2Anki:
+    """Translate from WaniKani API data to Anki card type data."""
 
-general_cache_path = 'cache/general/'
-if not os.path.isdir(general_cache_path): os.makedirs(general_cache_path)
+    def __init__(self, wanikani, anki):
+        self.wk = wanikani
+        self.anki = anki
 
-# username = input('Username: ')
-username = 'bbucommander'
-userpath = 'cache/users/{}/'.format(username)
+        self.fields_translators = {
+            'radical': self.translate_radical,
+            'kanji': self.translate_kanji,
+            'vocabulary': self.translate_vocabulary
+        }
 
-user = {}
-userfile = userpath + '/user.json'
-if os.path.isfile(userfile):
-    with open(userfile, 'r') as f:
-        user = json.load(f)
-else:
-    user['apikey'] = input('WaniKani API V2 key (not V1!): ')
-    user['ids'] = {
-        'deck': anki.generate_id(),
-        'options': anki.generate_id(),
-    }
-    user['ids'].update(
-        {subject:anki.generate_id() for subject in wk.subjects})
+    def combine_meanings(self, wk, user):
+        """First WaniKani then user meanings in a comma-delim string."""
+        wk_sort = sorted(wk, key=lambda x: x['primary'], reverse=True)
+        wk_sort = [m['meaning'] for m in wk_sort]
+        return ', '.join(wk_sort + user) if user else ', '.join(wk_sort)
+    def get_kanji_readings(self, kind, readings):
+        """Get list of readings of particular kind (onyomi, kunyomi, nanori)
+        from WaniKani kanji readings, ordering primary reading first."""
+        reading = filter(lambda x: x['type'] == kind, readings)
+        reading = sorted(reading, key=lambda x: x['primary'], reverse=True)
+        reading = [r['reading'] for r in reading]
+        return ', '.join(reading)
+    def check_existence(self, data, key):
+        """Return empty string unless key exists in map and its value is not
+        None."""
+        if key in data: return data[key] if data[key] else ''
+        else: return ''
 
-headers = {}
-headers['Authorization'] = 'Token token=' + user['apikey']
+    def translate_radical(self, data):
+        fields = {
+            #TODO: Handle radicals without unicode values.
+            'Characters': data['character'] if data['character'] else 'FIXME',
+            'Meanings': self.combine_meanings(
+                data['meanings'],
+                data['meaning_synonyms'] if 'meaning_synonyms' in data else None),
+            'Note': self.check_existence(data, 'meaning_note'),
+            'Level': str(data['level']),
+        }
+        return fields
+    def translate_kanji(self, data):
+        fields = {
+            'Characters': data['character'],
+            'Meanings': self.combine_meanings(
+                data['meanings'],
+                data['meaning_synonyms'] if 'meaning_synonyms' in data else None),
+            'Meaning Note': self.check_existence(data, 'meaning_note'),
+            'Onyomi': self.get_kanji_readings('Onyomi', data['readings']),
+            'Kunyomi': self.get_kanji_readings('Kunyomi', data['readings']),
+            'Nanori': self.get_kanji_readings('Nanori', data['readings']),
+            'Reading Note': self.check_existence(data, 'reading_note'),
+            'Level': str(data['level']),
+        }
+        return fields
+    def translate_vocabulary(self, data):
+        fields = {
+            'Characters': data['characters'],
+            'Meanings': self.combine_meanings(
+                data['meanings'],
+                data['meaning_synonyms'] if 'meaning_synonyms' in data else None),
+            'Meaning Note': self.check_existence(data, 'meaning_note'),
+            'Readings': ', '.join(
+                [x['reading'] for x in sorted(
+                    data['readings'],
+                    key=lambda x: x['primary'], reverse=True)]),
+            'Reading Note': self.check_existence(data, 'reading_note'),
+            'Level': str(data['level']),
+        }
+        return fields
 
-try: user['wanikani'] = wk.get_from_api('userdata', '/user', headers)
-except URLError:
-    #TODO: Check URL error to determine exact cause, i.e. net down, etc.
-    print('Invalid API V2 key: ' + user['apikey'])
-    print('Please double check the key. It is stored in: ' + user['apikey'])
-    exit()
+    def translate_srs(self, data, deck):
+        """Translate WaniKani SRS data to Anki SRS data."""
+        wk = self.wk
+        wk_srs_stage = data['srs_stage'] if 'srs_stage' in data else 0
+        anki_srs = {}
+        if wk_srs_stage == 0: # new
+            anki_srs['stage'] = 0
+        elif wk_srs_stage < 3: # learning
+            #TODO: Probably should set deck learning steps to match WaniKani.
+            anki_srs['stage'] = 1
+            anki_srs['interval'] = -int(
+                60 * 60 * 24 * wk.srs_stage_to_days[wk_srs_stage])
+            anki_srs['reps_til_grad'] = 3 - wk_srs_stage
 
-if username != user['wanikani']['data']['username']:
-    print('Warning: username mismatch!')
-    print("Locally cached username: '{}'".format(username))
-    print("Username reported by WaniKani: '{}'.".format(user['wanikani']['data']['username']))
-    response = ''
-    while (response != 'y' and response != 'n'):
-        response = input('Do you wish to continue? [Y/N] ')
-        response = response.lower()
-    if response == 'n': exit()
+            due = datetime.strptime(data['available_at'], wk.timestamp_fmt)
+            anki_srs['due'] = due.timestamp()
+        elif wk_srs_stage < 9: # review
+            anki_srs['stage'] = 2
+            anki_srs['interval'] = wk.srs_stage_to_days[wk_srs_stage]
+            anki_srs['ease'] = deck.options.starting_ease
 
-if not os.path.isfile(userfile):
-    if not os.path.isdir(userpath):
-        os.makedirs(userpath)
-    with open(userfile, 'w+') as f:
-        json.dump(user, f)
+            due = datetime.strptime(data['available_at'], wk.timestamp_fmt)
+            relative_due = due - deck.creation_time
+            anki_srs['due'] = relative_due.days
+        else: # burned
+            anki_srs['stage'] = 2
+            #TODO: Let user customize this, and maybe other stage translations.
+            anki_srs['interval'] = 5 * 365
+            anki_srs['ease'] = deck.options.starting_ease
 
-print("""Fetching information for
-      user:  {username}
-      level: {level}
-    """.format(**user['wanikani']['data']))
+            farfuture = datetime.strptime(data['burned_at'], wk.timestamp_fmt)
+            farfuture += timedelta(days=5 * 365)
 
-data = {}
-for subject in wk.subjects:
-    data[subject] = wk.get(subject + '-subjects', '/subjects?type={}'.format(subject), headers, general_cache_path)
-    data[subject]['data'].sort(key=lambda x: x['id'])
+            anki_srs['due'] = farfuture
+        return anki_srs
 
-    # Merge subjectable data into subject data to recreate unified
-    # object data of WaniKani API V1.
-    for subjectable in ('study_materials', 'review_statistics', 'assignments'):
-        subdata = wk.get(
-            '{}-{}'.format(subject, subjectable),
-            '/{}?subject_type={}'.format(subjectable, subject), headers, userpath)
-        subdata['data'].sort(key=lambda x: x['data']['subject_id'])
+    def create_anki_note(self, subject, model, fields_dict, srs):
+        """Create Anki note from translated WaniKani data using genanki.
+        This translates from internal representation to genanki
+        representation so that genanki could be replaced if needed."""
+        fields = [fields_dict[field['name']] for field in model.fields]
 
-        datumiter = iter(data[subject]['data'])
-        datum = next(datumiter)
-        for subdatum in subdata['data']:
-            while datum['id'] != subdatum['data']['subject_id']:
-                try: datum = next(datumiter)
-                except StopIteration: print('Error: Could not find subject id {}. Aborting.'.format(subdatum['data']['subject_id']))
-            datum['data'].update(subdatum['data'])
+        note = genanki.Note(model=model, fields=fields)
+        note.guid = genanki.guid_for(
+            *[fields_dict['Characters'], subject])
 
-# print(data['vocabulary']['data'][0])
-# print(next(x for x in data['radical']['data'] if x['id'] == 8762))
+        note.stage = srs['stage']
+        if note.stage == 0: # new
+            pass
+        elif note.stage == 1: # learning
+            note.due = srs['due']
+            note.interval = srs['interval']
+            note.reps_til_grad = srs['reps_til_grad']
+        elif note.stage == 2: # review
+            note.due = srs['due']
+            note.interval = srs['interval']
+            note.ease = srs['ease']
+        else:
+            raise ValueError('Illegal SRS level: ' + note.level)
 
-with open('cards.yaml', 'r') as f:
-    cards = f.read()
-    cards = yaml.load(cards)
-with open('wanikani.css','r') as f:
-    css = f.read()
-
-models = {}
-for subject, model in cards.items():
-    models[subject] = genanki.Model(
-        user['ids'][subject],
-        'WaniKani ' + subject.title(),
-        fields=model['fields'],
-        templates=model['templates'],
-        css=css)
-
-options = genanki.OptionsGroup(user['ids']['options'], 'WaniKani')
-options.new_steps = [1, 10, 4 * 60, 8 * 60]
-options.new_cards_per_day = 20
-options.max_reviews_per_day = 200
-options.starting_ease = 2250
-
-deck = genanki.Deck(
-    user['ids']['deck'],
-    'WaniKani',
-    options)
-deck.description = r'Your personalized WaniKani Anki deck. \nGenerated on {}.'.format(deck.creation_time.date().isoformat())
-
-# Sort subject data by level to make building deck in level-order easier.
-for subject in wk.subjects:
-    data[subject]['data'] = sorted(
-        data[subject]['data'], key=lambda x: x['data']['level'])
-
-datum_iter = {subject:iter(data[subject]['data']) for subject in wk.subjects}
-datum_dict = {subject:next(datum_iter[subject]) for subject in wk.subjects}
-for level in range(1,61):
-    for subject in wk.subjects:
-    # for subject in ('radical',):
-        model = models[subject]
-        translator = translators[subject]
-        datum = datum_dict[subject]
-        while True:
-            if datum['data']['level'] != level:
-                # Note: Some levels 51-60 contain no radicals.
-                datum_dict[subject] = datum
-                break
-
-            try:
-                fields_dict = translator(datum['data'])
-                fields = [fields_dict[field['name']] for field in model.fields]
-
-                srs = srs_translator(datum['data'], wk)
-            except Exception:
-                print(datum['data'])
-                print('Failed to translate the above WaniKani data. Aborting.')
-                raise
-
-            #TODO: Create note ids using subject (i.e. non-user
-            # specific) data.
-
-            note = genanki.Note(model=model, fields=fields)
-            note.guid = genanki.guid_for(
-                *[fields_dict['Characters'], subject])
-
-            note.level = srs['stage']
-            if note.level == 0: # new
-                pass
-            elif note.level == 1: # learning
-                note.due = srs['due'].timestamp()
-                note.interval = srs['interval']
-                note.reps_til_grad = srs['reps_til_grad']
-            elif note.level == 2: # review
-                due = srs['due'] - deck.creation_time
-                note.due = due.days
-                note.interval = srs['interval']
-                note.ease = deck.options.starting_ease
-            else:
-                raise ValueError('Illegal SRS level: ' + note.level)
-
-            deck.add_note(note)
-
-            try:
-                datum = next(datum_iter[subject])
-            except StopIteration:
-                break
-
-
-print('Writing deck...')
-filename = userpath + 'WaniKani.apkg'
-#TODO: periodically cleanup old decks
-if os.path.isfile(filename):
-    os.remove(filename)
-genanki.Package(deck).write_to_file(filename)
-print('All done')
+        return note

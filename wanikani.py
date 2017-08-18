@@ -6,8 +6,6 @@ import os
 from urllib.error import *
 from urllib.request import *
 
-import lib.genanki.genanki as genanki
-
 class WaniKani:
     rooturl = 'https://www.wanikani.com/api/v2'
     subjects = ('radical', 'kanji', 'vocabulary')
