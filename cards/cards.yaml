@@ -1,0 +1,38 @@
+radical:
+  fields:
+    - name: Characters
+    - name: Meanings
+    - name: Note
+    - name: Level
+  templates:
+    - name: Meanings
+      qfmt: radical_front.htm
+      afmt: radical_back.htm
+
+kanji:
+  fields:
+    - name: Characters
+    - name: Meanings
+    - name: Meaning Note
+    - name: Onyomi
+    - name: Kunyomi
+    - name: Nanori
+    - name: Reading Note
+    - name: Level
+  templates:
+    - name: Meanings and Readings
+      qfmt: kanji_front.htm
+      afmt: kanji_back.htm
+
+vocabulary:
+  fields:
+    - name: Characters
+    - name: Meanings
+    - name: Meaning Note
+    - name: Readings
+    - name: Reading Note
+    - name: Level
+  templates:
+    - name: Meanings and Readings
+      qfmt: vocabulary_front.htm
+      afmt: vocabulary_back.htm

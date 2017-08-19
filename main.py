@@ -102,10 +102,15 @@ for subject in wk.subjects:
 # print(data['vocabulary']['data'][0])
 # print(next(x for x in data['radical']['data'] if x['id'] == 8762))
 
-with open('cards.yaml', 'r') as f:
+with open('cards/cards.yaml', 'r') as f:
     cards = f.read()
     cards = yaml.load(cards)
-with open('wanikani.css','r') as f:
+    for subject, model in cards.items():
+        for template in model['templates']:
+            for fmt in ('qfmt', 'afmt'):
+                with open('cards/' + template[fmt], 'r') as f:
+                    template[fmt] = f.read()
+with open('cards/wanikani.css', 'r') as f:
     css = f.read()
 
 models = {}
