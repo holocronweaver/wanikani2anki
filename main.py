@@ -14,7 +14,6 @@ from datetime import datetime
 import json
 import os
 import random
-import yaml
 
 import lib.genanki.genanki as genanki
 
@@ -102,14 +101,7 @@ for subject in wk.subjects:
 # print(data['vocabulary']['data'][0])
 # print(next(x for x in data['radical']['data'] if x['id'] == 8762))
 
-with open('cards/cards.yaml', 'r') as f:
-    cards = f.read()
-    cards = yaml.load(cards)
-    for subject, model in cards.items():
-        for template in model['templates']:
-            for fmt in ('qfmt', 'afmt'):
-                with open('cards/' + template[fmt], 'r') as f:
-                    template[fmt] = f.read()
+cards = anki.import_card_definitions('cards/cards.yaml')
 with open('cards/wanikani.css', 'r') as f:
     css = f.read()
 

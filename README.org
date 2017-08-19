@@ -78,13 +78,6 @@ be done very infrequently, maybe once or twice a year.
 Need to figure out how to update Anki decks without disrupting SRS
 divergence between Anki and WaniKani.
 ** Support export filters.
-* Notice
-This software is meant to aid your studies. If you find WaniKani
-useful, support it by buying a subscription!
-
-The author is in no way associated with the maintainers of Tofugu or
-WaniKani. Just a happy user who wants offline access, greater
-customizability, and more control over their data.
 * Notes
 ** Links
 - [[https://www.wanikani.com/api][V1 API]]
@@ -170,3 +163,16 @@ algorithm documentation]].
 | [[https://github.com/dennmart/wanikani-to-anki][wanikani-to-anki]] ([[www.wanikanitoanki.com][website]])   |                    1 | website          | Ruby     | Easy to use. Creates raw CSV file for Anki, not a deck. User must make and style cards themselves (considerable work!). Limited export options. |
 | [[https://github.com/nigelkerr/wanikani2anki][wanikani2anki]]                |                    1 | Anki addon       | Python   | Same name, but very different! Anki addon, uses Anki's built-in Python interface.                                                               |
 | [[https://github.com/dendriticspine/WaniAnki-Python][WaniKani-Python]]              |                    1 | scripts          | Python   | Includes Kanji stroke order. Script interface split between mobile and desktop. Simple, but not very flexible.                                  |
+* Legal Notices
+This software is licensed under the Mozilla Public License 2.0
+(MPL-2.0).
+
+The [[http://wanakana.com/][WanaKana script]] is licensed from the WaniKani Community Github
+under the MIT license.
+
+The author is in no way associated with the maintainers of Tofugu or
+WaniKani. Just a happy user who wants offline access, greater
+customizability, and more control over their data.
+
+This software is meant to aid your studies. If you find WaniKani
+useful, support it by buying a subscription!
