@@ -118,10 +118,10 @@ Each card has an *interval*, the integer number of days between reviews.
 
 After each review, the interval is updated based on the user rated difficulty:
 
-Again: new interval = (new interval factor) * (old interval)
-Hard: new interval = 1.2 * (interval modifier) * (fuzz) * (old interval)
-Good: new interval = ease * (interval modifier) * (fuzz) * (old interval)
-Easy: new interval = ease * (easy bonus) * (interval modifier) * (fuzz) * (old interval)
+- Again: new interval = (new interval factor) * (old interval)
+- Hard: new interval = 1.2 * (interval modifier) * (fuzz) * (old interval)
+- Good: new interval = ease * (interval modifier) * (fuzz) * (old interval)
+- Easy: new interval = ease * (easy bonus) * (interval modifier) * (fuzz) * (old interval)
 
 Note that 'Again' returns the card to the Learning stage. In that case
 the new interval is used once the card regraduates to Review.
