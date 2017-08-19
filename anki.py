@@ -14,7 +14,13 @@ class Anki:
         # return datetime.now().timestamp()
 
     def import_card_definitions(self, yaml_filepath):
-        """Import card definitions from YAML file."""
+        """Import card definitions from YAML file.
+
+        Adds a Anki-like {{import:file.txt}} file import command which
+        works similar to the #include preprocessor command in C-like
+        languages, directly replacing the command with text from the
+        import file.
+        """
         path = os.path.dirname(yaml_filepath) + '/'
         with open(yaml_filepath, 'r') as f:
             cards = f.read()
