@@ -123,6 +123,7 @@ class WaniKani2Anki:
         note = genanki.Note(model=model, fields=fields)
         note.guid = genanki.guid_for(
             *[fields_dict['Characters'], subject])
+        note.tags = ['WKLevel_' + fields_dict['Level']]
 
         note.stage = srs['stage']
         if note.stage == 0: # new
