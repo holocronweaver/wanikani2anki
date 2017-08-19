@@ -167,6 +167,13 @@ algorithm documentation]].
 This software is licensed under the Mozilla Public License 2.0
 (MPL-2.0).
 
+/What is the MPL and how does it differ from the GPL?/ The MPL allows
+you to include this software in a project with any licensing scheme
+you wish so long as you openly share any changes you make to files
+from this project and leave its license intact. This is in contrast to
+the GPL which requires your whole project to have a GPL-compatible
+license.
+
 The [[http://wanakana.com/][WanaKana script]] is licensed from the WaniKani Community Github
 under the MIT license.
 
