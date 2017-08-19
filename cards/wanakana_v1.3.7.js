@@ -636,3 +636,8 @@ wanakana = wanakana || {}, wanakana.version = "1.3.7", "function" == typeof defi
   "んゆ": "n'yu",
   "んよ": "n'yo"
 };
+
+
+
+var input = document.getElementById('typeans');
+wanakana.bind(input);
