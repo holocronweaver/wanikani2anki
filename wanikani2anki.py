@@ -110,8 +110,8 @@ class WaniKani2Anki:
 
             farfuture = datetime.strptime(data['burned_at'], wk.timestamp_fmt)
             farfuture += timedelta(days=5 * 365)
-
-            anki_srs['due'] = farfuture
+            farfuture -= deck.creation_time
+            anki_srs['due'] = farfuture.days
         return anki_srs
 
     def create_anki_note(self, subject, model, fields_dict, srs):
