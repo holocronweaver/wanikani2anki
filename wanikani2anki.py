@@ -6,12 +6,14 @@ from datetime import datetime, timedelta
 
 import lib.genanki.genanki as genanki
 
+from anki import Anki
+
 class WaniKani2Anki:
     """Translate from WaniKani API data to Anki card type data."""
 
-    def __init__(self, wanikani, anki):
+    def __init__(self, wanikani, anki=None):
         self.wk = wanikani
-        self.anki = anki
+        self.anki = anki or Anki()
 
         self.fields_translators = {
             'radical': self.translate_radical,
@@ -114,12 +116,12 @@ class WaniKani2Anki:
             anki_srs['due'] = farfuture.days
         return anki_srs
 
-    def create_anki_note(self, datum, model, subject):
+    def create_anki_note(self, datum, deck, model, subject):
         """Create Anki note from translated WaniKani data using genanki.
         This translates from internal representation to genanki
         representation so that genanki could be replaced if needed."""
-        fields_dict = fields_translators[subject](datum)
-        srs = wk2a.translate_srs(datum, deck)
+        fields_dict = self.fields_translators[subject](datum)
+        srs = self.translate_srs(datum, deck)
 
         fields = [fields_dict[field['name']] for field in model.fields]
 
@@ -143,3 +145,79 @@ class WaniKani2Anki:
             raise ValueError('Illegal SRS level: ' + note.level)
 
         return note
+
+    def create_options(self, user):
+        """Create an Anki options group that mimics the WaniKani SRS."""
+        options = genanki.OptionsGroup(user['ids']['options'], 'WaniKani')
+        options.new_steps = [1, 10, 4 * 60, 8 * 60]
+        options.new_cards_per_day = 20
+        options.max_reviews_per_day = 200
+        options.starting_ease = 2250
+        options.new_bury_related_cards = False
+        options.review_bury_related_cards = False
+        return options
+
+    def create_models(self, user):
+        """Create WaniKani card models for an Anki deck."""
+        cards = self.anki.import_card_definitions('cards/cards.yaml')
+        with open('cards/wanikani.css', 'r') as f:
+            css = f.read()
+
+        models = {}
+        for subject, model in cards.items():
+            models[subject] = genanki.Model(
+                user['ids'][subject],
+                'WaniKani ' + subject.title(),
+                fields=model['fields'],
+                templates=model['templates'],
+                css=css)
+        return models
+
+    def create_deck(self, user, data, options):
+        """Create Anki deck from WaniKani data."""
+        deck = genanki.Deck(
+            user['ids']['deck'],
+            'WaniKani',
+            options)
+        deck.description = r'Your personalized WaniKani Anki deck. \nGenerated on {}.'.format(deck.creation_time.date().isoformat())
+
+        models = self.create_models(user)
+
+        # Sort subject data by level to make building deck in level-order easier.
+        for subject in self.wk.subjects:
+            data[subject]['data'] = sorted(
+                data[subject]['data'], key=lambda x: x['data']['level'])
+
+        datum_iter = {subject:iter(data[subject]['data'])
+                      for subject in self.wk.subjects}
+        datum_dict = {subject:next(datum_iter[subject])
+                      for subject in self.wk.subjects}
+        for level in range(1,61):
+            for subject in self.wk.subjects:
+                model = models[subject]
+                fields_translator = self.fields_translators[subject]
+                datum = datum_dict[subject]
+                while True:
+                    if datum['data']['level'] != level:
+                        # Note: Some levels 51-60 contain no radicals.
+                        datum_dict[subject] = datum
+                        break
+
+                    try:
+                        note = self.create_anki_note(
+                            datum['data'], deck, model, subject)
+                        deck.add_note(note)
+                    except Exception:
+                        print(datum['data'])
+                        print('Failed to translate the above WaniKani data to Anki. Aborting.')
+                        raise
+
+                    try:
+                        datum = next(datum_iter[subject])
+                    except StopIteration:
+                        break
+
+        return deck
+
+    def write_deck_to_file(self, filepath, deck):
+        genanki.Package(deck).write_to_file(filepath)

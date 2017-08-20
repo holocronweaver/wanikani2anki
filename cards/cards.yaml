@@ -8,7 +8,6 @@ radical:
     - name: Meanings
       qfmt: radical_front.htm
       afmt: radical_back.htm
-
 kanji:
   fields:
     - name: Characters
@@ -23,7 +22,6 @@ kanji:
     - name: Meanings and Readings
       qfmt: kanji_front.htm
       afmt: kanji_back.htm
-
 vocabulary:
   fields:
     - name: Characters

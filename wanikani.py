@@ -72,3 +72,85 @@ class WaniKani:
                 json.dump(data, f)
             data['from_cache'] = False
         return data
+
+    def get_data(self, user, userpath, general_cache_path):
+        """Gather all WaniKani data for user.
+        Data is downloaded/updated as necessary from the web and
+        cached for future use."""
+        headers = self.create_headers(user)
+        data = {}
+        for subject in self.subjects:
+            data[subject] = self.get(
+                subject + '-subjects',
+                '/subjects?type={}'.format(subject),
+                headers, general_cache_path)
+            data[subject]['data'].sort(key=lambda x: x['id'])
+
+            # Merge subjectable data into subject data to recreate unified
+            # object data of WaniKani API V1.
+            for subjectable in ('study_materials', 'review_statistics', 'assignments'):
+                subdata = self.get(
+                    '{}-{}'.format(subject, subjectable),
+                    '/{}?subject_type={}'.format(subjectable, subject),
+                    headers, userpath)
+                subdata['data'].sort(key=lambda x: x['data']['subject_id'])
+
+                datumiter = iter(data[subject]['data'])
+                datum = next(datumiter)
+                for subdatum in subdata['data']:
+                    while datum['id'] != subdatum['data']['subject_id']:
+                        try: datum = next(datumiter)
+                        except StopIteration: print('Error: Could not find subject id {}. Aborting.'.format(subdatum['data']['subject_id']))
+                    datum['data'].update(subdatum['data'])
+        return data
+
+    def create_headers(self, user):
+        headers = {}
+        headers['Authorization'] = 'Token token=' + user['apikey']
+        return headers
+
+    def get_user(self, username, userpath):
+        user = {}
+        userfile = userpath + '/user.json'
+        if os.path.isfile(userfile):
+            with open(userfile, 'r') as f:
+                user = json.load(f)
+        else:
+            user['apikey'] = input('WaniKani API V2 key (not V1!): ')
+            user['ids'] = {
+                'deck': self.anki.generate_id(),
+                'options': self.anki.generate_id(),
+            }
+            user['ids'].update(
+                {subject:self.anki.generate_id()
+                 for subject in self.wk.subjects})
+
+        headers = self.create_headers(user)
+
+        try: user['wanikani'] = self.get_from_api('userdata', '/user', headers)
+        except URLError:
+            #TODO: Check URL error to determine exact cause, i.e. net down, etc.
+            #TODO: Pass error to user.
+            print('Invalid API V2 key: ' + user['apikey'])
+            print('Please double check the key. It is stored in: ' + user['apikey'])
+            exit()
+
+        if username != user['wanikani']['data']['username']:
+            print('Warning: username mismatch!')
+            print("Locally cached username: '{}'".format(username))
+            print("Username reported by WaniKani: '{}'.".format(user['wanikani']['data']['username']))
+            #TODO: Pass error to user.
+            response = ''
+            while (response != 'y' and response != 'n'):
+                response = input('Do you wish to continue? [Y/N] ')
+                response = response.lower()
+            if response == 'n': exit()
+
+        if not os.path.isfile(userfile):
+            if not os.path.isdir(userpath):
+                #TODO: Let user handle this?
+                os.makedirs(userpath)
+            with open(userfile, 'w+') as f:
+                json.dump(user, f)
+
+        return user
