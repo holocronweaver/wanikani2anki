@@ -114,10 +114,13 @@ class WaniKani2Anki:
             anki_srs['due'] = farfuture.days
         return anki_srs
 
-    def create_anki_note(self, subject, model, fields_dict, srs):
+    def create_anki_note(self, datum, model, subject):
         """Create Anki note from translated WaniKani data using genanki.
         This translates from internal representation to genanki
         representation so that genanki could be replaced if needed."""
+        fields_dict = fields_translators[subject](datum)
+        srs = wk2a.translate_srs(datum, deck)
+
         fields = [fields_dict[field['name']] for field in model.fields]
 
         note = genanki.Note(model=model, fields=fields)

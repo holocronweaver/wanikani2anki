@@ -137,7 +137,6 @@ datum_iter = {subject:iter(data[subject]['data']) for subject in wk.subjects}
 datum_dict = {subject:next(datum_iter[subject]) for subject in wk.subjects}
 for level in range(1,61):
     for subject in wk.subjects:
-    # for subject in ('radical',):
         model = models[subject]
         fields_translator = wk2a.fields_translators[subject]
         datum = datum_dict[subject]
@@ -148,15 +147,13 @@ for level in range(1,61):
                 break
 
             try:
-                fields = fields_translator(datum['data'])
-                srs = wk2a.translate_srs(datum['data'], deck)
+                note = wk2a.create_anki_note(datum['data'], model, subject)
+                deck.add_note(note)
             except Exception:
                 print(datum['data'])
-                print('Failed to translate the above WaniKani data. Aborting.')
+                print('Failed to translate the above WaniKani data to Anki.'
+                      ' Aborting.')
                 raise
-
-            note = wk2a.create_anki_note(subject, model, fields, srs)
-            deck.add_note(note)
 
             try:
                 datum = next(datum_iter[subject])
@@ -170,4 +167,4 @@ filename = userpath + 'WaniKani.apkg'
 if os.path.isfile(filename):
     os.remove(filename)
 genanki.Package(deck).write_to_file(filename)
-print('All done')
+print('All done.')
