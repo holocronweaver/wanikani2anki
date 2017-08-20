@@ -5,6 +5,7 @@
 """A CLI for converting WaniKani user data to an Anki deck.
 TODO: mention in genanki documentation that deck ID is POSIX epoch second timestamp, used for determining relative due dates of cards.
 TODO: Match Wanki deck.
+TODO: Support mobile Anki (phone + tablet).
 TODO: Create web interface and core Python library.
 TODO: Double check WaniKani SRS to Anki SRS translation.
 TODO: Ensure deck updates properly.
