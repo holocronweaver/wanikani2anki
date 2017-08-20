@@ -1,2 +1,4 @@
 apikey.txt
 cache/
+__pycache__
+reference
