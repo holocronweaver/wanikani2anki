@@ -1,11 +1,13 @@
 /* Based on CSS suggested by Dennis Martinez on the wanikanitoanki.com
    website. */
 .card {
-  font-family: arial;
+  font-family: Noto Sans CJK JP Regular;
+  /* font-family: arial; */
   font-size: 40px;
   text-align: center;
   color: black;
-  background-color: white;
+  background: #F3F3F3;
+  margin 0px;
   word-wrap: break-word;
 }
 
@@ -57,7 +59,7 @@
 .radical-divider {
   background-color: #e7e7e7;
   color: #3e3e3e;
-  font-size: 1em;
+  font-size: 0.75em;
   font-weight: normal;
   margin-bottom: 2px;
   line-height: 1.6em;
@@ -66,7 +68,7 @@
 .kanji-divider {
   background-color: #2a2a2a;
   color: white;
-  font-size: 1em;
+  font-size: 0.75em;
   font-weight: normal;
   margin-bottom: 2px;
   line-height: 1.6em;
@@ -115,15 +117,45 @@
   background:  -webkit-linear-gradient(#55A5D5, #3D7597);
 }
 
+#container {
+  padding: 0 60px;
+  color: black;
+  text-align: left;
+  font-size: 20px;
+}
+
 input#typeans {
   font-family: Noto Sans CJK JP Regular;
   font-size: 30px;
   text-align: center;
   color: black;
   border: 1px;
+  margin: 20px 0px 20px 0px;
   padding: 20px 0px 20px 0px;
   outline: 0;
   outline-style: none;
   outline-width: 0;
   border-radius: 20px;
+}
+
+div#incorrect {
+  background: -webkit-linear-gradient(#FF0033, #B20024);
+  font-family: Noto Sans CJK JP Regular;
+  padding: 20px;
+  outline: 0;
+  outline-style:none;
+  outline-width:0;
+  border-radius: 20px;
+  margin: 10px;
+}
+
+div#correct {
+  background: -webkit-linear-gradient(#88CC00, #5F8F00);
+  font-family: Noto Sans CJK JP Regular;
+  padding: 20px;
+  outline: 0;
+  outline-style:none;
+  outline-width:0;
+  border-radius: 20px;
+  margin: 10px;
 }
