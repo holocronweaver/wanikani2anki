@@ -119,6 +119,8 @@ options.new_steps = [1, 10, 4 * 60, 8 * 60]
 options.new_cards_per_day = 20
 options.max_reviews_per_day = 200
 options.starting_ease = 2250
+options.new_bury_related_cards = False
+options.review_bury_related_cards = False
 
 deck = genanki.Deck(
     user['ids']['deck'],
