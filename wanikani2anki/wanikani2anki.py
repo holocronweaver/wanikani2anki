@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 
 import lib.genanki.genanki as genanki
 
-from anki import Anki
+from .anki import Anki
 
 class WaniKani2Anki:
     """Translate from WaniKani API data to Anki card type data."""

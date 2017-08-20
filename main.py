@@ -12,8 +12,7 @@ TODO: Consider in long term serializing Anki deck instead of WaniKani JSON.
 """
 import os
 
-from wanikani import WaniKani
-from wanikani2anki import WaniKani2Anki
+from wanikani2anki import WaniKani, WaniKani2Anki
 
 wk = WaniKani()
 wk2a = WaniKani2Anki(wk)
