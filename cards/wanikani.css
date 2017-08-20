@@ -56,34 +56,39 @@
   font-size: 0.5em;
 }
 
-.radical-divider {
-  background-color: #e7e7e7;
-  color: #3e3e3e;
+.divider {
   font-size: 0.75em;
   font-weight: normal;
   margin-bottom: 2px;
+  padding: 20px 0;
   line-height: 1.6em;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+  z-index:999;
+}
+
+.radical-divider {
+  background-color: #e7e7e7;
+  color: #3e3e3e;
 }
 
 .kanji-divider {
   background-color: #2a2a2a;
   color: white;
-  font-size: 0.75em;
-  font-weight: normal;
-  margin-bottom: 2px;
-  line-height: 1.6em;
 }
 
 .meanings {
+  margin: 5px 0;
   padding-top: 5px;
   font-weight: normal;
-  font-size: 0.5em;
+  font-size: 1em;
 }
 
 .readings {
+  margin: 5px 0;
   padding-top: 1px;
   font-weight: normal;
-  font-size: 0.5em;
+  font-size: 1em;
 }
 
 .readings th {
