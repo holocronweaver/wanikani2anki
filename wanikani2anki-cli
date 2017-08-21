@@ -9,7 +9,7 @@ TODO: Support mobile Anki (phone + tablet).
 TODO: Create web interface and core Python library.
 TODO: Double check WaniKani SRS to Anki SRS translation.
 TODO: Ensure deck updates properly.
-TODO: Consider in long term serializing Anki deck instead of WaniKani JSON.
+TODO: Write documentation.
 """
 import os
 
