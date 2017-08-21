@@ -3,9 +3,9 @@
 Document new fields, add usage example to README.
 Mention that deck ID is POSIX epoch second timestamp, used for
 determining relative due dates of cards.
-** Match Wanki deck.
+** DONE Match Wanki deck.
+CLOSED: [2017-08-21 Mon]
 Kanji, then vocab, then radicals. Use Anki card editor.
-Embed fonts and audio.
 ** Support vocabulary audio and example sentences.
 See issue [[https://github.com/holocronweaver/wanikani2anki/issues/3][#3]].
 
@@ -16,6 +16,15 @@ Meanwhile, this content can be obtained by scraping the site.
 
 Since this content rarely changes and is user-independent, updates can
 be done very infrequently, maybe once a year.
+** Embed media and fonts.
+** Support multiple card types.
+These generally only apply to vocab.
+*** spoken Japanese -> Japanese
+*** spoken Japanese -> English
+*** Japanese -> reading + English
+*** Japanese -> English
+*** Japanese -> reading
+*** English -> Japanese
 ** Support mobile Anki (phone + tablet).
 *** AnkiDroid
 *** AnkiMobile (MacOS/iOS)
@@ -31,3 +40,10 @@ divergence between Anki and WaniKani.
 CLI, library, web frontend.
 ** WaniKani stats Anki addon
 A simple Anki addon which produces WaniKani-style stats.
+** Double check deck visuals.
+Use custom study to speed up deck updates and keep cards consistent.
+*** desktop (Win, Mac, Linux)
+*** mobile (Android, iOS)
+*** compare against Ganki (Wanki)
+*** ensure media and fonts properly embedded
+** Study with deck daily for 2 weeks.
