@@ -1,7 +1,5 @@
 {{FrontSide}}
-<!-- <div class="small">Meanings</div> -->
 <div class="meanings">{{Meanings}}</div>
-<!-- <div class="small">Readings</div> -->
 <div class="readings">{{Readings}}</div>
 {{#Meaning Note}}
 <div class="small">Meaning Note</div>
@@ -14,26 +12,7 @@
 
 
 <script>
- {{import:get_answer.js}}
+ {{import:check_answer.js}}
 
- var answer = get_japanese_answer();
- var typeParse = answer[0];
- var typedAnswer = answer[1];
-
- var correctAnswers = get_correct_answers();
-
-  // Modify answer output.
- if ((correctAnswers.indexOf(typeParse) > -1) && (!(typeParse == "")))
- {
-     var c = "<div id='correct'>"+typedAnswer+"</div>";
-     var d = document.getElementById('typeans');
-     d.innerHTML = c;
- } else {
-     if(typeParse == "") {
-         typeParse = "BITTERNESS INTENSIFIES!!!";
-     }
-     var e = "<div id='incorrect'>"+typeParse+"</div>";
-     var f = document.getElementById('typeans');
-     f.innerHTML = e;
- };
+ check_japanese_answer();
 </script>

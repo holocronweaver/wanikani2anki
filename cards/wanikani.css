@@ -18,6 +18,10 @@
   line-height: 1.6em;
 }
 
+.mobile .ja {
+  font-size: 2.25em;
+}
+
 .ja a {
   text-decoration: none;
   color: inherit;
@@ -67,6 +71,15 @@
   z-index:999;
 }
 
+.mobile .divider {
+  font-size: 0.5em;
+  margin-bottom: 2px;
+  padding: 10px 0;
+  line-height: 1.6em;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+
 .radicals-divider {
   background-color: #e7e7e7;
   color: #3e3e3e;
@@ -84,11 +97,19 @@
   font-size: 1em;
 }
 
+.mobile .meanings {
+  font-size: 1em;
+}
+
 .readings {
   margin: 5px 0;
   padding-top: 1px;
   font-weight: normal;
   font-size: 1em;
+}
+
+.mobile .readings {
+  font-size: 0.75em;
 }
 
 .readings th {
@@ -102,31 +123,8 @@
   font-size: 0.5em;
 }
 
-#button_1 {
-  color: #fff;
-  display: inline-block;
-  box-sizing: border-box;
-  position: relative;
-  border: 0;
-  font-family: Noto Sans CJK JP Regular;
-  font-size: 12px;
-  line-height: 1.6875;
-  padding: 0.5625em 1em;
-  text-align: center;
-  letter-spacing: 0.02em;
-  text-decoration: none;
-  max-width: 100%;
-  -webkit-font-smoothing: antialiased;
-  border-radius: 10px;
-  transition: all 0.2s ease;
-  background:  -webkit-linear-gradient(#55A5D5, #3D7597);
-}
-
-#container {
-  padding: 0 60px;
-  color: black;
-  text-align: left;
-  font-size: 20px;
+.mobile .note {
+  font-size: 0.5em;
 }
 
 input#typeans {
@@ -141,6 +139,13 @@ input#typeans {
   outline-style: none;
   outline-width: 0;
   border-radius: 20px;
+}
+
+.mobile input#typeans {
+  font-size: 15px;
+  margin: 10px 0px 10px 0px;
+  padding: 10px 0px 10px 0px;
+  border-radius: 10px;
 }
 
 div#incorrect {

@@ -54,16 +54,56 @@ var get_japanese_answer = function()
     return [typeParse, typedAnswer];
 };
 
-// Get correct answers from front of card.
+// Get comma-separated list of answers from front of card.
 // Placing invisible answers is a way to get around Anki fields
 // otherwise not being directly accessible to JavaScript.
 var get_correct_answers = function()
 {
     var getcorr = document.getElementById('correctAnswer');
     getcorr = getcorr.innerHTML;
-    var correctAnswers = getcorr.split(",");
-    for (var i = 0; i < correctAnswers.length; i++) {
-        correctAnswers[i] = correctAnswers[i].trim();
+    var answers = getcorr.split(",");
+    var correctAnswers = [];
+    for (var i = 0; i < answers.length; i++) {
+        if (answers[i]) {
+            correctAnswers.push(answers[i].trim());
+        }
     }
     return correctAnswers;
+};
+
+var _check_answer = function(answer)
+{
+    var typeParse = answer[0];
+    var typedAnswer = answer[1];
+
+    var correctAnswers = get_correct_answers();
+
+    // Modify answer output.
+    if ((correctAnswers.indexOf(typeParse) > -1) && (!(typeParse == "")))
+    {
+        var c = "<div id='correct'>"+typedAnswer+"</div>";
+        var d = document.getElementById('typeans');
+        d.innerHTML = c;
+    } else {
+        if(typeParse == "") {
+            typeParse = "BITTERNESS INTENSIFIES!!!";
+        }
+        var e = "<div id='incorrect'>"+typeParse+"</div>";
+        var f = document.getElementById('typeans');
+        f.innerHTML = e;
+    };
+};
+
+// Check typed answer.
+var check_answer = function()
+{
+    var answer = get_answer();
+    _check_answer([answer, answer]);
+};
+
+// Check answer entered in Japanese.
+var check_japanese_answer = function()
+{
+    var answer = get_japanese_answer();
+    _check_answer(answer);
 };
