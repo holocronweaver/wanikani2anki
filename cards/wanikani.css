@@ -1,5 +1,6 @@
-/* Based on CSS suggested by Dennis Martinez on the wanikanitoanki.com
-   website. */
+/* Inspired by CSS from various Japanese Anki decks, particularly the
+   Ganki deck, as well as CSS suggested by Dennis Martinez on the
+   wanikanitoanki.com website. */
 .card {
   font-family: Noto Sans CJK JP Regular;
   /* font-family: arial; */
@@ -94,22 +95,13 @@
   margin: 0.5em 0;
   padding-top: 0.5em;
   font-weight: normal;
-  font-size: 1em;
-}
-
-.mobile .meanings {
-  font-size: 1em;
+  font-size: 0.75em;
 }
 
 .readings {
   margin: 0.5em 0;
   padding-top: 0.1em;
   font-weight: normal;
-  /* font-size: 1em; */
-  font-size: 1em;
-}
-
-.mobile .readings {
   font-size: 0.75em;
 }
 
@@ -135,10 +127,6 @@
   margin: 0.25em 2em;
   text-align: left;
   display: inline-block;
-}
-
-.mobile .note {
-  font-size: 0.5em;
 }
 
 input#typeans {
