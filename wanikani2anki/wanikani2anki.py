@@ -16,7 +16,7 @@ class WaniKani2Anki:
         self.anki = anki or Anki()
 
         self.fields_translators = {
-            'radical': self.translate_radical,
+            'radicals': self.translate_radical,
             'kanji': self.translate_kanji,
             'vocabulary': self.translate_vocabulary
         }

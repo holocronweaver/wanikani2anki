@@ -8,7 +8,7 @@ from urllib.request import *
 
 class WaniKani:
     rooturl = 'https://www.wanikani.com/api/v2'
-    subjects = ('radical', 'kanji', 'vocabulary')
+    subjects = ('radicals', 'kanji', 'vocabulary')
     srs_stage_to_days = [0, 4/24, 8/24, 1, 3, 7, 14, 28, 56]
     timestamp_fmt = '%Y-%m-%dT%H:%M:%SZ'
 
@@ -76,7 +76,48 @@ class WaniKani:
     def get_data(self, user, userpath, general_cache_path):
         """Gather all WaniKani data for user.
         Data is downloaded/updated as necessary from the web and
-        cached for future use."""
+        cached for future use.
+
+        Data is a dict of subjects with the following format.
+
+        data = {
+          subject: { // radicals, kanji, or vocabular
+            somerequest: info,
+            morerequest: info,
+            ...
+            andso: on,
+            data: [item1,
+                   item2,
+                   ...
+                   lastitem]
+          }
+        }
+        Each item has all the data for a single radical, kanji, or
+        vocab. Items have a structure similar to subject.
+
+        item = {
+          somerequest: info,
+          morerequest: info,
+          ...
+          andso: on,
+          data: {
+            wanikani_data: value,
+            more_wanikani_data: value,
+            ...
+            and_even_more_wanikani_data: value
+          }
+        }
+
+        The item['data'] field contains all the WaniKani data for
+        that item available from the WK API.
+
+        The available fields in item['data'] depend on the subject and
+        whether the user has reviewed the item at least once. See the
+        WaniKani V2 API for what to expect. Currently all data that
+        can be pulled is pulled, so if you can't find what you want
+        then most likely the WaniKani API doesn't provide it yet or
+        you haven't reviewed the item on WaniKani at least once.
+        """
         headers = self.create_headers(user)
         data = {}
         for subject in self.subjects:

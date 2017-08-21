@@ -35,7 +35,6 @@ print("""Fetching information for
 data = wk.get_data(user, userpath, general_cache_path)
 
 # print(data['vocabulary']['data'][0])
-# print(next(x for x in data['radical']['data'] if x['id'] == 8762))
 
 options = wk2a.create_options(user)
 

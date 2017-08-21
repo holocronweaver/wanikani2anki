@@ -1,4 +1,4 @@
-radical:
+radicals:
   fields:
     - name: Characters
     - name: Meanings
@@ -6,8 +6,8 @@ radical:
     - name: Level
   templates:
     - name: Meanings
-      qfmt: radical_front.htm
-      afmt: radical_back.htm
+      qfmt: radicals_front.htm
+      afmt: radicals_back.htm
 kanji:
   fields:
     - name: Characters
