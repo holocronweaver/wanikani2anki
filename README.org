@@ -178,5 +178,9 @@ The author is in no way associated with the maintainers of Tofugu or
 WaniKani. Just a happy user who wants offline access, greater
 customizability, and more control over their data.
 
+DO NOT PUBLICLY POST WANIKANI DECKS ON THE INTERNET. You do not have
+copyright for any of the content on WaniKani you did not personally
+create (i.e., you only own your notes).
+
 This software is meant to aid your studies. If you find WaniKani
 useful, support it by buying a subscription!
