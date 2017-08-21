@@ -3,13 +3,6 @@
 # License, v2.0. If a copy of the MPL was not distributed with this
 # file, you can obtain one at http://mozilla.org/MPL/2.0/.
 """A CLI for converting WaniKani user data to an Anki deck.
-TODO: mention in genanki documentation that deck ID is POSIX epoch second timestamp, used for determining relative due dates of cards.
-TODO: Match Wanki deck.
-TODO: Support mobile Anki (phone + tablet).
-TODO: Create web interface and core Python library.
-TODO: Double check WaniKani SRS to Anki SRS translation.
-TODO: Ensure deck updates properly.
-TODO: Write documentation.
 """
 import os
 

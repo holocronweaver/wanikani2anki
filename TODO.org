@@ -1,0 +1,11 @@
+* Update genanki documentation.
+Mention that deck ID is POSIX epoch second timestamp, used for
+determining relative due dates of cards.
+* Match Wanki deck.
+Kanji, then vocab, then radicals. Use Anki card editor.
+* Support mobile Anki (phone + tablet).
+* Create web interface and core Python library.
+* Double check WaniKani SRS to Anki SRS translation.
+* Ensure deck updates properly.
+* Write documentation.
+CLI, library, web frontend.
