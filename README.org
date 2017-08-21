@@ -63,6 +63,15 @@ from WaniKani, reducing data transfer costs.
 
 Typically a server will remove old user caches over time, say after a
 few months.
+** SRS
+Unlike WaniKani, Anki gives you control over the SRS algorithm
+parameters so you can customize it to fit your needs on a deck-by-deck
+basis. Want to make reviews occur more or less frequently? Want to
+limit the number of reviews you do a day? Want to add more learning
+stages or change their repetition intervals? Want to apply special
+rules to cards you frequently get wrong? Prefer to have 'burned' items
+given far future due dates rather than being permanently retired? Anki
+allows you to do all these things and more.
 * Future Plans
 ** Support vocabulary audio and example sentences.
 See issue [[https://github.com/holocronweaver/wanikani2anki/issues/3][#3]].
@@ -73,11 +82,13 @@ example sentences in the future. See related [[https://community.wanikani.com/t/
 Meanwhile, this content can be obtained by scraping the site.
 
 Since this content rarely changes and is user-independent, updates can
-be done very infrequently, maybe once or twice a year.
+be done very infrequently, maybe once a year.
 ** Update Anki decks.
 Need to figure out how to update Anki decks without disrupting SRS
 divergence between Anki and WaniKani.
 ** Support export filters.
+** WaniKani stats Anki addon
+A simple Anki addon which produces WaniKani-style stats.
 * Notes
 ** Links
 - [[https://www.wanikani.com/api][V1 API]]
@@ -90,11 +101,12 @@ divergence between Anki and WaniKani.
 WaniKani has 10 SRS stages: new, 4H, 8H, 24H, 3D, 1W, 2W
 (master), 1M (enlighten), 4M (burn), burned.
 
-These map to Anki fairly well: new, 4H + 8H (learning), 24H to 4M
-(review). Burning doesn't exist in Anki without addons, but intervals
-eventually become enormous (years). Burning can be effectively
-mimicked by periodically setting the intervals of all cards with
-intervals greater than, say, 1 year, to 100 years.
+These map to Anki fairly well: new (new), 4H & 8H (learning), 24H to
+4M (review). Burning doesn't exist in Anki without addons, but
+intervals eventually become years and decades which may actually be
+better than never seeing the card again. Burning can be effectively
+mimicked by periodically setting all cards with intervals greater than
+1 year to 100 years.
 ** Anki SRS
 Anki SRS has the following progression stages: new, learning, and review.
 *** New
