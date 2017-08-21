@@ -73,22 +73,7 @@ rules to cards you frequently get wrong? Prefer to have 'burned' items
 given far future due dates rather than being permanently retired? Anki
 allows you to do all these things and more.
 * Future Plans
-** Support vocabulary audio and example sentences.
-See issue [[https://github.com/holocronweaver/wanikani2anki/issues/3][#3]].
-
-WaniKani API V2 is supposedly going to support vocabulary audio and
-example sentences in the future. See related [[https://community.wanikani.com/t/API-V2-Alpha-Documentation/18987/67][WaniKani form post]].
-
-Meanwhile, this content can be obtained by scraping the site.
-
-Since this content rarely changes and is user-independent, updates can
-be done very infrequently, maybe once a year.
-** Update Anki decks.
-Need to figure out how to update Anki decks without disrupting SRS
-divergence between Anki and WaniKani.
-** Support export filters.
-** WaniKani stats Anki addon
-A simple Anki addon which produces WaniKani-style stats.
+See [[https://github.com/holocronweaver/wanikani2anki/blob/master/TODO.org][TODO list]].
 * Notes
 ** Links
 - [[https://www.wanikani.com/api][V1 API]]

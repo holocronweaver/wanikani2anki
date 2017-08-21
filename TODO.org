@@ -1,11 +1,29 @@
-* Update genanki documentation.
+* Version 0.50
+** Update genanki documentation.
 Mention that deck ID is POSIX epoch second timestamp, used for
 determining relative due dates of cards.
-* Match Wanki deck.
+** Match Wanki deck.
 Kanji, then vocab, then radicals. Use Anki card editor.
-* Support mobile Anki (phone + tablet).
-* Create web interface and core Python library.
-* Double check WaniKani SRS to Anki SRS translation.
-* Ensure deck updates properly.
-* Write documentation.
+** Support mobile Anki (phone + tablet).
+** Create web interface and core Python library.
+*** Support export filters.
+*** Add export filters to CLI.
+** Double check WaniKani SRS to Anki SRS translation.
+** Ensure deck updates properly.
+Need to figure out how to update Anki decks without disrupting SRS
+divergence between Anki and WaniKani.
+** Write documentation.
 CLI, library, web frontend.
+** WaniKani stats Anki addon
+A simple Anki addon which produces WaniKani-style stats.
+* Version 1.00
+** Support vocabulary audio and example sentences.
+See issue [[https://github.com/holocronweaver/wanikani2anki/issues/3][#3]].
+
+WaniKani API V2 is supposedly going to support vocabulary audio and
+example sentences in the future. See related [[https://community.wanikani.com/t/API-V2-Alpha-Documentation/18987/67][WaniKani form post]].
+
+Meanwhile, this content can be obtained by scraping the site.
+
+Since this content rarely changes and is user-independent, updates can
+be done very infrequently, maybe once a year.
