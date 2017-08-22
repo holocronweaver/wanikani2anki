@@ -27,9 +27,12 @@ https://github.com/mozilla/geckodriver/releases
 Note that selenium opens a browser window and 'drives' it
 programatically. I know of no convenient cross-platform method of
 hiding the browser window.
+
+TODO: Add resume feature. Store results in temp files. Consider
+storing results using pickle instead of JSON, and using a dict of
+arrays rather than an array of dicts.
 """
 from datetime import datetime
-import json
 import os
 import random
 import time
@@ -37,6 +40,7 @@ import time
 from bs4 import BeautifulSoup
 
 from webdriver import *
+from scrapers import *
 
 from wanikani2anki import WaniKani, WaniKani2Anki
 
@@ -46,9 +50,12 @@ subjects = ['radicals', 'kanji', 'vocabulary']
 
 general_cache_path = 'cache/general/'
 
+formats = {
+    'audio': 'audio/' + 'mpeg', # or 'ogg'
+}
+
 audio_path = os.path.abspath(general_cache_path + 'audio/')
 if not os.path.isdir(audio_path): os.makedirs(audio_path)
-audio_format = 'audio/' + 'mpeg' # or 'ogg'
 
 firefox_profile = '/home/jesse/.mozilla/firefox/1crm9gtr.crawl/'
 
@@ -65,70 +72,27 @@ user = wk.get_user(username, userpath)
 data = wk.get_data(user, userpath, general_cache_path)
 
 # Scrape!
-driver = WebDriver(firefox_profile, audio_path, [audio_format])
-scraped_data = {}
+driver = WebDriver(firefox_profile, audio_path, [formats['audio']])
 sleep_offsets = {'radicals': 0, 'kanji': 0, 'vocabulary': -5}
 
-def get_mnemonic(field, soup, scrape_dict):
-    h2 = soup.find('h2', string=field)
-    p = h2.parent.p
-    if len(p.contents):
-        scrape_dict[field] = ''.join([child.string for child in p.contents])
-    else:
-        scrape_dict[field] = p.string
-def scrape_radical(soup):
-    scraped = {}
-    get_mnemonic('Name Mnemonic', soup, scraped)
-    return scraped
-def scrape_kanji(soup):
-    scraped = {}
-    get_mnemonic('Meaning Mnemonic', soup, scraped)
-    get_mnemonic('Reading Mnemonic', soup, scraped)
-    return scraped
-def scrape_vocabulary(soup):
-    scraped = {}
-    # Context sentences.
-    section = soup.find('section', 'context-sentence')
-    sentences = []
-    for div in section.find_all('div'):
-        ja = div.find('p', attrs={'lang': 'ja'})
-        en = div.find('p', attrs={'lang': None})
-        sentences.append([ja.string, en.string])
-    scraped['Context Sentences'] = sentences
-    # Mnemonincs.
-    get_mnemonic('Meaning Explanation', soup, scraped)
-    get_mnemonic('Reading Explanation', soup, scraped)
-    # Audio.
-    source = soup.find('source', attrs={'type': audio_format})
-    audiofile = source['src'].split('/')[-1]
-    scraped['Audio'] = audiofile
-    try:
-        driver.get(source['src'])
-    except selenium.common.exceptions.TimeoutException:
-        # Navigatig to a page which induces a download in Firefox
-        pass
-
-    return scraped
-
-scrapers = {
-    'radicals': scrape_radical,
-    'kanji': scrape_kanji,
-    'vocabulary': scrape_vocabulary
-}
-
 for subject in subjects:
-    scraped_data[subject] = []
-    scraper = scrapers[subject]
-
-    fields_translator = wk2a.fields_translators[subject]
+    scraper = scrapers[subject](
+        subject, general_cache_path, driver, formats)
 
     get_sleep_time = lambda: 10 + 3 * (random.random() * 2 - 1) + sleep_offsets[subject]
 
     log = open('{}/{}-scrape.log'.format(general_cache_path, subject), 'a')
 
-    for wk_datum in data[subject]['data']:
-        datum = fields_translator(wk_datum['data'])
+    # For restoring, find last index that was serialized.
+    resumeindex = -1
+    if scraper.lastid_before_resume > -1:
+        for i in range(len(data[subject]['data'])):
+            wk_datum = data[subject]['data'][i]
+            if wk_datum['id'] == scraper.lastid_before_resume:
+                resumeindex = i
+                break
 
+    for wk_datum in data[subject]['data'][resumeindex + 1:]:
         url = wk_datum['data']['document_url']
 
         try:
@@ -136,8 +100,7 @@ for subject in subjects:
 
             soup = BeautifulSoup(html, 'lxml')
 
-            scraped = scraper(soup)
-            scraped['id'] = wk_datum['id']
+            scraper.scrape(wk_datum['id'], soup)
         except Exception:
             msg = '{}:ERROR: Failed to get item: {} id: {} url: {}.\n'.format(
                 datetime.now().isoformat(),
@@ -146,17 +109,13 @@ for subject in subjects:
             print(msg)
             continue
 
-        scraped_data[subject].append(scraped)
         time.sleep(get_sleep_time())
-        print(scraped)
+        print('id: {}, data: {}'.format(
+            scraper.ids[-1],
+            {key: value[-1] for key, value in scraper.data.items()}))
 
+    scraper.serialize()
     log.close()
-
-
-for subject, scraped in scraped_data.items():
-    filename = '{}/{}-scrape.json'.format(general_cache_path, subject)
-    with open(filename, 'w') as f:
-        json.dump(scraped, f)
 
 # For some reason this crashes, but would be nice to close driver.
 # driver.quit()
