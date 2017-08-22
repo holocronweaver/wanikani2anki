@@ -65,6 +65,10 @@ class WaniKani2Anki:
         }
         return fields
     def translate_vocabulary(self, data):
+        context_sentences = ''
+        if 'Context Sentences' in data:
+            context_sentences = ', '.join(
+                [', '.join(pair) for pair in data['Context Sentences']])
         fields = {
             'Characters': data['characters'],
             'Meanings': self.combine_meanings(
@@ -76,8 +80,10 @@ class WaniKani2Anki:
                     data['readings'],
                     key=lambda x: x['primary'], reverse=True)]),
             'Reading Note': self.check_existence(data, 'reading_note'),
-            'Audio': '',
-            'Context Sentences': ', '.join([]),
+            'Audio': '[{}]'.format(data['Audio']) if 'Audio' in data else '',
+            'Context Sentences': context_sentences,
+            'Meaning Explanation': data['Meaning Explanation'] if 'Meaning Explanation' in data else '',
+            'Reading Explanation': data['Reading Explanation'] if 'Reading Explanation' in data else '',
             'Level': str(data['level']),
         }
         return fields

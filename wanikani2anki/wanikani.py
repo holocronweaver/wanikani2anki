@@ -127,9 +127,33 @@ class WaniKani:
                 headers, general_cache_path)
             data[subject]['data'].sort(key=lambda x: x['id'])
 
+            errmsg ='Error: Could not find subject id {}. Aborting.'
+
+            # Merge in scrape data for each item, if available.
+            scrape_filename = '{}/{}-scrape.json'.format(
+                self.general_cache_path, subject)
+            if os.path.isfile(scrape_filename):
+                with open(scrape_filename, 'r') as f:
+                    scraped = json.load(f)
+                scraped.sort(key=lambda x: x['id'])
+
+                datumiter = iter(data[subject]['data'])
+                datum = next(datumiter)
+                for subdatum in scraped:
+                    while datum['id'] != subdatum['id']:
+                        try: datum = next(datumiter)
+                        except StopIteration: print(errmsg.format(
+                                subdatum['id']))
+                    datum['data'].update(subdatum['data'])
+
             # Merge subjectable data into subject data to recreate unified
             # object data of WaniKani API V1.
-            for subjectable in ('study_materials', 'review_statistics', 'assignments'):
+            subjectables = (
+                'study_materials',
+                'review_statistics',
+                'assignments',
+            )
+            for subjectable in subjectables:
                 subdata = self.get(
                     '{}-{}'.format(subject, subjectable),
                     '/{}?subject_type={}'.format(subjectable, subject),
@@ -141,7 +165,8 @@ class WaniKani:
                 for subdatum in subdata['data']:
                     while datum['id'] != subdatum['data']['subject_id']:
                         try: datum = next(datumiter)
-                        except StopIteration: print('Error: Could not find subject id {}. Aborting.'.format(subdatum['data']['subject_id']))
+                        except StopIteration: print(errmsg.format(
+                                subdatum['data']['subject_id']))
                     datum['data'].update(subdatum['data'])
         return data
 

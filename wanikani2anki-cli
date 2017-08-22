@@ -20,10 +20,10 @@ userpath = 'cache/users/{}/'.format(username)
 
 user = wk.get_user(username, userpath)
 
-print("""Fetching information for
+print('''Fetching information for
       user:  {username}
       level: {level}
-    """.format(**user['wanikani']['data']))
+'''.format(**user['wanikani']['data']))
 
 data = wk.get_data(user, userpath, general_cache_path)
 

@@ -27,8 +27,8 @@ class Scraper:
 
         self.restore()
     def scrape(self, wk_id, soup):
-        self.ids.append(wk_id)
         self._scrape(soup)
+        self.ids.append(wk_id)
         self.counter += 1
         if self.counter == self.cachesize:
             self._serialize_partial()
@@ -84,8 +84,11 @@ class Scraper:
     def to_list_of_dicts(self):
         l = []
         for i in range(len(self.ids)):
-            d = {key: self.data[key][i] for key in self.data.keys()}
-            d['id'] = self.ids[i]
+            data = {key: self.data[key][i] for key in self.data.keys()}
+            d = {
+                'id': self.ids[i],
+                'data': data,
+            }
             l.append(d)
         return l
 class RadicalScraper(Scraper):
