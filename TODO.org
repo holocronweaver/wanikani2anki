@@ -19,12 +19,18 @@ be done very infrequently, maybe once a year.
 ** Embed media and fonts.
 ** Support multiple card types.
 These generally only apply to vocab.
-*** spoken Japanese -> Japanese
-*** spoken Japanese -> English
-*** Japanese -> reading + English
-*** Japanese -> English
-*** Japanese -> reading
-*** English -> Japanese
+Most of these can probably be configured with JS variables.
+*** Japanese -> readings + meanings
+Can be split to match WaniKani.
+*** spoken Japanese -> readings + meanings
+Due to number of homonyms, this may be useless.
+*** meanings -> readings
+Due to number of synonyms, this may be useless.
+*** options
+**** enable typing
+Applies to radicals and kanji as well.
+Enabled/disabled on a per-card type basis.
+**** kanji separate meaning / reading
 ** Support mobile Anki (phone + tablet).
 *** AnkiDroid
 *** AnkiMobile (MacOS/iOS)

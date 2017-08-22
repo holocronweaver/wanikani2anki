@@ -32,6 +32,8 @@ var get_answer = function()
     };
 
     typedVar = innerHTMLText.slice(0,firstBr).join("");
+    console.log("pre-answer: " + typedVar);
+    typedVar = typedVar.split("-").join("");
     return typedVar;
 };
 
@@ -85,7 +87,7 @@ var _check_answer = function(answer)
         var d = document.getElementById('typeans');
         d.innerHTML = c;
     } else {
-        if(typeParse == "") {
+        if (typeParse == "") {
             typeParse = "BITTERNESS INTENSIFIES!!!";
         }
         var e = "<div id='incorrect'>"+typeParse+"</div>";
@@ -94,7 +96,7 @@ var _check_answer = function(answer)
     };
 };
 
-// Check typed answer.
+// Check typed answer. Strict, but allows a list of options.
 var check_answer = function()
 {
     var answer = get_answer();
@@ -106,4 +108,39 @@ var check_japanese_answer = function()
 {
     var answer = get_japanese_answer();
     _check_answer(answer);
+};
+
+var check_english_answer = function()
+{
+    var typed_answer = get_answer();
+    var answer = typed_answer.toLowerCase().trim();
+
+    var correctAnswers = get_correct_answers();
+
+    console.log("answer: " + answer + ", " + typed_answer);
+
+    // Modify answer output.
+    for (var i = 0; i < correctAnswers.length; i++)
+    {
+        console.log(correctAnswers[i]);
+        var correctAnswer = correctAnswers[i].toLowerCase();
+        var distance = levenshtein(answer, correctAnswer);
+        var length = correctAnswer.length;
+        // Correct!
+        if ((distance / length < 0.4) && (!(answer == "")))
+        {
+            var c = "<div id='correct'>"+typed_answer+"</div>";
+            var d = document.getElementById('typeans');
+            d.innerHTML = c;
+            return;
+        }
+    }
+
+    // Incorrect!
+    if (answer == "") {
+        answer = "BITTERNESS INTENSIFIES!!!";
+    }
+    var e = "<div id='incorrect'>"+typed_answer+"</div>";
+    var f = document.getElementById('typeans');
+    f.innerHTML = e;
 };

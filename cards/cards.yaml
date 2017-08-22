@@ -8,6 +8,8 @@ radicals:
     - name: Meanings
       qfmt: radicals_front.htm
       afmt: radicals_back.htm
+      # options:
+      #   typing: false
 kanji:
   fields:
     - name: Characters
@@ -19,9 +21,22 @@ kanji:
     - name: Reading Note
     - name: Level
   templates:
-    - name: Meanings and Readings
-      qfmt: kanji_front.htm
-      afmt: kanji_back.htm
+    - name: Meanings
+      qfmt: kanji_meanings_front.htm
+      afmt: kanji_meanings_back.htm
+    - name: Readings
+      qfmt: kanji_readings_front.htm
+      afmt: kanji_readings_back.htm
+      # options:
+      #   separate: false
+      #   typing: true
+    # - name: Meanings
+    #   qfmt: kanji_front.htm
+    #   afmt: kanji_back.htm
+    # - name: Readings
+    #   qfmt: kanji_front.htm
+    #   afmt: kanji_back.htm
+
 vocabulary:
   fields:
     - name: Characters
@@ -29,8 +44,28 @@ vocabulary:
     - name: Meaning Note
     - name: Readings
     - name: Reading Note
+    - name: Audio
+    - name: Context Sentences
     - name: Level
   templates:
-    - name: Meanings and Readings
-      qfmt: vocabulary_front.htm
-      afmt: vocabulary_back.htm
+    - name: Meanings
+      qfmt: vocabulary_meanings_front.htm
+      afmt: vocabulary_meanings_back.htm
+    - name: Readings
+      qfmt: vocabulary_readings_front.htm
+      afmt: vocabulary_readings_back.htm
+      # options:
+      #   audio: true
+      #   separate: false
+      #   typing: true
+    # - name: spoken Japanese -> readings + meanings
+    #   qfmt: vocabulary_spoken_front.htm
+    #   afmt: vocabulary_spoken_back.htm
+    #   options:
+    #     typing: true
+    # - name: meanings -> readings
+    #   qfmt: vocabulary_meanings_front.htm
+    #   afmt: vocabulary_meanings_back.htm
+    #   options:
+    #     audio: true
+    #     typing: false

@@ -2,8 +2,8 @@
    Ganki deck, as well as CSS suggested by Dennis Martinez on the
    wanikanitoanki.com website. */
 .card {
+  /* font-family: "Noto Sans", "Noto Sans CJK JP", sans-serif; */
   font-family: Noto Sans CJK JP Regular;
-  /* font-family: arial; */
   font-size: 40px;
   text-align: center;
   color: black;

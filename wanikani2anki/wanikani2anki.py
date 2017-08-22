@@ -76,6 +76,8 @@ class WaniKani2Anki:
                     data['readings'],
                     key=lambda x: x['primary'], reverse=True)]),
             'Reading Note': self.check_existence(data, 'reading_note'),
+            'Audio': '',
+            'Context Sentences': ', '.join([]),
             'Level': str(data['level']),
         }
         return fields
