@@ -39,18 +39,21 @@
 
 .radicals {
   background-color: #00a0f1;
+  /* background: -webkit-linear-gradient(); */
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.25) inset;
   text-shadow: 5px 5px 0 #0093dd;
 }
 
 .kanji {
   background-color: #f100a0;
+  /* background: -webkit-linear-gradient(); */
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.25) inset;
   text-shadow: 5px 5px 0 #dd0093;
 }
 
 .vocabulary {
   background-color: #a000f1;
+  /* background: -webkit-linear-gradient(#9700E3, #8300c5); */
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.25) inset;
   text-shadow: 5px 5px 0 #9300dd;
 }
@@ -83,11 +86,13 @@
 
 .radicals-divider {
   background-color: #e7e7e7;
+  /* background: -webkit-linear-gradient(); */
   color: #3e3e3e;
 }
 
 .kanji-divider {
   background-color: #2a2a2a;
+  /* background: -webkit-linear-gradient(#3C3C3C, #000000); */
   color: white;
 }
 

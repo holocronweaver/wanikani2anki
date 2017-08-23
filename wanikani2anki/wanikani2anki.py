@@ -33,7 +33,17 @@ class WaniKani2Anki:
         reading = sorted(reading, key=lambda x: x['primary'], reverse=True)
         reading = [r['reading'] for r in reading]
         return ', '.join(reading)
-    def check_existence(self, data, key):
+    def get_mnemonic(self, field, data):
+        """Join mnemonic and its hint using '::hint::', which can be further
+        parsed and formatted in-card using JavaScript."""
+        if not self.check_existence(field, data):
+            return ''
+        else:
+            if type(data[field]) is list:
+                return '::hint::'.join(data[field])
+            else: #TODO: Check no longer needed once scraping redone.
+                return data[field]
+    def check_existence(self, key, data):
         """Return empty string unless key exists in map and its value is not
         None."""
         if key in data: return data[key] if data[key] else ''
@@ -46,7 +56,8 @@ class WaniKani2Anki:
             'Meanings': self.combine_meanings(
                 data['meanings'],
                 data['meaning_synonyms'] if 'meaning_synonyms' in data else None),
-            'Note': self.check_existence(data, 'meaning_note'),
+            'Note': self.check_existence('meaning_note', data),
+            'Meaning Mnemonic': self.get_mnemonic('Meaning Mnemonic', data),
             'Level': str(data['level']),
         }
         return fields
@@ -56,34 +67,36 @@ class WaniKani2Anki:
             'Meanings': self.combine_meanings(
                 data['meanings'],
                 data['meaning_synonyms'] if 'meaning_synonyms' in data else None),
-            'Meaning Note': self.check_existence(data, 'meaning_note'),
+            'Meaning Note': self.check_existence('meaning_note', data),
             'Onyomi': self.get_kanji_readings('Onyomi', data['readings']),
             'Kunyomi': self.get_kanji_readings('Kunyomi', data['readings']),
             'Nanori': self.get_kanji_readings('Nanori', data['readings']),
-            'Reading Note': self.check_existence(data, 'reading_note'),
+            'Reading Note': self.check_existence('reading_note', data),
+            'Meaning Mnemonic': self.get_mnemonic('Meaning Mnemonic', data),
+            'Reading Mnemonic': self.get_mnemonic('Reading Mnemonic', data),
             'Level': str(data['level']),
         }
         return fields
     def translate_vocabulary(self, data):
         context_sentences = ''
         if 'Context Sentences' in data:
-            context_sentences = ', '.join(
-                [', '.join(pair) for pair in data['Context Sentences']])
+            context_sentences = '::context::'.join(
+                ['::translation::'.join(pair) for pair in data['Context Sentences']])
         fields = {
             'Characters': data['characters'],
             'Meanings': self.combine_meanings(
                 data['meanings'],
                 data['meaning_synonyms'] if 'meaning_synonyms' in data else None),
-            'Meaning Note': self.check_existence(data, 'meaning_note'),
+            'Meaning Note': self.check_existence('meaning_note', data),
             'Readings': ', '.join(
                 [x['reading'] for x in sorted(
                     data['readings'],
                     key=lambda x: x['primary'], reverse=True)]),
-            'Reading Note': self.check_existence(data, 'reading_note'),
-            'Audio': '[{}]'.format(data['Audio']) if 'Audio' in data else '',
+            'Reading Note': self.check_existence('reading_note', data),
+            'Audio': '[sound:{}]'.format(data['Audio']) if 'Audio' in data else '',
             'Context Sentences': context_sentences,
-            'Meaning Explanation': data['Meaning Explanation'] if 'Meaning Explanation' in data else '',
-            'Reading Explanation': data['Reading Explanation'] if 'Reading Explanation' in data else '',
+            'Meaning Explanation': self.get_mnemonic('Meaning Explanation', data),
+            'Reading Explanation': self.get_mnemonic('Reading Explanation', data),
             'Level': str(data['level']),
         }
         return fields
@@ -227,5 +240,5 @@ class WaniKani2Anki:
 
         return deck
 
-    def write_deck_to_file(self, filepath, deck):
-        genanki.Package(deck).write_to_file(filepath)
+    def write_deck_to_file(self, filepath, deck, media):
+        genanki.Package(deck, media).write_to_file(filepath)

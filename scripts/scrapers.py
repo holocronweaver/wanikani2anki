@@ -37,12 +37,19 @@ class Scraper:
     def add_mnemonic(self, field, soup):
         h2 = soup.find('h2', string=field)
         p = h2.parent.p
+        aside = h2.parent.aside
         mnemonic = ''
         if p.contents:
             mnemonic = ''.join([child.string for child in p.contents if child.string])
         else:
             mnemonic = p.string
-        self.data[field].append(mnemonic)
+        hints = ''
+        if aside:
+            if aside.contents:
+                hints = ''.join([child.string for child in aside.contents if child.string])
+            else:
+                hints = aside.string
+        self.data[field].append([mnemonic, hints])
     def restore(self):
         # Find last page of partial results.
         filenames = glob.glob(self.filename + '_*')
@@ -55,7 +62,7 @@ class Scraper:
         filename = self.page_filename.format(self.page)
         with open(filename, 'r') as f:
             j = json.load(f)
-        self.lastid_before_resume = j[-1]['id']
+        self.lastid_before_resume = int(j[-1]['id'])
     def _serialize_partial(self):
         partial = self.to_list_of_dicts()
         filename = self.page_filename.format(self.page)
@@ -86,7 +93,7 @@ class Scraper:
         for i in range(len(self.ids)):
             data = {key: self.data[key][i] for key in self.data.keys()}
             d = {
-                'id': self.ids[i],
+                'id': int(self.ids[i]),
                 'data': data,
             }
             l.append(d)

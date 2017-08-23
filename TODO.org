@@ -6,13 +6,11 @@ determining relative due dates of cards.
 ** DONE Match Wanki deck.
 CLOSED: [2017-08-21 Mon]
 Kanji, then vocab, then radicals. Use Anki card editor.
-** Support vocabulary audio and example sentences.
+** DONE Support vocabulary audio and example sentences.
+CLOSED: [2017-08-22 Tue 22:19]
 See issue [[https://github.com/holocronweaver/wanikani2anki/issues/3][#3]].
 
-WaniKani API V2 is supposedly going to support vocabulary audio and
-example sentences in the future. See related [[https://community.wanikani.com/t/API-V2-Alpha-Documentation/18987/67][WaniKani form post]].
-
-Meanwhile, this content can be obtained by scraping the site.
+For now this content can be obtained by scraping the site.
 
 Since this content rarely changes and is user-independent, updates can
 be done very infrequently, maybe once a year.
@@ -38,6 +36,13 @@ Enabled/disabled on a per-card type basis.
 *** Support export filters.
 *** Add export filters to CLI.
 * Version 1.00
+** Check if scraped data can be obtained from WK API.
+See issue [[https://github.com/holocronweaver/wanikani2anki/issues/3][#3]].
+
+WaniKani API V2 is supposedly going to support vocabulary audio and
+example sentences in the future. See related [[https://community.wanikani.com/t/API-V2-Alpha-Documentation/18987/67][WaniKani form post]].
+
+Context sentences, meaning and reading mnemonics, and audio.
 ** Double check WaniKani SRS to Anki SRS translation.
 ** Ensure deck updates properly.
 Need to figure out how to update Anki decks without disrupting SRS

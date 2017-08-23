@@ -2,6 +2,7 @@ radicals:
   fields:
     - name: Characters
     - name: Meanings
+    - name: Meaning Mnemonic
     - name: Note
     - name: Level
   templates:
@@ -15,10 +16,12 @@ kanji:
     - name: Characters
     - name: Meanings
     - name: Meaning Note
+    - name: Meaning Mnemonic
     - name: Onyomi
     - name: Kunyomi
     - name: Nanori
     - name: Reading Note
+    - name: Reading Mnemonic
     - name: Level
   templates:
     - name: Meanings
@@ -42,8 +45,10 @@ vocabulary:
     - name: Characters
     - name: Meanings
     - name: Meaning Note
+    - name: Meaning Explanation
     - name: Readings
     - name: Reading Note
+    - name: Reading Explanation
     - name: Audio
     - name: Context Sentences
     - name: Level

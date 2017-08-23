@@ -48,7 +48,7 @@ for subject in subjects:
             match = re.search(r'item: (.*) id: (.*) url: (.*).$', line)
             incompletes.append({
                 'characters': match.group(1),
-                'id': match.group(2),
+                'id': int(match.group(2)),
                 'url': match.group(3).replace(' ', '-'),
             })
 
@@ -60,6 +60,7 @@ for subject in subjects:
 
             soup = BeautifulSoup(html, 'lxml')
 
+            datum['id'] = int(datum['id'])
             scraper.scrape(datum['id'], soup)
         except Exception:
             msg = '{}:ERROR: Failed to get item: {} id: {} url: {}.\n'.format(

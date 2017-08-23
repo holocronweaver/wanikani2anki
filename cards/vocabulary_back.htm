@@ -1,7 +1,12 @@
 {{FrontSide}}
-<!-- {{Audio}}  -->
 <div class="meanings">{{Meanings}}</div>
 <div class="readings">{{Readings}}</div>
+{{#Context Sentences}}
+<div class="small">Context Sentences</div>
+<div id="context-sentences" class="note">
+    {{hint:Context Sentences}}
+</div>
+{{/Context Sentences}}
 {{#Meaning Note}}
 <div class="small">Meaning Note</div>
 <div class="note">{{hint:Meaning Note}}</div>
@@ -10,3 +15,28 @@
 <div class="small">Reading Note</div>
 <div class="note">{{hint:Reading Note}}</div>
 {{/Reading Note}}
+{{#Meaning Explanation}}
+<!-- TODO <div class="small">Meaning Explanation</div>
+     <div class="note">{{hint:Meaning Explanation}}</div> -->
+{{/Meaning Explanation}}
+{{#Reading Explanation}}
+<!-- TODO -->
+{{/Reading Explanation}}
+
+<script>
+ // Split context sentences into separate lines.
+ var context = document.getElementById('context-sentences');
+ if (context)
+ {
+     var sentences = context.innerHTML.split('::context::');
+     var html = '';
+     for (var i = 0; i < sentences.length; i++)
+     {
+         sentences[i] = sentences[i].split('::translation::');
+         html += sentences[i][0] + '<br>';
+         html += sentences[i][1];
+         if (i < sentences.length - 1) html += '<br>';
+     }
+     context.innerHTML = html;
+ }
+</script>

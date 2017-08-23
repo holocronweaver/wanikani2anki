@@ -32,7 +32,6 @@ var get_answer = function()
     };
 
     typedVar = innerHTMLText.slice(0,firstBr).join("");
-    console.log("pre-answer: " + typedVar);
     typedVar = typedVar.split("-").join("");
     return typedVar;
 };
@@ -117,12 +116,9 @@ var check_english_answer = function()
 
     var correctAnswers = get_correct_answers();
 
-    console.log("answer: " + answer + ", " + typed_answer);
-
     // Modify answer output.
     for (var i = 0; i < correctAnswers.length; i++)
     {
-        console.log(correctAnswers[i]);
         var correctAnswer = correctAnswers[i].toLowerCase();
         var distance = levenshtein(answer, correctAnswer);
         var length = correctAnswer.length;
