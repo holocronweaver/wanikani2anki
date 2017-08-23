@@ -131,7 +131,7 @@ class WaniKani:
 
             # Merge in scrape data for each item, if available.
             scrape_filename = '{}/{}-scrape.json'.format(
-                self.general_cache_path, subject)
+                general_cache_path, subject)
             if os.path.isfile(scrape_filename):
                 with open(scrape_filename, 'r') as f:
                     scraped = json.load(f)

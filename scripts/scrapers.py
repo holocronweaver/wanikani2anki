@@ -2,6 +2,8 @@ import glob
 import json
 import os
 
+from webdriver import *
+
 class Scraper:
     lastid_before_resume = -1
     ids = []
@@ -9,20 +11,18 @@ class Scraper:
     cachesize = 500
     counter = 0
     page = 0
-    def __init__(self, subject, path, driver, formats):
-        self.subject = subject
-        self.path = path
+    def __init__(self, filename, driver, formats):
         self.driver = driver # webdriver
         self.formats = formats # dict of formats
 
-        self.filename = '{}/{}-scrape.json'.format(self.path, self.subject)
+        self.filename = filename
         self.page_filename = self.filename + '_{:04d}'
 
         if os.path.isfile(self.filename):
             raise Exception(
                 'Cache file {} already exists.'.format(self.filename) \
                 + ' Aborting to avoid data overwrite.' \
-                + ' Please manually detele file if you wish to replace it.'
+                + ' Please manually delete file if you wish to replace it.'
             )
 
         self.restore()
@@ -38,15 +38,15 @@ class Scraper:
         h2 = soup.find('h2', string=field)
         p = h2.parent.p
         mnemonic = ''
-        if len(p.contents):
-            mnemonic = ''.join([child.string for child in p.contents])
+        if p.contents:
+            mnemonic = ''.join([child.string for child in p.contents if child.string])
         else:
             mnemonic = p.string
         self.data[field].append(mnemonic)
     def restore(self):
         # Find last page of partial results.
         filenames = glob.glob(self.filename + '_*')
-        if filenames.empty():
+        if not filenames:
             return # No partial results.
         pages = map(lambda x: int(x.split('_')[1]), filenames)
         pages.sort()

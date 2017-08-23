@@ -14,8 +14,7 @@ wk2a = WaniKani2Anki(wk)
 general_cache_path = 'cache/general/'
 if not os.path.isdir(general_cache_path): os.makedirs(general_cache_path)
 
-# username = input('Username: ')
-username = 'bbucommander'
+username = input('Username: ')
 userpath = 'cache/users/{}/'.format(username)
 
 user = wk.get_user(username, userpath)

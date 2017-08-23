@@ -8,10 +8,10 @@ This should ONLY be used for aiding private study, such as creating an
 offline Anki deck so you can continue studying when Internet access is
 unavailable.
 
-Also, do not run this script more than once and preferably run it
-during off hours to reduce any impact on the WK servers. Possibly only
-do one subject a night. The script already spaces page visits by 5-15
-seconds.
+All the usual rules of scraping etiquette apply. Run the script during
+off hours and no more than once a year to reduce any impact on the WK
+servers. Possibly only do one subject a night. The script already
+spaces page visits by 5-15 seconds.
 
 A complete download takes about 23 hours:
 radicals: 1.3 hours
@@ -28,9 +28,9 @@ Note that selenium opens a browser window and 'drives' it
 programatically. I know of no convenient cross-platform method of
 hiding the browser window.
 
-TODO: Add resume feature. Store results in temp files. Consider
-storing results using pickle instead of JSON, and using a dict of
-arrays rather than an array of dicts.
+By default this script saves partial results to disk every 500 items,
+saving roughly every 1.3 hours, and will automatically reuse any saved
+partial results the next time the script is run.
 """
 from datetime import datetime
 import os
@@ -44,25 +44,7 @@ from scrapers import *
 
 from wanikani2anki import WaniKani, WaniKani2Anki
 
-#BEGIN USER CONFIGURABLE OPTIONS
-subjects = ['radicals', 'kanji', 'vocabulary']
-# subjects = ['kanji']
-
-general_cache_path = 'cache/general/'
-
-formats = {
-    'audio': 'audio/' + 'mpeg', # or 'ogg'
-}
-
-audio_path = os.path.abspath(general_cache_path + 'audio/')
-if not os.path.isdir(audio_path): os.makedirs(audio_path)
-
-firefox_profile = '/home/jesse/.mozilla/firefox/1crm9gtr.crawl/'
-
-# WaniKani config.
-username = 'bbucommander'
-userpath = 'cache/users/{}/'.format(username)
-#END USER CONFIGURABLE OPTIONS
+from scrape_options import *
 
 wk = WaniKani()
 wk2a = WaniKani2Anki(wk)
@@ -77,7 +59,8 @@ sleep_offsets = {'radicals': 0, 'kanji': 0, 'vocabulary': -5}
 
 for subject in subjects:
     scraper = scrapers[subject](
-        subject, general_cache_path, driver, formats)
+        '{}/{}-scrape.json'.format(general_cache_path, subject),
+        driver, formats)
 
     get_sleep_time = lambda: 10 + 3 * (random.random() * 2 - 1) + sleep_offsets[subject]
 
@@ -94,6 +77,7 @@ for subject in subjects:
 
     for wk_datum in data[subject]['data'][resumeindex + 1:]:
         url = wk_datum['data']['document_url']
+        url = url.replace(' ', '-') # Fixes radicals with spaces in URL.
 
         try:
             html = driver.get_html(url)
@@ -102,9 +86,10 @@ for subject in subjects:
 
             scraper.scrape(wk_datum['id'], soup)
         except Exception:
+            characters = wk_datum['data']['character'] if 'character' in wk_datum['data'] else wk_datum['data']['characters']
             msg = '{}:ERROR: Failed to get item: {} id: {} url: {}.\n'.format(
                 datetime.now().isoformat(),
-                datum['Characters'], wk_datum['id'], url)
+                characters, wk_datum['id'], url)
             log.write(msg)
             print(msg)
             continue
