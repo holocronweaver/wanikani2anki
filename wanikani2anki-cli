@@ -4,39 +4,33 @@
 # file, you can obtain one at http://mozilla.org/MPL/2.0/.
 """A CLI for converting WaniKani user data to an Anki deck.
 """
-import glob
 import os
 
 from wanikani2anki import WaniKani, WaniKani2Anki
 
+from options import *
+
 wk = WaniKani()
 wk2a = WaniKani2Anki(wk)
 
-general_cache_path = 'cache/general/'
-if not os.path.isdir(general_cache_path): os.makedirs(general_cache_path)
-
-username = input('Username: ')
-userpath = 'cache/users/{}/'.format(username)
-
-user = wk.get_user(username, userpath)
+if not apikey:
+    apikey = input('WaniKani API V2 key (not V1!): ')
+user, userpath = wk.get_user(apikey, users_cache)
 
 print('''Fetching information for
       user:  {username}
       level: {level}
 '''.format(**user['wanikani']['data']))
 
-data = wk.get_data(user, userpath, general_cache_path)
-
-# print(data['vocabulary']['data'][0])
+data = wk.get_data(user, userpath, general_cache)
 
 options = wk2a.create_options(user)
 
 deck = wk2a.create_deck(user, data, options)
 
-media = glob.glob('cache/general/audio/*.mp3') or None
+media = wk2a.get_media(media_formats, media_dir)
 
 print('Writing deck...')
-#TODO: periodically cleanup old decks
 filepath = userpath + 'WaniKani.apkg'
 if os.path.isfile(filepath):
     os.remove(filepath)

@@ -49,7 +49,7 @@ from scrape_options import *
 wk = WaniKani()
 wk2a = WaniKani2Anki(wk)
 
-user = wk.get_user(username, userpath)
+user, userpath = wk.get_user(apikey, users_cache)
 
 data = wk.get_data(user, userpath, general_cache_path)
 

@@ -1,6 +1,8 @@
 # This Source Code Form is subject to the terms of the Mozilla Public
 # License, v2.0. If a copy of the MPL was not distributed with this
 # file, you can obtain one at http://mozilla.org/MPL/2.0/.
+import mimetypes
+
 from selenium import webdriver
 import selenium.common.exceptions
 
@@ -27,7 +29,7 @@ class WebDriver:
         self.fp.set_preference('browser.download.folderList', 2)
         self.fp.set_preference('browser.download.manager.showWhenStarting', False)
         self.fp.set_preference('browser.download.dir', path)
-        types = ', '.join(types)
+        mime_types = ', '.join([mimetypes.types_map[type] for type in types])
         self.fp.set_preference('browser.helperApps.neverAsk.saveToDisk', types)
 
     def get_html(self, url):

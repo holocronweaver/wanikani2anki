@@ -1,8 +1,10 @@
 # This Source Code Form is subject to the terms of the Mozilla Public
 # License, v2.0. If a copy of the MPL was not distributed with this
 # file, you can obtain one at http://mozilla.org/MPL/2.0/.
-from functools import reduce
 from datetime import datetime, timedelta
+from functools import reduce
+import glob
+import os
 
 import lib.genanki.genanki as genanki
 
@@ -242,3 +244,14 @@ class WaniKani2Anki:
 
     def write_deck_to_file(self, filepath, deck, media):
         genanki.Package(deck, media).write_to_file(filepath)
+
+    def get_media(self, media_formats, media_dir):
+        """Get list of media files based in the media path and formats dict.
+        """
+        media = []
+        for medium, options in media_formats.items():
+            format_path = os.path.join(media_dir, options['subdir'])
+            format_regex = os.path.join(
+                format_path, '*.' + options['ext'])
+            media += glob.glob(format_regex)
+        return media

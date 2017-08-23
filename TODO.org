@@ -1,4 +1,6 @@
 * Version 0.50
+** DONE Do not cache API key.
+CLOSED: [2017-08-23 Wed 13:10]
 ** Update genanki documentation.
 Document new fields, add usage example to README.
 Mention that deck ID is POSIX epoch second timestamp, used for
@@ -33,8 +35,10 @@ Enabled/disabled on a per-card type basis.
 *** AnkiDroid
 *** AnkiMobile (MacOS/iOS)
 ** Create web interface and core Python library.
+Maybe better to do an Anki addon?
 *** Support export filters.
 *** Add export filters to CLI.
+*** Periodically cleanup old decks.
 * Version 1.00
 ** Check if scraped data can be obtained from WK API.
 See issue [[https://github.com/holocronweaver/wanikani2anki/issues/3][#3]].

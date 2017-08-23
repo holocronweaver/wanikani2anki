@@ -1,6 +1,7 @@
 # This Source Code Form is subject to the terms of the Mozilla Public
 # License, v2.0. If a copy of the MPL was not distributed with this
 # file, you can obtain one at http://mozilla.org/MPL/2.0/.
+import copy
 import json
 import os
 from urllib.error import *
@@ -16,7 +17,7 @@ class WaniKani:
         """Make a GET request and return resulting JSON."""
         try: response = urlopen(request)
         except URLError as error:
-            print('Error while fetching {}: {}'.format(description, error.reason))
+            print('Error while fetching {}!'.format(description))
             raise error
         # print(response.getcode())
         # print(response.info())
@@ -33,7 +34,7 @@ class WaniKani:
         next_url = self.rooturl + url_ext
         while next_url and next_url != 'null':
             request = Request(next_url, headers=headers)
-            pages.append(self.get_json(request, type))
+            pages.append(self.get_json(request, resource))
             if 'pages' in pages[-1]:
                 next_url = pages[-1]['pages']['next_url']
             else:
@@ -46,7 +47,7 @@ class WaniKani:
     def get(self, resource, url_ext, headers, path, do_update=False):
         """Retrieve cached WaniKani data or, if none, retrieve it via WaniKani API.
         """
-        filename = path + resource + '.json'
+        filename = os.path.join(path, resource + '.json')
         if os.path.isfile(filename):
             print(resource + ' has existing JSON cache.')
             with open(filename, 'r') as f:
@@ -73,7 +74,7 @@ class WaniKani:
             data['from_cache'] = False
         return data
 
-    def get_data(self, user, userpath, general_cache_path):
+    def get_data(self, user, userpath, general_cache):
         """Gather all WaniKani data for user.
         Data is downloaded/updated as necessary from the web and
         cached for future use.
@@ -124,14 +125,14 @@ class WaniKani:
             data[subject] = self.get(
                 subject + '-subjects',
                 '/subjects?type={}'.format(subject),
-                headers, general_cache_path)
+                headers, general_cache)
             data[subject]['data'].sort(key=lambda x: x['id'])
 
             errmsg ='Error: Could not find subject id {}. Aborting.'
 
             # Merge in scrape data for each item, if available.
-            scrape_filename = '{}/{}-scrape.json'.format(
-                general_cache_path, subject)
+            scrape_filename = os.path.join(
+                general_cache, '{}-scrape.json'.format(subject))
             if os.path.isfile(scrape_filename):
                 with open(scrape_filename, 'r') as f:
                     scraped = json.load(f)
@@ -175,14 +176,28 @@ class WaniKani:
         headers['Authorization'] = 'Token token=' + user['apikey']
         return headers
 
-    def get_user(self, username, userpath):
-        user = {}
-        userfile = userpath + '/user.json'
+    def get_user(self, apikey, users_cache):
+        user = {'apikey': apikey}
+
+        headers = self.create_headers(user)
+        try:
+            user['wanikani'] = self.get_from_api('userdata', '/user', headers)
+        except URLError as e:
+            msg = '\nIs your API V2 key correct? {}\n'.format(user['apikey'])
+            if e.hasattr(message): e.message += msg
+            else: e.message = msg
+            raise e
+
+        username = user['wanikani']['data']['username']
+
+        userpath = os.path.join(users_cache, username)
+        userfile = os.path.join(userpath, 'user.json')
         if os.path.isfile(userfile):
             with open(userfile, 'r') as f:
-                user = json.load(f)
+                user.update(json.load(f))
         else:
-            user['apikey'] = input('WaniKani API V2 key (not V1!): ')
+            if not os.path.isdir(userpath): os.makedirs(userpath)
+
             user['ids'] = {
                 'deck': self.anki.generate_id(),
                 'options': self.anki.generate_id(),
@@ -191,32 +206,9 @@ class WaniKani:
                 {subject:self.anki.generate_id()
                  for subject in self.wk.subjects})
 
-        headers = self.create_headers(user)
+            with open(userfile, 'w') as f:
+                clean_user = copy.deepcopy(user)
+                del clean_user['apikey']
+                json.dump(clean_user, f)
 
-        try: user['wanikani'] = self.get_from_api('userdata', '/user', headers)
-        except URLError:
-            #TODO: Check URL error to determine exact cause, i.e. net down, etc.
-            #TODO: Pass error to user.
-            print('Invalid API V2 key: ' + user['apikey'])
-            print('Please double check the key. It is stored in: ' + user['apikey'])
-            exit()
-
-        if username != user['wanikani']['data']['username']:
-            print('Warning: username mismatch!')
-            print("Locally cached username: '{}'".format(username))
-            print("Username reported by WaniKani: '{}'.".format(user['wanikani']['data']['username']))
-            #TODO: Pass error to user.
-            response = ''
-            while (response != 'y' and response != 'n'):
-                response = input('Do you wish to continue? [Y/N] ')
-                response = response.lower()
-            if response == 'n': exit()
-
-        if not os.path.isfile(userfile):
-            if not os.path.isdir(userpath):
-                #TODO: Let user handle this?
-                os.makedirs(userpath)
-            with open(userfile, 'w+') as f:
-                json.dump(user, f)
-
-        return user
+        return [user, userpath]
