@@ -2,3 +2,5 @@ apikey.txt
 cache/
 __pycache__
 reference
+*.pyc
+*.log
