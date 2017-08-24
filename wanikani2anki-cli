@@ -31,7 +31,7 @@ deck = wk2a.create_deck(user, data, options)
 media = wk2a.get_media(media_formats, media_dir)
 
 print('Writing deck...')
-filepath = userpath + 'WaniKani.apkg'
+filepath = os.path.join(userpath, 'WaniKani.apkg')
 if os.path.isfile(filepath):
     os.remove(filepath)
 wk2a.write_deck_to_file(filepath, deck, media)

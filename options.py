@@ -9,13 +9,17 @@ if not os.path.isdir(general_cache): os.makedirs(general_cache)
 users_cache = 'cache/users/'
 if not os.path.isdir(users_cache): os.makedirs(users_cache)
 
-media_dir = os.path.abspath('wanikani/')
+media_dir = os.path.abspath('media/')
 if not os.path.isdir(media_dir): os.makedirs(media_dir)
 media_formats = {
     'audio': {
         'subdir': 'audio',
         'ext': 'mp3', # or 'ogg'
-    }
+    },
+    'font': {
+        'subdir': '',
+        'ext': 'ttf', # can't change this, sorry!
+    },
 }
 
 # Absolute path to the Firefox profile folder.

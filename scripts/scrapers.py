@@ -71,6 +71,7 @@ class Scraper:
 
         self.page += 1
         self.counter = 0
+
         self.ids = []
         self.data = {key:[] for key in data.keys()}
     def serialize(self):

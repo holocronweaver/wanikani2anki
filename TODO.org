@@ -16,7 +16,8 @@ For now this content can be obtained by scraping the site.
 
 Since this content rarely changes and is user-independent, updates can
 be done very infrequently, maybe once a year.
-** Embed media and fonts.
+** DONE Embed media and fonts.
+CLOSED: [2017-08-24 Thu 00:50]
 ** Support multiple card types.
 These generally only apply to vocab.
 Most of these can probably be configured with JS variables.
@@ -39,6 +40,8 @@ Maybe better to do an Anki addon?
 *** Support export filters.
 *** Add export filters to CLI.
 *** Periodically cleanup old decks.
+** Write documentation.
+CLI, library, web frontend.
 * Version 1.00
 ** Check if scraped data can be obtained from WK API.
 See issue [[https://github.com/holocronweaver/wanikani2anki/issues/3][#3]].
@@ -51,8 +54,6 @@ Context sentences, meaning and reading mnemonics, and audio.
 ** Ensure deck updates properly.
 Need to figure out how to update Anki decks without disrupting SRS
 divergence between Anki and WaniKani.
-** Write documentation.
-CLI, library, web frontend.
 ** WaniKani stats Anki addon
 A simple Anki addon which produces WaniKani-style stats.
 ** Double check deck visuals.
@@ -61,4 +62,5 @@ Use custom study to speed up deck updates and keep cards consistent.
 *** mobile (Android, iOS)
 *** compare against Ganki (Wanki)
 *** ensure media and fonts properly embedded
+** Proof read documentation.
 ** Study with deck daily for 2 weeks.

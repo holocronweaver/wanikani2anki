@@ -4,3 +4,4 @@ __pycache__
 reference
 *.pyc
 *.log
+media/audio

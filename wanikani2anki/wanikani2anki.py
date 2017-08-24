@@ -254,4 +254,5 @@ class WaniKani2Anki:
             format_regex = os.path.join(
                 format_path, '*.' + options['ext'])
             media += glob.glob(format_regex)
+
         return media
