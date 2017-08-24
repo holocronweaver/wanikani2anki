@@ -24,9 +24,9 @@ print('''Fetching information for
 
 data = wk.get_data(user, userpath, general_cache)
 
-options = wk2a.create_options(user)
+deck_options = wk2a.create_deck_options(user)
 
-deck = wk2a.create_deck(user, data, options)
+deck = wk2a.create_deck(user, data, deck_options)
 
 media = wk2a.get_media(media_formats, media_dir)
 

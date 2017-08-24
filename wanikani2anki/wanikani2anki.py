@@ -13,9 +13,15 @@ from .anki import Anki
 class WaniKani2Anki:
     """Translate from WaniKani API data to Anki card type data."""
 
-    def __init__(self, wanikani, anki=None):
+    options = {
+        'enable audio': True,
+        'mode': 'classic',
+    }
+
+    def __init__(self, wanikani, anki=None, options=None):
         self.wk = wanikani
         self.anki = anki or Anki()
+        if options: self.options = options
 
         self.fields_translators = {
             'radicals': self.translate_radical,
@@ -84,6 +90,11 @@ class WaniKani2Anki:
         if 'Context Sentences' in data:
             context_sentences = '::context::'.join(
                 ['::translation::'.join(pair) for pair in data['Context Sentences']])
+
+        audio = ''
+        if self.options['enable audio'] and 'Audio' in data:
+            audio = '[sound:{}]'.format(data['Audio'])
+
         fields = {
             'Characters': data['characters'],
             'Meanings': self.combine_meanings(
@@ -95,7 +106,7 @@ class WaniKani2Anki:
                     data['readings'],
                     key=lambda x: x['primary'], reverse=True)]),
             'Reading Note': self.check_existence('reading_note', data),
-            'Audio': '[sound:{}]'.format(data['Audio']) if 'Audio' in data else '',
+            'Audio': audio,
             'Context Sentences': context_sentences,
             'Meaning Explanation': self.get_mnemonic('Meaning Explanation', data),
             'Reading Explanation': self.get_mnemonic('Reading Explanation', data),
@@ -169,15 +180,15 @@ class WaniKani2Anki:
 
         return note
 
-    def create_options(self, user):
+    def create_deck_options(self, user):
         """Create an Anki options group that mimics the WaniKani SRS."""
         options = genanki.OptionsGroup(user['ids']['options'], 'WaniKani')
         options.new_steps = [1, 10, 4 * 60, 8 * 60]
         options.new_cards_per_day = 20
         options.max_reviews_per_day = 200
         options.starting_ease = 2250
-        options.new_bury_related_cards = False
-        options.review_bury_related_cards = False
+        options.bury_related_new_cards = False
+        options.bury_related_review_cards = False
         return options
 
     def create_models(self, user):

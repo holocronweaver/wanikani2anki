@@ -18,30 +18,33 @@ Since this content rarely changes and is user-independent, updates can
 be done very infrequently, maybe once a year.
 ** DONE Embed media and fonts.
 CLOSED: [2017-08-24 Thu 00:50]
-** Support multiple card types.
+** Support multiple card types and user options.
 These generally only apply to vocab.
 Most of these can probably be configured with JS variables.
 *** Japanese -> readings + meanings
 Can be split to match WaniKani.
-*** spoken Japanese -> readings + meanings
-Due to number of homonyms, this may be useless.
-*** meanings -> readings
-Due to number of synonyms, this may be useless.
+*** CANCELED spoken Japanese -> readings + meanings
+Due to number of homonyms, this is useless.
+*** CANCELED meanings -> readings
+Due to number of synonyms, this is useless.
 *** options
-**** enable typing
-Applies to radicals and kanji as well.
-Enabled/disabled on a per-card type basis.
-**** kanji separate meaning / reading
+**** disable audio
+Useful for reducing file size requirements.
+**** modes
+***** classic
+Classic mode attempts to match WaniKani as closely as possible.
+***** plus
+Plus mode tries to improve upon WaniKani.
 ** Support mobile Anki (phone + tablet).
 *** AnkiDroid
 *** AnkiMobile (MacOS/iOS)
-** Create web interface and core Python library.
+** Create cross-platform app and core Python library.
 Maybe better to do an Anki addon?
 *** Support export filters.
 *** Add export filters to CLI.
 *** Periodically cleanup old decks.
 ** Write documentation.
-CLI, library, web frontend.
+CLI, library, app.
 * Version 1.00
 ** Check if scraped data can be obtained from WK API.
 See issue [[https://github.com/holocronweaver/wanikani2anki/issues/3][#3]].
