@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 from functools import reduce
 import glob
 import os
+import yaml
 
 import lib.genanki.genanki as genanki
 
@@ -14,18 +15,7 @@ from .anki import Anki
 class WaniKani2Anki:
     """Translate from WaniKani API data to Anki card type data."""
 
-    modes = {
-        'classic': {
-            'burn years': 100,
-            'enable audio': True,
-            'separate meaning and reading': True,
-        },
-        'plus': {
-            'burn years': 5,
-            'enable audio': True,
-            'separate meaning and reading': False,
-        },
-    }
+    modes = yaml.load(open('cards/modes.yaml', 'r'))
 
     def __init__(self, wanikani, anki=None, mode='classic', options=None):
         self.wk = wanikani
