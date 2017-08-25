@@ -11,7 +11,7 @@ from wanikani2anki import WaniKani, WaniKani2Anki
 from options import *
 
 wk = WaniKani()
-wk2a = WaniKani2Anki(wk)
+wk2a = WaniKani2Anki(wk, mode='plus')
 
 if not apikey:
     apikey = input('WaniKani API V2 key (not V1!): ')

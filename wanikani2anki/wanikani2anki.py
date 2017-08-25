@@ -1,6 +1,7 @@
 # This Source Code Form is subject to the terms of the Mozilla Public
 # License, v2.0. If a copy of the MPL was not distributed with this
 # file, you can obtain one at http://mozilla.org/MPL/2.0/.
+import copy
 from datetime import datetime, timedelta
 from functools import reduce
 import glob
@@ -13,15 +14,25 @@ from .anki import Anki
 class WaniKani2Anki:
     """Translate from WaniKani API data to Anki card type data."""
 
-    options = {
-        'enable audio': True,
-        'mode': 'classic',
+    modes = {
+        'classic': {
+            'burn years': 100,
+            'enable audio': True,
+            'separate meaning and reading': True,
+        },
+        'plus': {
+            'burn years': 5,
+            'enable audio': True,
+            'separate meaning and reading': False,
+        },
     }
 
-    def __init__(self, wanikani, anki=None, options=None):
+    def __init__(self, wanikani, anki=None, mode='classic', options=None):
         self.wk = wanikani
         self.anki = anki or Anki()
-        if options: self.options = options
+
+        self.options = self.modes[mode]
+        if options: self.options.update(options)
 
         self.fields_translators = {
             'radicals': self.translate_radical,
@@ -141,11 +152,11 @@ class WaniKani2Anki:
         else: # burned
             anki_srs['stage'] = 2
             #TODO: Let user customize this, and maybe other stage translations.
-            anki_srs['interval'] = 5 * 365
+            anki_srs['interval'] = int(self.options['burn years'] * 365)
             anki_srs['ease'] = deck.options.starting_ease
 
             farfuture = datetime.strptime(data['burned_at'], wk.timestamp_fmt)
-            farfuture += timedelta(days=5 * 365)
+            farfuture += timedelta(days=anki_srs['interval'])
             farfuture -= deck.creation_time
             anki_srs['due'] = farfuture.days
         return anki_srs
@@ -199,11 +210,20 @@ class WaniKani2Anki:
 
         models = {}
         for subject, model in cards.items():
+            templates = copy.deepcopy(model['templates'])
+            if not 'radical' in subject:
+                if self.options['separate meaning and reading']:
+                    templates = list(filter(
+                        lambda x: not 'and' in x['name'], templates))
+                else:
+                    templates = list(filter(
+                        lambda x: 'and' in x['name'], templates))
+
             models[subject] = genanki.Model(
                 user['ids'][subject],
                 'WaniKani ' + subject.title(),
                 fields=model['fields'],
-                templates=model['templates'],
+                templates=templates,
                 css=css)
         return models
 
