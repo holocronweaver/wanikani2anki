@@ -1,8 +1,23 @@
-{{import:vocabulary_back.htm}}
+{{FrontSide}}
+<div class="meanings">{{Meanings}}</div>
+{{#Context Sentences}}
+<div class="small">Context Sentences</div>
+<div id="context-sentences" class="note">
+    {{hint:Context Sentences}}
+</div>
+{{/Context Sentences}}
+{{#Meaning Note}}
+<div class="small">Meaning Note</div>
+<div class="note">{{hint:Meaning Note}}</div>
+{{/Meaning Note}}
 
 <script>
  {{import:levenshtein.js}}
  {{import:check_answer.js}}
 
   check_english_answer();
+</script>
+
+<script>
+ {{import:parse_context_sentences.js}}
 </script>

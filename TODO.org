@@ -1,10 +1,12 @@
 * Version 0.50
 ** DONE Do not cache API key.
 CLOSED: [2017-08-23 Wed 13:10]
-** Update genanki documentation.
+** DONE Update genanki documentation.
+CLOSED: [2017-08-24 Thu 13:58]
 Document new fields, add usage example to README.
-Mention that deck ID is POSIX epoch second timestamp, used for
-determining relative due dates of cards.
+
+Mention that deck creation date is POSIX epoch second timestamp, used
+for determining relative due dates of cards.
 ** DONE Match Wanki deck.
 CLOSED: [2017-08-21 Mon]
 Kanji, then vocab, then radicals. Use Anki card editor.

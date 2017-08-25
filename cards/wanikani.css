@@ -3,8 +3,8 @@
    wanikanitoanki.com website. */
 @font-face {
   font-family: 'Noto Sans Japanese';
-  /* font-style: normal; */
-  /* font-weight: 400; */
+  font-style: normal;
+  font-weight: 400;
   src: url('_NotoSansCJKjp-Regular.min.ttf') format('truetype');
 }
 
@@ -20,6 +20,7 @@
 }
 
 .ja {
+  font-family: "Noto Sans CJK JP Regular", "Noto Sans", "Noto Sans CJK JP", "Noto Sans Japanese", sans-serif;
   color: #fff;
   font-size: 3em;
   font-weight: normal;
@@ -91,13 +92,13 @@
   border-bottom-right-radius: 10px;
 }
 
-.radicals-divider {
+.meaning-divider {
   background-color: #e7e7e7;
   /* background: -webkit-linear-gradient(); */
   color: #3e3e3e;
 }
 
-.kanji-divider {
+.reading-divider {
   background-color: #2a2a2a;
   /* background: -webkit-linear-gradient(#3C3C3C, #000000); */
   color: white;
@@ -108,6 +109,9 @@
   padding-top: 0.5em;
   font-weight: normal;
   font-size: 0.75em;
+  max-width: 700px;
+  text-align: center;
+  display: inline-block;
 }
 
 .readings {
@@ -115,11 +119,16 @@
   padding-top: 0.1em;
   font-weight: normal;
   font-size: 0.75em;
+  max-width: 700px;
+  text-align: center;
+  display: inline-block;
 }
 
 .readings table {
   border-collapse: separate;
   border-spacing: 1em 0.5em;
+  text-align: center;
+  display: inline-block;
 }
 
 .readings th {
@@ -133,16 +142,19 @@
 }
 
 .note {
+  font-family: "Noto Sans CJK JP Regular", "Noto Sans", "Noto Sans CJK JP", "Noto Sans Japanese", sans-serif;
+  font-weight: 100;
   padding-top: 5px;
   font-weight: normal;
   font-size: 0.5em;
   margin: 0.25em 2em;
   text-align: left;
   display: inline-block;
+  max-width: 550px;
 }
 
 input#typeans {
-  font-family: Noto Sans CJK JP Regular;
+  font-family: "Noto Sans CJK JP Regular", "Noto Sans", "Noto Sans CJK JP", "Noto Sans Japanese", sans-serif;
   font-size: 30px;
   text-align: center;
   color: black;
@@ -164,7 +176,7 @@ input#typeans {
 
 div#incorrect {
   background: -webkit-linear-gradient(#FF0033, #B20024);
-  font-family: Noto Sans CJK JP Regular;
+  font-family: "Noto Sans CJK JP Regular", "Noto Sans", "Noto Sans CJK JP", "Noto Sans Japanese", sans-serif;
   padding: 20px;
   outline: 0;
   outline-style:none;
@@ -175,7 +187,7 @@ div#incorrect {
 
 div#correct {
   background: -webkit-linear-gradient(#88CC00, #5F8F00);
-  font-family: Noto Sans CJK JP Regular;
+  font-family: "Noto Sans CJK JP Regular", "Noto Sans", "Noto Sans CJK JP", "Noto Sans Japanese", sans-serif;
   padding: 20px;
   outline: 0;
   outline-style:none;

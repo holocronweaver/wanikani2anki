@@ -1,4 +1,13 @@
-{{import:kanji_back.htm}}
+{{FrontSide}}
+<div class="readings"><center><table>
+    {{#Onyomi}}<tr><th class="reading-type">On'yomi</th><th>{{Onyomi}}</th></tr>{{/Onyomi}}
+    {{#Kunyomi}}<tr><th class="reading-type">Kun'yomi</th><th>{{Kunyomi}}</th></tr>{{/Kunyomi}}
+    {{#Nanori}}<tr><th class="reading-type">Nanori</th><th>{{Nanori}}</th></tr>{{/Nanori}}
+</table></center></div>
+{{#Meaning Note}}
+<div class="small">Meaning Note</div>
+<div class="note">{{hint:Meaning Note}}</div>
+{{/Meaning Note}}
 
 <script>
  {{import:check_answer.js}}

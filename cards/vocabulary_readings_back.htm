@@ -1,8 +1,23 @@
-{{import:vocabulary_back.htm}}
+{{FrontSide}}
+<div class="readings">{{Readings}}</div>
+{{#Context Sentences}}
+<div class="small">Context Sentences</div>
+<div id="context-sentences" class="note">
+    {{hint:Context Sentences}}
+</div>
+{{/Context Sentences}}
+{{#Reading Note}}
+<div class="small">Reading Note</div>
+<div class="note">{{hint:Reading Note}}</div>
+{{/Reading Note}}
 {{Audio}}
 
 <script>
  {{import:check_answer.js}}
 
  check_japanese_answer();
+</script>
+
+<script>
+ {{import:parse_context_sentences.js}}
 </script>
