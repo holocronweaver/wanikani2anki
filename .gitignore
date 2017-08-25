@@ -5,3 +5,5 @@ reference
 *.pyc
 *.log
 media/audio
+build/build
+build/dist

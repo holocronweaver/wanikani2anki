@@ -20,7 +20,8 @@ Since this content rarely changes and is user-independent, updates can
 be done very infrequently, maybe once a year.
 ** DONE Embed media and fonts.
 CLOSED: [2017-08-24 Thu 00:50]
-** Support multiple card types and user options.
+** DONE Support multiple card types and user options.
+CLOSED: [2017-08-25 Fri 09:48]
 These generally only apply to vocab.
 Most of these can probably be configured with JS variables.
 *** Japanese -> readings + meanings
@@ -45,6 +46,8 @@ Maybe better to do an Anki addon?
 *** Support export filters.
 *** Add export filters to CLI.
 *** Periodically cleanup old decks.
+*** Bundle for desktop platforms.
+~pyinstall --onefile whatever_has_main.py~
 ** Write documentation.
 CLI, library, app.
 * Version 1.00
