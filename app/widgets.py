@@ -1,6 +1,8 @@
+from kivy.base import EventLoop
 from kivy.graphics import Color, Rectangle
 from kivy.uix.button import Button
 from kivy.uix.label import Label
+from kivy.uix.textinput import TextInput
 from kivy.uix.widget import Widget
 
 class ErrorLabel(Label):
@@ -29,3 +31,24 @@ class ErrorLabel(Label):
         else:
             self.text = ''
             self.canvas.before.clear()
+
+
+class TextInputPlus(TextInput):
+    """Supports right-click context menus."""
+
+    use_bubble = True
+
+    def on_touch_down(self, touch):
+        super().on_touch_down(touch)
+
+        if touch.button == 'right':
+            pos = touch.pos
+            if self.collide_point(pos[0], pos[1]):
+                self._show_cut_copy_paste(
+                    pos, EventLoop.window, mode='paste')
+
+    def paste(self):
+        super().paste()
+        if not self.multiline:
+            # Remove extraneous newlines.
+            self.text = self.text.rstrip()
