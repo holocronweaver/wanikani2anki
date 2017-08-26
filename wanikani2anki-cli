@@ -6,7 +6,7 @@
 """
 import os
 
-from wanikani2anki import WaniKani, WaniKani2Anki
+from lib.wanikani2anki import WaniKani, WaniKani2Anki
 
 from options import *
 
