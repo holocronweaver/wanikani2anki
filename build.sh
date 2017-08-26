@@ -1,3 +1,3 @@
 #! /usr/bin/env sh
 cd build
-pyinstall wanikani2anki.spec
+pyinstaller wanikani2anki.spec

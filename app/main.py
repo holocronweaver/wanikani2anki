@@ -10,7 +10,7 @@ class WaniKani2Anki(Widget):
 
 class WaniKani2AnkiApp(App):
     def build(self):
-        self.icon = '../media/images/WaniKaniLogoSite.png'
+        self.icon = 'media/images/WaniKaniLogoSite.png'
         return WaniKani2Anki()
 
 
