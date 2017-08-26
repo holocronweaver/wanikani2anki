@@ -86,9 +86,9 @@ var _check_answer = function(answer)
         var d = document.getElementById('typeans');
         d.innerHTML = c;
     } else {
-        if (typeParse == "") {
-            typeParse = "BITTERNESS INTENSIFIES!!!";
-        }
+        // if (typeParse == "") {
+        //     typeParse = "BITTERNESS INTENSIFIES!!!";
+        // }
         var e = "<div id='incorrect'>"+typeParse+"</div>";
         var f = document.getElementById('typeans');
         f.innerHTML = e;
@@ -133,9 +133,9 @@ var check_english_answer = function()
     }
 
     // Incorrect!
-    if (answer == "") {
-        answer = "BITTERNESS INTENSIFIES!!!";
-    }
+    // if (answer == "") {
+    //     answer = "BITTERNESS INTENSIFIES!!!";
+    // }
     var e = "<div id='incorrect'>"+typed_answer+"</div>";
     var f = document.getElementById('typeans');
     f.innerHTML = e;
