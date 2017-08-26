@@ -1,58 +1,27 @@
-import re
-
+#! /usr/bin/env python3
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v2.0. If a copy of the MPL was not distributed with this
+# file, you can obtain one at http://mozilla.org/MPL/2.0/.
 from kivy.app import App
-from kivy.graphics import Color, Rectangle
-from kivy.uix.button import Button
-from kivy.uix.label import Label
-from kivy.uix.widget import Widget
+from kivy.uix.screenmanager import ScreenManager
 
-class ErrorLabel(Label):
-    """Label widget which only shows itself when an error label is set."""
-    _error = False
+# from lib.wanikani2anki import WaniKani
 
-    @property
-    def error(self):
-        return self._error
-    @error.setter
-    def error(self, value):
-        self._error = value
-        if self._error:
-            self.text = self._error
-            with self.canvas.before:
-                # Border.
-                Color(rgba=self.border_color)
-                Rectangle(pos=self.pos, size=self.size)
-                # Background.
-                Color(rgba=self.background_color)
-                Rectangle(
-                    pos=[int(self.pos[i] + self.border_margin)
-                         for i in range(2)],
-                    size=[self.size[i] - 2 * self.border_margin
-                          for i in range(2)])
-        else:
-            self.text = ''
-            self.canvas.before.clear()
-
-
-class WaniKani2Anki(Widget):
-    def process_apikey(self):
-        apikey = self.ids.apikey_input.text.strip()
-        print('Start with {}!'.format(apikey))
-        # Check if it is a valid key.
-        regex = '\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$'
-        error_label = self.ids.error_label
-        if re.match(regex, apikey):
-            # error_label.error = 'Match!'
-            error_label.error = None
-        else:
-            error_label.error = 'Invalid API key. Please try again.'
+from screens import *
+from widgets import *
 
 
 class WaniKani2AnkiApp(App):
     def build(self):
         self.title = 'WaniKani 2 Anki'
         self.icon = 'media/images/WaniKaniLogoSite.png'
-        return WaniKani2Anki()
+
+        sm = ScreenManager()
+        sm.add_widget(APIKeyScreen(name='api key'))
+        sm.add_widget(PickModeScreen(name='pick mode'))
+        sm.current = 'api key'
+
+        return sm
 
 
 if __name__ == '__main__':

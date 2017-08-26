@@ -23,7 +23,7 @@
 
 <Margin@Label>:
 
-<APIKeyScreen@Widget>:
+<APIKeyScreen>:
     canvas.before:
         Color:
             rgba: window_background_off_white
@@ -132,7 +132,11 @@
             size_hint_y: None
 
 
-<WaniKani2Anki>:
-    APIKeyScreen:
-        pos: root.pos
-        size: root.size
+<PickModeScreen>:
+    Button:
+        on_press:
+            root.manager.transition.direction = 'right'
+            root.manager.current = 'api key'
+        text: 'Good job. Press to go back.'
+        pos: self.pos
+        size: self.size
