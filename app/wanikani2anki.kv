@@ -1,6 +1,90 @@
 #:kivy 1.0.9
 
 <WaniKani2Anki>:
-    Button:
+    canvas:
+        Color:
+            rgba: 0.921569, 0.921569, 0.921569, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    BoxLayout:
         size: self.parent.size
-        text: 'Hello from test.kv'
+        orientation: 'vertical'
+
+        Image:
+            source: '../media/images/WaniKani2AnkiLogo.png'
+            height: '256px'
+            size_hint_y: None
+            margin: 2, 0
+
+
+        Label:
+            text: 'WaniKani 2 Anki'
+            font_size: 40
+            color: 0.333333, 0.333333, 0.333333, 1
+            height: 50
+            size_hint_y: None
+
+        Label:
+            text: 'Create a personalized Anki deck from your WaniKani account.'
+            font_size: 25
+            height: 50
+            size_hint_y: None
+            color: 0.333333, 0.333333, 0.333333, 1
+
+        Label:
+
+        BoxLayout:
+            height: 50
+            size_hint_y: None
+
+            Label:
+
+            Label:
+                text: 'WaniKani API V2 key   '
+                font_size: 18
+                text_size: self.size
+                halign: 'right'
+                valign: 'middle'
+                color: 0.333333, 0.333333, 0.333333, 1
+                width: 180
+                size_hint_x: None
+
+            TextInput:
+                on_text_validate: root.start()
+                text: ''
+                foreground_color: 0.6, 0.6, 0.6, 1
+                background_color: 0.964706, 0.964706, 0.964706, 1
+                focus: True
+                multiline: False
+                font_size: 30
+                width: 590
+                size_hint_x: None
+
+            Label:
+
+
+        Label:
+            text: 'Your API key can be found on the WaniKani website under Menu -> Settings -> Account -> API Version 2.'
+            color: 0.333333, 0.333333, 0.333333, 1
+
+        Button:
+            on_press: root.start()
+            text: 'Start'
+            font_size: 30
+            color: 0.980392, 0.980392, 0.980392, 1
+            background_normal: ''
+            background_color: 0, 0.654901, 0.984313, 1
+            height: 50
+            size_hint_y: None
+
+        Button:
+            on_press: quit()
+            text: 'Exit'
+            font_size: 30
+            height: 50
+            color: 0.980392, 0.980392, 0.980392, 1
+            background_normal: ''
+            background_color: 1, 0, 0.666667, 1
+            size_hint_y: None

@@ -4,11 +4,13 @@ from kivy.uix.widget import Widget
 
 
 class WaniKani2Anki(Widget):
-    pass
+    def start(self):
+        print('Start!')
 
 
 class WaniKani2AnkiApp(App):
     def build(self):
+        self.icon = '../media/images/WaniKaniLogoSite.png'
         return WaniKani2Anki()
 
 
