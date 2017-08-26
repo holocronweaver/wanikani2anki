@@ -1,9 +1,32 @@
 #:kivy 1.0.9
 
-<WaniKani2Anki>:
-    canvas:
+#:set window_background_off_white (0.921569, 0.921569, 0.921569, 1)
+#:set dark_text_color (0.333333, 0.333333, 0.333333, 1)
+
+#:set input_background_white (0.964706, 0.964706, 0.964706, 1)
+#:set input_text_grey (0.6, 0.6, 0.6, 1)
+
+#:set error_text_reddish (0.725490, 0.290196, 0.282353, 1)
+#:set error_text_background_grey (0.949020, 0.870588, 0.870588, 1)
+#:set error_text_border_grey (0.831373, 0.831373, 0.831373, 1)
+
+#:set button_text_off_white (0.980392, 0.980392, 0.980392, 1)
+#:set deep_pink (1, 0, 0.666667, 1)
+#:set light_blue (0, 0.654901, 0.984313, 1)
+
+<ErrorLabel>:
+    text: ''
+    border_margin: 2
+    color: error_text_reddish
+    background_color: error_text_background_grey
+    border_color: error_text_border_grey
+
+<Margin@Label>:
+
+<APIKeyScreen@Widget>:
+    canvas.before:
         Color:
-            rgba: 0.921569, 0.921569, 0.921569, 1
+            rgba: window_background_off_white
         Rectangle:
             pos: self.pos
             size: self.size
@@ -16,66 +39,85 @@
             source: 'media/images/WaniKani2AnkiLogo.png'
             height: '256px'
             size_hint_y: None
-            margin: 2, 0
-
 
         Label:
+            # font_name: 'media/_NotoSansCJKjp-Regular.min'
             text: 'WaniKani 2 Anki'
             font_size: 40
-            color: 0.333333, 0.333333, 0.333333, 1
+            color: dark_text_color
             height: 50
             size_hint_y: None
 
         Label:
+            # font_name: 'media/_NotoSansCJKjp-Regular.min'
             text: 'Create a personalized Anki deck from your WaniKani account.'
             font_size: 25
             height: 50
             size_hint_y: None
-            color: 0.333333, 0.333333, 0.333333, 1
+            color: dark_text_color
 
-        Label:
+        Margin:
+
+        ErrorLabel:
+            id: error_label
+            font_size: 16
+            size_hint_y: None
+            height: 40
+            # background_color:
+            # foreground_color: error_text_border_grey
+
+        Margin:
+            size_hint_y: None
+            height: 20
 
         BoxLayout:
             height: 50
             size_hint_y: None
 
-            Label:
+            Margin:
 
             Label:
+                # font_name: 'media/_NotoSansCJKjp-Regular.min'
                 text: 'WaniKani API V2 key   '
                 font_size: 18
                 text_size: self.size
                 halign: 'right'
                 valign: 'middle'
-                color: 0.333333, 0.333333, 0.333333, 1
+                color: dark_text_color
                 width: 180
                 size_hint_x: None
 
             TextInput:
-                on_text_validate: root.start()
+                id: apikey_input
+                on_text_validate: root.process_apikey()
                 text: ''
-                foreground_color: 0.6, 0.6, 0.6, 1
-                background_color: 0.964706, 0.964706, 0.964706, 1
+                foreground_color: input_text_grey
+                background_color: input_background_white
                 focus: True
                 multiline: False
                 font_size: 30
                 width: 590
                 size_hint_x: None
 
-            Label:
+            Margin:
 
 
         Label:
-            text: 'Your API key can be found on the WaniKani website under Menu -> Settings -> Account -> API Version 2.'
-            color: 0.333333, 0.333333, 0.333333, 1
+            # font_name: 'media/_NotoSansCJKjp-Regular.min'
+            # font_name: 'media/Ubuntu-R'
+            font_size: 16
+            text: u'Your API key can be found on the WaniKani website under Menu -> Settings -> Account -> API Version 2.'
+            color: dark_text_color
+            size_hint_y: None
+            height: 60
 
         Button:
-            on_press: root.start()
+            on_press: root.process_apikey()
             text: 'Start'
             font_size: 30
-            color: 0.980392, 0.980392, 0.980392, 1
+            color: button_text_off_white
             background_normal: ''
-            background_color: 0, 0.654901, 0.984313, 1
+            background_color: light_blue
             height: 50
             size_hint_y: None
 
@@ -84,7 +126,13 @@
             text: 'Exit'
             font_size: 30
             height: 50
-            color: 0.980392, 0.980392, 0.980392, 1
+            color: button_text_off_white
             background_normal: ''
-            background_color: 1, 0, 0.666667, 1
+            background_color: deep_pink
             size_hint_y: None
+
+
+<WaniKani2Anki>:
+    APIKeyScreen:
+        pos: root.pos
+        size: root.size

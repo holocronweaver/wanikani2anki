@@ -4,7 +4,7 @@ block_cipher = None
 
 
 a = Analysis(['../app/main.py'],
-             pathex=['/home/jesse/nextcloud/projects/wanikani/wanikani2anki/app/build'],
+             pathex=['./'],
              binaries=[],
              datas=[],
              hiddenimports=[],
