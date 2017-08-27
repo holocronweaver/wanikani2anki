@@ -5,6 +5,8 @@ import time
 import yaml
 
 from kivy.app import App
+from kivy.clock import Clock
+from kivy.properties import NumericProperty
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.uix.behaviors.togglebutton import ToggleButtonBehavior
 
@@ -27,7 +29,7 @@ class SequentialScreenManager(ScreenManager):
         self.current_screen.prev_screen()
 
 
-class APIKeyScreen(Screen):
+class APIKeyScreen(SequentialScreen):
     """Get user's WaniKani API V2 key."""
     def process_apikey(self):
         apikey = self.ids.apikey_input.text.strip()
@@ -115,13 +117,37 @@ class AdvancedDeckOptionsScreen(SequentialScreen):
 
 class DownloadScreen(SequentialScreen):
     """Waiting screen while deck is downloading and generating."""
+
+    progress = NumericProperty(0)
+    download_thread = None
+    download_status = None # 'downloading', 'canceled', 'complete'
+    create_deck_button = None
+
     def next_screen(self):
         super().next_screen()
-        self.download_wanikani_data()
-        self.manager.current = 'finish'
+        self.create_deck_button = self.ids.create_deck
+        self.ids.create_deck_container.remove_widget(self.ids.create_deck)
+        self.download_thread = threading.Thread(
+            target=self.download_wanikani_data)
+
+        self.download_status = 'downloading'
+        self.download_thread.start()
+        Clock.schedule_interval(self.update_download_progress, 0.5)
 
     def prev_screen(self):
-        #TODO: Cancel download.
+        self.download_status = 'canceled'
+        if self.download_thread:
+            self.wk.cancel_download()
+            self.download_thread.join()
+        if self.create_deck_button:
+            self.ids.create_deck_container.add_widget(self.create_deck_button)
+
+        # Reset state. TODO: Convert to function.
+        self.progress = 0
+        self.download_thread = None
+        self.download_status = None
+        self.create_deck_button = None
+
         self.manager.transition.direction = 'right'
         self.manager.current = 'pick deck type'
 
@@ -133,32 +159,48 @@ class DownloadScreen(SequentialScreen):
         app = App.get_running_app()
         apikey = app.apikey
         deck_type = app.deck_type
-        wk = WaniKani()
+        self.wk = WaniKani()
         wk2a = WaniKani2Anki(
-            wk, mode=deck_type if not 'advanced' in deck_type else 'plus',
+            self.wk,
+            mode=deck_type if not 'advanced' in deck_type else 'plus',
             options=app.wk2a_options)
 
-        user, userpath = wk.get_user(apikey, users_cache)
-        self.update_progress(0.1)
+        user, userpath = self.wk.get_user(apikey, users_cache)
+        self.progress = 10
+        time.sleep(1)
 
         print('''Fetching information for
         user:  {username}
         level: {level}
         '''.format(**user['wanikani']['data']))
 
-        #TODO: Figure out how to get progress updates.
-        data = wk.get_data(user, userpath, general_cache)
-        self.update_progress(0.8)
+        if 'canceled' == self.download_status:
+            return
+
+        data = self.wk.get_data(user, userpath, general_cache)
+
+        if 'canceled' == self.download_status:
+            return
+
+        self.progress = 90
+        time.sleep(1)
 
         deck_options = wk2a.create_deck_options(user)
         deck = wk2a.create_deck(user, data, deck_options)
 
-        self.update_progress(1.0)
-        time.sleep(1)
+        if deck:
+            self.download_status = 'complete'
+            deckpath = os.path.join(userpath, 'WaniKani.apkg')
+            # wk2a.write_deck_to_file(deckpath, deck, media, override=True)
+            self.progress = 100
+            time.sleep(2)
+            self.manager.current = 'finish'
 
-    def update_progress(self, value):
-        progress = self.ids.progress
-        progress.value = int(value * progress.max)
+    def update_download_progress(self, time_delta):
+        downloading = 'downloading' == self.download_status
+        if downloading:
+            self.progress = 10 + self.wk.download_progress * 80
+        return downloading
 
 
 class FinishScreen(SequentialScreen):

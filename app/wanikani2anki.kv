@@ -11,6 +11,9 @@
 
 #:set background_light_grey (0.835294, 0.835294, 0.835294, 1)
 
+#:set togglebutton_selected_dark_grey (0.533333, 0.533333, 0.533333, 1)
+#:set togglebutton_unselected_light_grey (0.882353, 0.882353, 0.882353, 1)
+
 #:set button_text_off_white (0.980392, 0.980392, 0.980392, 1)
 #:set deep_pink (1, 0, 0.666667, 1)
 #:set light_blue (0, 0.654901, 0.984313, 1)
@@ -29,6 +32,10 @@
     border_color: error_text_border_grey
 
 <Margin@Label>:
+
+<OptionMargin@Margin>:
+    size_hint_y: None
+    height: 10
 
 <NavigationButton@Button>:
     font_size: 30
@@ -60,19 +67,23 @@
             on_press: exit()
             background_color: deep_pink
 
-<DeckTypeButton@ToggleButton>:
+<WKToggleButton>:
     font_size: 30
     color: dark_text_color
+    color_normal: (0.5, 0.5, 0.5, 1)
+    color_down: (1, 1, 1, 1)
     size_hint_y: None
     height: 100
     background_normal: ''
-    background_color: background_light_grey
+    background_down: ''
+    # background_color: togglebutton_unselected_light_grey
+    background_color_normal: togglebutton_unselected_light_grey
+    background_color_down: togglebutton_selected_dark_grey
+    state: 'normal'
     halign: 'center'
-    group: 'deck_type'
+    post_fix: self.on_state(self, self.state)
 
-
-
-<APIKeyScreen>:
+<WKBoxLayout@BoxLayout>:
     canvas.before:
         Color:
             rgba: window_background_off_white
@@ -80,7 +91,9 @@
             pos: self.pos
             size: self.size
 
-    BoxLayout:
+
+<APIKeyScreen>:
+    WKBoxLayout:
         size: self.parent.size
         orientation: 'vertical'
 
@@ -117,7 +130,7 @@
 
         Margin:
             size_hint_y: None
-            height: 20
+            height: 7
 
         BoxLayout:
             height: 50
@@ -151,11 +164,12 @@
         Label:
             # font_name: 'media/_NotoSansCJKjp-Regular.min'
             # font_name: 'media/Ubuntu-R'
-            font_size: 16
             text: u'Your API key can be found on the WaniKani website under Menu -> Settings -> Account -> API Version 2.'
+            font_size: 16
+            valign: 'top'
             color: dark_text_color
             size_hint_y: None
-            height: 60
+            height: 80
 
         NavigationButton:
             text: 'Start'
@@ -169,79 +183,152 @@
 
 
 <PickDeckTypeScreen>:
-    BoxLayout:
+    WKBoxLayout:
         size: self.parent.size
         orientation: 'vertical'
 
+        Margin:
+            size_hint_y: None
+            height: 20
+
         Label:
             text: 'Choose a deck type'
-            font_size: 30
-            color: button_text_off_white
+            font_size: 60
+            color: dark_text_color
+            valign: 'bottom'
 
         ErrorLabel:
             id: error_label
-            font_size: 16
+            font_size: 20
             size_hint_y: None
             height: 40
 
-        DeckTypeButton:
+        Margin:
+            size_hint_y: None
+            height: 7
+
+        WKToggleButton:
             text: 'Classic\n' + 'Match WaniKani as closely as possible.'
             deck_type: 'classic'
-        DeckTypeButton:
+            group: 'deck_type'
+        OptionMargin:
+        WKToggleButton:
             text: 'Plus\n' + 'Make a few improvements over WaniKani.'
             deck_type: 'plus'
-        DeckTypeButton:
+            group: 'deck_type'
+        OptionMargin:
+        WKToggleButton:
             text: 'Advanced\n' + 'Choose your own mix of deck options.'
             deck_type: 'advanced'
+            group: 'deck_type'
+        OptionMargin:
 
         NavigationWidget:
 
 
 <AdvancedDeckOptionsScreen>:
-    BoxLayout:
+    WKBoxLayout:
         orientation: 'vertical'
+
+        Margin:
+            size_hint_y: None
+            height: 10
 
         Label:
             text: 'Advanced Deck Options'
+            color: dark_text_color
+            font_size: 60
 
         ErrorLabel:
             id: error_label
-            font_size: 16
+            font_size: 24
             size_hint_y: None
             height: 40
 
+        Margin:
+            size_hint_y: None
+            height: 10
+
         BoxLayout:
+            size_hint_y: None
+            height: 50
+
+            Margin:
             Label:
-                text: 'Burn Years'
+                text: 'Burn years'
+                color: dark_text_color
+                font_size: 30
+                halign: 'right'
             TextInputPlus:
                 id: burn_years
                 text: '5'
                 font_size: 30
-                width: 590
-                size_hint_x: None
-        ToggleButton:
+                # size_hint_x: None
+                # width: 80
+            Margin:
+
+        OptionMargin:
+        WKToggleButton:
             id: enable_audio
-            text: 'Enable Audio'
+            text: 'Enable audio'
             state: 'down'
-        ToggleButton:
+            font_size: 30
+        OptionMargin:
+        WKToggleButton:
             id: separate_meaning_and_reading
-            text: 'Separate meaning and reading'
+            text: 'Separate meaning and reading cards'
+            font_size: 30
+        OptionMargin:
 
         NavigationWidget:
 
 
 <DownloadScreen>:
-    BoxLayout:
+    WKBoxLayout:
+        id: root_layout
         orientation: 'vertical'
 
-        ProgressBar:
-            id: progress
-            max: 100
+        Margin:
+            size_hint_y: None
+            height: 10
 
-        NavigationButton:
-            text: 'Create Deck'
-            on_press: root.next_screen()
-            background_color: light_blue
+        Label:
+            text: "Select 'Create Deck' to\nbegin download from WaniKani."
+            font_size: 40
+            color: dark_text_color
+            halign: 'center'
+
+        Label:
+            text: 'Progression: {}%'.format(int(progressbar.value))
+            font_size: 40
+            color: dark_text_color
+            size_hint_y: None
+            height: '48dp'
+
+        BoxLayout:
+            Margin:
+                size_hint_x: None
+                width: 20
+            ProgressBar:
+                id: progressbar
+                max: 100
+                value: root.progress
+                # size_hint_y: None
+                # height: 100
+            Margin:
+                size_hint_x: None
+                width: 20
+
+        BoxLayout:
+            id: create_deck_container
+            size_hint_y: None
+            height: create_deck.height
+
+            NavigationButton:
+                id: create_deck
+                text: 'Create Deck'
+                on_press: root.next_screen()
+                background_color: light_blue
         NavigationButton:
             text: 'Cancel'
             on_press: root.prev_screen()
@@ -249,11 +336,12 @@
 
 
 <FinishScreen>:
-    Button:
-        text: 'Finished!\nTODO: help user import deck into anki.'
-        halign: 'center'
-        on_press: exit()
-        font_size: 38
-        color: button_text_off_white
-        background_normal: ''
-        background_color: light_blue
+    WKBoxLayout:
+        Button:
+            text: 'Finished!\nTODO: help user import deck into anki.\nClick to exit.'
+            halign: 'center'
+            on_press: exit()
+            font_size: 38
+            color: button_text_off_white
+            background_normal: ''
+            background_color: light_blue

@@ -1,9 +1,23 @@
 from kivy.base import EventLoop
 from kivy.graphics import Color, Rectangle
 from kivy.uix.button import Button
+from kivy.uix.behaviors.togglebutton import ToggleButtonBehavior
 from kivy.uix.label import Label
 from kivy.uix.textinput import TextInput
+from kivy.uix.togglebutton import ToggleButton
 from kivy.uix.widget import Widget
+
+class WKToggleButton(ToggleButton):
+    def on_state(self, widget, value):
+        """Change solid color based on button state.
+        Unfortunately not implemented in default Kivy."""
+        if value == 'down':
+            self.background_color = self.background_color_down
+            self.color = self.color_down
+        else:
+            self.background_color = self.background_color_normal
+            self.color = self.color_normal
+
 
 class ErrorLabel(Label):
     """Label widget which only shows itself when an error label is set."""
