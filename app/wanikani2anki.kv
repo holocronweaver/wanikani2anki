@@ -5,14 +5,16 @@
 
 #:set input_background_white (0.964706, 0.964706, 0.964706, 1)
 #:set input_text_grey (0.6, 0.6, 0.6, 1)
-
 #:set error_text_reddish (0.725490, 0.290196, 0.282353, 1)
 #:set error_text_background_grey (0.949020, 0.870588, 0.870588, 1)
 #:set error_text_border_grey (0.831373, 0.831373, 0.831373, 1)
 
+#:set background_light_grey (0.835294, 0.835294, 0.835294, 1)
+
 #:set button_text_off_white (0.980392, 0.980392, 0.980392, 1)
 #:set deep_pink (1, 0, 0.666667, 1)
 #:set light_blue (0, 0.654901, 0.984313, 1)
+#:set purple (0.596078, 0.196078, 0.698039, 1)
 
 <ErrorLabel>:
     text: ''
@@ -22,6 +24,48 @@
     border_color: error_text_border_grey
 
 <Margin@Label>:
+
+<NavigationButton@Button>:
+    font_size: 30
+    color: button_text_off_white
+    size_hint_y: None
+    height: 50
+    background_normal: ''
+
+<NavigationWidget@BoxLayout>:
+    size_hint_y: None
+    height: self.children[0].height
+    orientation: 'vertical'
+
+    NavigationButton:
+        text: 'Continue'
+        on_press: app.root.next_screen()
+        background_color: light_blue
+
+    BoxLayout:
+        size_hint_y: None
+        height: self.children[0].height
+
+        NavigationButton:
+            text: 'Back'
+            on_press: app.root.prev_screen()
+            background_color: purple
+        NavigationButton:
+            text: 'Exit'
+            on_press: exit()
+            background_color: deep_pink
+
+<DeckTypeButton@ToggleButton>:
+    font_size: 30
+    color: dark_text_color
+    size_hint_y: None
+    height: 100
+    background_normal: ''
+    background_color: background_light_grey
+    halign: 'center'
+    group: 'deck_type'
+
+
 
 <APIKeyScreen>:
     canvas.before:
@@ -111,32 +155,57 @@
             size_hint_y: None
             height: 60
 
-        Button:
-            on_press: root.process_apikey()
+        NavigationButton:
             text: 'Start'
-            font_size: 30
-            color: button_text_off_white
-            background_normal: ''
+            on_press: root.process_apikey()
             background_color: light_blue
-            height: 50
-            size_hint_y: None
 
-        Button:
-            on_press: exit()
+        NavigationButton:
             text: 'Exit'
-            font_size: 30
-            height: 50
-            color: button_text_off_white
-            background_normal: ''
+            on_press: exit()
             background_color: deep_pink
-            size_hint_y: None
 
 
-<PickModeScreen>:
-    Button:
-        on_press:
-            root.manager.transition.direction = 'right'
-            root.manager.current = 'api key'
-        text: 'Good job. Press to go back.'
-        pos: self.pos
-        size: self.size
+<PickDeckTypeScreen>:
+    BoxLayout:
+        size: self.parent.size
+        orientation: 'vertical'
+
+        Label:
+            text: 'Choose a deck type'
+            font_size: 30
+            color: button_text_off_white
+
+        DeckTypeButton:
+            text: 'Classic\n' + 'Match WaniKani as closely as possible.'
+            deck_type: 'classic'
+        DeckTypeButton:
+            text: 'Plus\n' + 'Make a few improvements over WaniKani.'
+            deck_type: 'plus'
+        DeckTypeButton:
+            text: 'Advanced\n' + 'Choose your own mix of deck options.'
+            deck_type: 'advanced'
+
+        NavigationWidget:
+
+
+<AdvancedDeckOptionsScreen>:
+
+
+
+<DownloadScreen>:
+    ProgressBar:
+        id: progress
+        max: 100
+
+    NavigationButton:
+        text: 'Start Download'
+        on_press: root.next_screen()
+        background_color: light_blue
+    NavigationButton:
+        text: 'Cancel'
+        on_press: root.prev_screen()
+        background_color: deep_pink
+
+
+<FinishScreen>:
