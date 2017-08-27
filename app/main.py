@@ -14,6 +14,8 @@ from widgets import *
 
 
 class WaniKani2AnkiApp(App):
+    wk2a_options = None
+
     def build(self):
         self.title = 'WaniKani 2 Anki'
         self.icon = 'media/images/WaniKaniLogoSite.png'

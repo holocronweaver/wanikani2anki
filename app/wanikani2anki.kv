@@ -178,6 +178,12 @@
             font_size: 30
             color: button_text_off_white
 
+        ErrorLabel:
+            id: error_label
+            font_size: 16
+            size_hint_y: None
+            height: 40
+
         DeckTypeButton:
             text: 'Classic\n' + 'Match WaniKani as closely as possible.'
             deck_type: 'classic'
@@ -195,18 +201,30 @@
     BoxLayout:
         orientation: 'vertical'
 
+        Label:
+            text: 'Advanced Deck Options'
+
+        ErrorLabel:
+            id: error_label
+            font_size: 16
+            size_hint_y: None
+            height: 40
+
         BoxLayout:
             Label:
                 text: 'Burn Years'
             TextInputPlus:
-                text: ''
-                id: apikey_input
+                id: burn_years
+                text: '5'
                 font_size: 30
                 width: 590
                 size_hint_x: None
         ToggleButton:
+            id: enable_audio
             text: 'Enable Audio'
+            state: 'down'
         ToggleButton:
+            id: separate_meaning_and_reading
             text: 'Separate meaning and reading'
 
         NavigationWidget:
