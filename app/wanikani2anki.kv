@@ -194,18 +194,29 @@
 
 
 <DownloadScreen>:
-    ProgressBar:
-        id: progress
-        max: 100
+    BoxLayout:
+        orientation: 'vertical'
 
-    NavigationButton:
-        text: 'Start Download'
-        on_press: root.next_screen()
-        background_color: light_blue
-    NavigationButton:
-        text: 'Cancel'
-        on_press: root.prev_screen()
-        background_color: deep_pink
+        ProgressBar:
+            id: progress
+            max: 100
+
+        NavigationButton:
+            text: 'Create Deck'
+            on_press: root.next_screen()
+            background_color: light_blue
+        NavigationButton:
+            text: 'Cancel'
+            on_press: root.prev_screen()
+            background_color: purple
 
 
 <FinishScreen>:
+    Button:
+        text: 'Finished!\nTODO: help user import deck into anki.'
+        halign: 'center'
+        on_press: exit()
+        font_size: 38
+        color: button_text_off_white
+        background_normal: ''
+        background_color: light_blue

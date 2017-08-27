@@ -9,8 +9,6 @@ Config.set('input', 'mouse', 'mouse,multitouch_on_demand')
 
 from kivy.app import App
 
-# from lib.wanikani2anki import WaniKani
-
 from screens import *
 from widgets import *
 
@@ -22,7 +20,10 @@ class WaniKani2AnkiApp(App):
 
         sm = SequentialScreenManager()
         sm.add_widget(APIKeyScreen(name='api key'))
-        sm.add_widget(PickDeckTypeScreen(name='pick mode'))
+        sm.add_widget(PickDeckTypeScreen(name='pick deck type'))
+        sm.add_widget(AdvancedDeckOptionsScreen(name='advanced options'))
+        sm.add_widget(DownloadScreen(name='download'))
+        sm.add_widget(FinishScreen(name='finish'))
         sm.current = 'api key'
 
         return sm
