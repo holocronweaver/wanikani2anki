@@ -7,11 +7,16 @@ import os
 from urllib.error import *
 from urllib.request import *
 
+import time
+
 class WaniKani:
     rooturl = 'https://www.wanikani.com/api/v2'
     subjects = ('radicals', 'kanji', 'vocabulary')
     srs_stage_to_days = [0, 4/24, 8/24, 1, 3, 7, 14, 28, 56]
     timestamp_fmt = '%Y-%m-%dT%H:%M:%SZ'
+
+    _download_canceled = False
+    _download_progress = 0
 
     def get_json(self, request, description):
         """Make a GET request and return resulting JSON."""
@@ -121,12 +126,28 @@ class WaniKani:
         """
         headers = self.create_headers(user)
         data = {}
+        subjectables = (
+            'study_materials',
+            'review_statistics',
+            'assignments',
+        )
+        items_downloaded = 0
+        num_download_items = len(self.subjects)
+        num_download_items += len(self.subjects) * len(subjectables)
+        pause_secs = 0.25
         for subject in self.subjects:
+            if self._download_canceled:
+                return None
+
             data[subject] = self.get(
                 subject + '-subjects',
                 '/subjects?type={}'.format(subject),
                 headers, general_cache)
             data[subject]['data'].sort(key=lambda x: x['id'])
+
+            items_downloaded += 1
+            self._download_progress = items_downloaded / num_download_items
+            time.sleep(pause_secs)
 
             errmsg ='Error: Could not find subject id {}. Aborting.'
 
@@ -149,17 +170,19 @@ class WaniKani:
 
             # Merge subjectable data into subject data to recreate unified
             # object data of WaniKani API V1.
-            subjectables = (
-                'study_materials',
-                'review_statistics',
-                'assignments',
-            )
             for subjectable in subjectables:
+                if self._download_canceled:
+                    return None
+
                 subdata = self.get(
                     '{}-{}'.format(subject, subjectable),
                     '/{}?subject_type={}'.format(subjectable, subject),
                     headers, userpath)
                 subdata['data'].sort(key=lambda x: x['data']['subject_id'])
+
+                items_downloaded += 1
+                self._download_progress = items_downloaded / num_download_items
+                time.sleep(pause_secs)
 
                 datumiter = iter(data[subject]['data'])
                 datum = next(datumiter)
@@ -212,3 +235,10 @@ class WaniKani:
                 json.dump(clean_user, f)
 
         return [user, userpath]
+
+    def cancel_download(self):
+        self._download_canceled = True
+
+    @property
+    def download_progress(self):
+        return self._download_progress

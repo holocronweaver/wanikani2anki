@@ -263,7 +263,9 @@ class WaniKani2Anki:
 
         return deck
 
-    def write_deck_to_file(self, filepath, deck, media):
+    def write_deck_to_file(self, filepath, deck, media, override=False):
+        if override and os.path.isfile(filepath):
+            os.remove(filepath)
         genanki.Package(deck, media).write_to_file(filepath)
 
     def get_media(self, media_formats, media_dir):
