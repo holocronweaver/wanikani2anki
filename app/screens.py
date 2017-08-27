@@ -74,6 +74,8 @@ class AdvancedDeckOptionsScreen(SequentialScreen):
         super().next_screen()
         #TODO: Save & later restore custom config.
 
+        self.manager.current = 'download'
+
 
 class DownloadScreen(SequentialScreen):
     """Waiting screen while deck is downloading and generating."""

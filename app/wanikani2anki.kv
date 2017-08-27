@@ -16,6 +16,11 @@
 #:set light_blue (0, 0.654901, 0.984313, 1)
 #:set purple (0.596078, 0.196078, 0.698039, 1)
 
+<TextInputPlus>:
+    foreground_color: input_text_grey
+    background_color: input_background_white
+    multiline: False
+
 <ErrorLabel>:
     text: ''
     border_margin: 2
@@ -132,13 +137,10 @@
                 size_hint_x: None
 
             TextInputPlus:
+                text: ''
                 id: apikey_input
                 on_text_validate: root.process_apikey()
-                text: ''
-                foreground_color: input_text_grey
-                background_color: input_background_white
                 focus: True
-                multiline: False
                 font_size: 30
                 width: 590
                 size_hint_x: None
@@ -190,7 +192,24 @@
 
 
 <AdvancedDeckOptionsScreen>:
+    BoxLayout:
+        orientation: 'vertical'
 
+        BoxLayout:
+            Label:
+                text: 'Burn Years'
+            TextInputPlus:
+                text: ''
+                id: apikey_input
+                font_size: 30
+                width: 590
+                size_hint_x: None
+        ToggleButton:
+            text: 'Enable Audio'
+        ToggleButton:
+            text: 'Separate meaning and reading'
+
+        NavigationWidget:
 
 
 <DownloadScreen>:
