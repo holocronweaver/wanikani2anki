@@ -51,6 +51,11 @@ class TextInputPlus(TextInput):
     """Supports right-click context menus and max characters."""
 
     use_bubble = True
+    max_char = None
+
+    def on_text(self, instance, value):
+        if self.max_char and len(value) > self.max_char:
+            self.text = value[:self.max_char]
 
     def on_touch_down(self, touch):
         super().on_touch_down(touch)

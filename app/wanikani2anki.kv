@@ -152,6 +152,7 @@
             TextInputPlus:
                 text: ''
                 id: apikey_input
+                max_char: 36
                 on_text_validate: root.process_apikey()
                 focus: True
                 font_size: 30
@@ -249,35 +250,68 @@
             size_hint_y: None
             height: 10
 
-        BoxLayout:
-            size_hint_y: None
-            height: 50
+        GridLayout:
+            cols: 2
 
-            Margin:
             Label:
-                text: 'Burn years'
+                text: 'Number of years in the future to\nschedule burned items for review.\nIf set to zero, burned cards will be\nsuspended and can be manually\nunsuspended.'
                 color: dark_text_color
-                font_size: 30
-                halign: 'right'
-            TextInputPlus:
-                id: burn_years
-                text: '5'
-                font_size: 30
-                # size_hint_x: None
-                # width: 80
-            Margin:
+
+            BoxLayout:
+                Margin:
+                Label:
+                    text: 'Burn years'
+                    color: dark_text_color
+                    font_size: 20
+                    halign: 'right'
+                    valign: 'center'
+                Margin:
+                BoxLayout:
+                    orientation: 'vertical'
+                    Margin:
+                    TextInputPlus:
+                        id: burn_years
+                        text: '5'
+                        max_char: 3
+                        font_size: 20
+                        size_hint_x: None
+                        width: 50
+                        size_hint_y: None
+                        height: 35
+                        valign: 'center'
+                        halign: 'right'
+                    Margin:
+                Margin:
 
         OptionMargin:
-        WKToggleButton:
-            id: enable_audio
-            text: 'Enable audio'
-            state: 'down'
-            font_size: 30
+
+        GridLayout:
+            cols: 2
+
+            Label:
+                text: 'Disabling audio can reduce\ndeck file size by about 164 MB.'
+                color: dark_text_color
+
+            WKToggleButton:
+                id: enable_audio
+                text: 'Enable audio'
+                state: 'down'
+                font_size: 20
+
         OptionMargin:
-        WKToggleButton:
-            id: separate_meaning_and_reading
-            text: 'Separate meaning and reading cards'
-            font_size: 30
+
+        GridLayout:
+            cols: 2
+
+            Label:
+                text: 'WaniKani has separate cards,\nbut recalling meaning and\nreading together is closer\nto natural language.'
+                color: dark_text_color
+
+            WKToggleButton:
+                id: separate_meaning_and_reading
+                text: 'Separate meaning and reading cards'
+                font_size: 20
+
         OptionMargin:
 
         NavigationWidget:
@@ -340,7 +374,7 @@
         Button:
             text: 'Finished!\nTODO: help user import deck into anki.\nClick to exit.'
             halign: 'center'
-            on_press: exit()
+            on_press: root.next_screen()
             font_size: 38
             color: button_text_off_white
             background_normal: ''

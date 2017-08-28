@@ -6,6 +6,7 @@ import yaml
 
 from kivy.app import App
 from kivy.clock import Clock
+from kivy.core.window import Window
 from kivy.properties import NumericProperty
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.uix.behaviors.togglebutton import ToggleButtonBehavior
@@ -15,11 +16,23 @@ from lib.wanikani2anki import WaniKani, WaniKani2Anki
 
 
 class SequentialScreen(Screen):
+    def on_enter(self):
+        self._keyboard = Window.request_keyboard(self._keyboard_closed, self)
+        self._keyboard.bind(on_key_down=self._on_keyboard_down)
+
     def next_screen(self):
         self.manager.transition.direction = 'left'
     def prev_screen(self):
         self.manager.transition.direction = 'right'
         self.manager.current = self.manager.previous()
+
+    def _keyboard_closed(self):
+        self._keyboard.unbind(on_key_down=self._on_keyboard_down)
+        self._keyboard = None
+    def _on_keyboard_down(self, keyboard, keycode, text, modifiers):
+        if keycode[1] == 'enter':
+            self.next_screen()
+        return True
 
 class SequentialScreenManager(ScreenManager):
     """A screen manager that calls."""
@@ -31,6 +44,9 @@ class SequentialScreenManager(ScreenManager):
 
 class APIKeyScreen(SequentialScreen):
     """Get user's WaniKani API V2 key."""
+    def next_screen(self):
+        self.process_apikey()
+
     def process_apikey(self):
         apikey = self.ids.apikey_input.text.strip()
 
@@ -69,6 +85,7 @@ class PickDeckTypeScreen(SequentialScreen):
                 self.manager.current = 'advanced options'
             else:
                 self.manager.current = 'download'
+            self.ids.error_label.error = ''
         else:
             self.ids.error_label.error = 'Please make a selection.'
 
@@ -85,6 +102,7 @@ class AdvancedDeckOptionsScreen(SequentialScreen):
     filename = 'user_options.yaml'
 
     def on_enter(self):
+        super().on_enter()
         if os.path.isfile(self.filename):
             with open(self.filename, 'r') as f:
                 self.wk2a_options = yaml.load(f)
@@ -92,8 +110,6 @@ class AdvancedDeckOptionsScreen(SequentialScreen):
 
     def next_screen(self):
         super().next_screen()
-
-        #TODO: Save & later restore custom config.
 
         # Validate options.
         try:
@@ -198,6 +214,7 @@ class DownloadScreen(SequentialScreen):
 class FinishScreen(SequentialScreen):
     """Farewell screen letting user know what to do next."""
     def next_screen(self):
+        exit()
         pass
 
     def prev_screen(self):
