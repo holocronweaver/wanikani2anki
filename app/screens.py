@@ -87,7 +87,7 @@ class PickDeckTypeScreen(SequentialScreen):
                 self.manager.current = 'download'
             self.ids.error_label.error = ''
         else:
-            self.ids.error_label.error = 'Please make a selection.'
+            self.ids.error_label.error = 'Please make a selection. (*^.^*)'
 
     def get_selected_deck_type(self):
         selection = next(

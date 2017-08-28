@@ -37,6 +37,15 @@
     size_hint_y: None
     height: 10
 
+<OptionDescription@Label>:
+    color: dark_text_color
+    font_size: 24
+    size_hint_y: None
+    height: 40
+    text_size: self.size
+    halign: 'center'
+    valign: 'top'
+
 <NavigationButton@Button>:
     font_size: 30
     color: button_text_off_white
@@ -194,7 +203,7 @@
 
         Label:
             text: 'Choose a deck type'
-            font_size: 60
+            font_size: 40
             color: dark_text_color
             valign: 'bottom'
 
@@ -209,19 +218,26 @@
             height: 7
 
         WKToggleButton:
-            text: 'Classic\n' + 'Match WaniKani as closely as possible.'
+            text: 'Classic'
             deck_type: 'classic'
             group: 'deck_type'
-        OptionMargin:
+            height: 80
+        OptionDescription:
+            text: 'Match WaniKani as closely as possible.'
         WKToggleButton:
-            text: 'Plus\n' + 'Make a few improvements over WaniKani.'
+            text: 'Plus'
             deck_type: 'plus'
             group: 'deck_type'
-        OptionMargin:
+            height: 80
+        OptionDescription:
+            text: 'Make a few improvements over WaniKani.'
         WKToggleButton:
-            text: 'Advanced\n' + 'Choose your own mix of deck options.'
+            text: 'Advanced'
             deck_type: 'advanced'
             group: 'deck_type'
+            height: 80
+        OptionDescription:
+            text: 'Choose your own mix of deck options.'
         OptionMargin:
 
         NavigationWidget:
