@@ -140,16 +140,24 @@ class WaniKani2Anki:
             due = datetime.strptime(data['available_at'], wk.timestamp_fmt)
             relative_due = due - deck.creation_time
             anki_srs['due'] = relative_due.days
+            anki_srs['status'] = 0
         else: # burned
             anki_srs['stage'] = 2
-            #TODO: Let user customize this, and maybe other stage translations.
-            anki_srs['interval'] = int(self.options['burn years'] * 365)
-            anki_srs['ease'] = deck.options.starting_ease
+            if self.options['burn years']:
+                anki_srs['interval'] = int(self.options['burn years'] * 365)
 
-            farfuture = datetime.strptime(data['burned_at'], wk.timestamp_fmt)
-            farfuture += timedelta(days=anki_srs['interval'])
-            farfuture -= deck.creation_time
-            anki_srs['due'] = farfuture.days
+                farfuture = datetime.strptime(data['burned_at'], wk.timestamp_fmt)
+                farfuture += timedelta(days=anki_srs['interval'])
+                farfuture -= deck.creation_time
+                anki_srs['due'] = farfuture.days
+                anki_srs['status'] = 0
+            else:
+                anki_srs['interval'] = 0
+                anki_srs['due'] = 0
+                # Suspended, requires manual unsuspension.
+                anki_srs['status'] = 1
+
+            anki_srs['ease'] = deck.options.starting_ease
         return anki_srs
 
     def create_anki_note(self, datum, deck, model, subject):
@@ -177,6 +185,7 @@ class WaniKani2Anki:
             note.due = srs['due']
             note.interval = srs['interval']
             note.ease = srs['ease']
+            note.status = srs['status']
         else:
             raise ValueError('Illegal SRS level: ' + note.level)
 
