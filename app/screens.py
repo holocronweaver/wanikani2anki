@@ -37,13 +37,21 @@ class APIKeyScreen(SequentialScreen):
         # Check if it is a valid key.
         regex = '\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$'
         error_label = self.ids.error_label
-        if re.match(regex, apikey):
-            error_label.error = None
-            App.get_running_app().apikey = apikey
-            self.manager.transition.direction = 'left'
-            self.manager.current = 'pick deck type'
-        else:
+        if not re.match(regex, apikey):
             error_label.error = 'Invalid API key. Please try again.'
+            return
+
+        app = App.get_running_app()
+        try:
+            user, _ = app.get_user(apikey)
+        except Exception as e:
+            error_label.error = 'WaniKani did not accept API key. Please check key and try again.'
+            print(e)
+            return
+
+        error_label.error = None
+        self.manager.transition.direction = 'left'
+        self.manager.current = 'pick deck type'
 
 
 class PickDeckTypeScreen(SequentialScreen):
@@ -125,6 +133,8 @@ class DownloadScreen(SequentialScreen):
 
     def next_screen(self):
         super().next_screen()
+        self.wk = App.get_running_app().wk
+
         self.create_deck_button = self.ids.create_deck
         self.ids.create_deck_container.remove_widget(self.ids.create_deck)
         self.download_thread = threading.Thread(
@@ -153,31 +163,15 @@ class DownloadScreen(SequentialScreen):
 
     def download_wanikani_data(self):
         #TODO: Figure out nice way to centralize options.
-        general_cache = 'cache/general/'
-        users_cache = 'cache/users/'
-
         app = App.get_running_app()
-        apikey = app.apikey
-        deck_type = app.deck_type
-        self.wk = WaniKani()
-        wk2a = WaniKani2Anki(
-            self.wk,
-            mode=deck_type if not 'advanced' in deck_type else 'plus',
-            options=app.wk2a_options)
 
-        user, userpath = self.wk.get_user(apikey, users_cache)
         self.progress = 10
         time.sleep(1)
-
-        print('''Fetching information for
-        user:  {username}
-        level: {level}
-        '''.format(**user['wanikani']['data']))
 
         if 'canceled' == self.download_status:
             return
 
-        data = self.wk.get_data(user, userpath, general_cache)
+        data = app.get_data()
 
         if 'canceled' == self.download_status:
             return
@@ -185,13 +179,11 @@ class DownloadScreen(SequentialScreen):
         self.progress = 90
         time.sleep(1)
 
-        deck_options = wk2a.create_deck_options(user)
-        deck = wk2a.create_deck(user, data, deck_options)
+        deck = app.create_deck(data)
 
         if deck:
             self.download_status = 'complete'
-            deckpath = os.path.join(userpath, 'WaniKani.apkg')
-            # wk2a.write_deck_to_file(deckpath, deck, media, override=True)
+            app.write_deck_to_file(deck)
             self.progress = 100
             time.sleep(2)
             self.manager.current = 'finish'

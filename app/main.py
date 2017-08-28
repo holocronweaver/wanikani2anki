@@ -16,6 +16,15 @@ from widgets import *
 class WaniKani2AnkiApp(App):
     wk2a_options = None
 
+    wk = WaniKani()
+    wk2a = None
+    general_cache = 'cache/general/'
+    users_cache = 'cache/users/'
+    user = None
+    userpath = None
+
+    deck_type = ''
+
     def build(self):
         self.title = 'WaniKani 2 Anki'
         self.icon = 'media/images/WaniKaniLogoSite.png'
@@ -29,6 +38,28 @@ class WaniKani2AnkiApp(App):
         sm.current = 'api key'
 
         return sm
+
+    def get_user(self, apikey):
+        self.user, self.userpath = self.wk.get_user(apikey, self.users_cache)
+        return (self.user, self.userpath)
+
+    def get_data(self):
+        deck_type = self.deck_type
+        self.wk2a = WaniKani2Anki(
+            self.wk,
+            mode=deck_type if not 'advanced' in deck_type else 'plus',
+            options=self.wk2a_options)
+        data = self.wk.get_data(self.user, self.userpath, self.general_cache)
+        return data
+
+    def create_deck(self, data):
+        deck_options = self.wk2a.create_deck_options(self.user)
+        deck = self.wk2a.create_deck(self.user, data, deck_options)
+        return deck
+
+    def write_deck_to_file(self, deck):
+        deckpath = os.path.join(self.userpath, 'WaniKani.apkg')
+        # self.wk2a.write_deck_to_file(deckpath, deck, media, override=True)
 
 
 if __name__ == '__main__':

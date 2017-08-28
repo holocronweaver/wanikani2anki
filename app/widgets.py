@@ -48,7 +48,7 @@ class ErrorLabel(Label):
 
 
 class TextInputPlus(TextInput):
-    """Supports right-click context menus."""
+    """Supports right-click context menus and max characters."""
 
     use_bubble = True
 
