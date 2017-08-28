@@ -13,23 +13,25 @@ from options import *
 wk = WaniKani()
 wk2a = WaniKani2Anki(wk, mode='plus')
 
+apikey = options['apikey']
 if not apikey:
-    apikey = input('WaniKani API V2 key (not V1!): ')
-user, userpath = wk.get_user(apikey, users_cache)
+    apikey = input('Please enter your WaniKani API V2 key (not V1!): ')
+user, userpath = wk.get_user(apikey, options['users_cache'])
 
 print('''Fetching information for
       user:  {username}
       level: {level}
 '''.format(**user['wanikani']['data']))
 
-data = wk.get_data(user, userpath, general_cache)
+data = wk.get_data(user, userpath, options['general_cache'])
 
 deck_options = wk2a.create_deck_options(user)
 
 deck = wk2a.create_deck(user, data, deck_options)
 
-media = wk2a.get_media(media_formats, media_dir)
+media = wk2a.get_media(options['media_formats'], options['media_dir'])
 
 print('Writing deck...')
-wk2a.write_deck_to_file(deckpath, deck, media, override=True)
+deck_path = os.path.join(userpath, options['deck_path'])
+wk2a.write_deck_to_file(deck_path, deck, media, override=True)
 print('All done.')

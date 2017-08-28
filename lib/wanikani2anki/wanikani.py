@@ -124,6 +124,8 @@ class WaniKani:
         then most likely the WaniKani API doesn't provide it yet or
         you haven't reviewed the item on WaniKani at least once.
         """
+        if not os.path.isdir(general_cache): os.makedirs(general_cache)
+
         headers = self.create_headers(user)
         data = {}
         subjectables = (

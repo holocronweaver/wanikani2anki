@@ -117,6 +117,7 @@ class WaniKani2Anki:
 
     def translate_srs(self, data, deck):
         """Translate WaniKani SRS data to Anki SRS data."""
+        #TODO: Let user further customize stage translations?
         wk = self.wk
         wk_srs_stage = data['srs_stage'] if 'srs_stage' in data else 0
         anki_srs = {}
@@ -271,6 +272,12 @@ class WaniKani2Anki:
     def get_media(self, media_formats, media_dir):
         """Get list of media files based in the media path and formats dict.
         """
+        if not os.path.isdir(media_dir):
+            if os.path.isfile(media_dir):
+                raise ValueError('Media path is a file, not a directory: ' + media_dir)
+            else:
+                raise ValueError('Media path does not exist: ' + media_dir)
+
         media = []
         for medium, options in media_formats.items():
             format_path = os.path.join(media_dir, options['subdir'])
