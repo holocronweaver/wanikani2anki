@@ -11,24 +11,38 @@ import yaml
 import lib.genanki.genanki as genanki
 
 from .anki import Anki
+from .wanikani import WaniKani
 
 class WaniKani2Anki:
-    """Translate from WaniKani API data to Anki card type data."""
+    """Create an Anki deck from WaniKani data."""
 
-    modes = yaml.load(open('cards/modes.yaml', 'r'))
+    def __init__(self):
+        self.wk = WaniKani()
+        self.anki = Anki()
 
-    def __init__(self, wanikani, anki=None, mode='classic', options=None):
-        self.wk = wanikani
-        self.anki = anki or Anki()
+        self.options = self.load_options()
 
-        self.options = self.modes[mode]
-        if options: self.options.update(options)
+        self.media = self.get_media(self.options['media formats'],
+                                    self.options['media dir'])
 
         self.fields_translators = {
             'radicals': self.translate_radical,
             'kanji': self.translate_kanji,
             'vocabulary': self.translate_vocabulary
         }
+
+    def get_user(self, apikey=None):
+        if not apikey:
+            apikey = self.options['api key']
+        return self.wk.get_user(apikey, self.options['users cache'])
+
+    def get_data(self, user):
+        return self.wk.get_data(user, self.options['general cache'])
+
+    def write_deck_to_file(self, deck, filepath, override=False):
+        if override and os.path.isfile(filepath):
+            os.remove(filepath)
+        genanki.Package(deck, self.media).write_to_file(filepath)
 
     def combine_meanings(self, wk, user):
         """First WaniKani then user meanings in a comma-delim string."""
@@ -227,12 +241,15 @@ class WaniKani2Anki:
                 css=css)
         return models
 
-    def create_deck(self, user, data, options):
+    def create_deck(self, user, data, deck_options=None):
         """Create Anki deck from WaniKani data."""
+        if not deck_options:
+            deck_options = self.create_deck_options(user)
+
         deck = genanki.Deck(
             user['ids']['deck'],
             'WaniKani',
-            options)
+            deck_options)
         deck.description = r'Your personalized WaniKani Anki deck. \nGenerated on {}.'.format(deck.creation_time.date().isoformat())
 
         models = self.create_models(user)
@@ -273,14 +290,8 @@ class WaniKani2Anki:
 
         return deck
 
-    def write_deck_to_file(self, filepath, deck, media, override=False):
-        if override and os.path.isfile(filepath):
-            os.remove(filepath)
-        genanki.Package(deck, media).write_to_file(filepath)
-
     def get_media(self, media_formats, media_dir):
-        """Get list of media files based in the media path and formats dict.
-        """
+        """Get list of media files from the formats dict and media path."""
         if not os.path.isdir(media_dir):
             if os.path.isfile(media_dir):
                 raise ValueError('Media path is a file, not a directory: ' + media_dir)
@@ -295,3 +306,10 @@ class WaniKani2Anki:
             media += glob.glob(format_regex)
 
         return media
+
+    def load_options(self):
+        with open('options.yaml', 'r') as f:
+            options = yaml.load(f)
+        deck_type = options['deck type']
+        options.update(options['deck types'][deck_type])
+        return options

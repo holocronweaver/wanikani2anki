@@ -79,7 +79,7 @@ class WaniKani:
             data['from_cache'] = False
         return data
 
-    def get_data(self, user, userpath, general_cache):
+    def get_data(self, user, general_cache):
         """Gather all WaniKani data for user.
         Data is downloaded/updated as necessary from the web and
         cached for future use.
@@ -179,7 +179,7 @@ class WaniKani:
                 subdata = self.get(
                     '{}-{}'.format(subject, subjectable),
                     '/{}?subject_type={}'.format(subjectable, subject),
-                    headers, userpath)
+                    headers, user['path'])
                 subdata['data'].sort(key=lambda x: x['data']['subject_id'])
 
                 items_downloaded += 1
@@ -215,13 +215,14 @@ class WaniKani:
 
         username = user['wanikani']['data']['username']
 
-        userpath = os.path.join(users_cache, username)
-        userfile = os.path.join(userpath, 'user.json')
+        user['path'] = os.path.join(users_cache, username)
+        userfile = os.path.join(user['path'], 'user.json')
         if os.path.isfile(userfile):
             with open(userfile, 'r') as f:
                 user.update(json.load(f))
         else:
-            if not os.path.isdir(userpath): os.makedirs(userpath)
+            if not os.path.isdir(user['path']):
+                os.makedirs(user['path'])
 
             user['ids'] = {
                 'deck': self.anki.generate_id(),
@@ -236,7 +237,7 @@ class WaniKani:
                 del clean_user['apikey']
                 json.dump(clean_user, f)
 
-        return [user, userpath]
+        return user
 
     def cancel_download(self):
         self._download_canceled = True

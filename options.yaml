@@ -1,0 +1,38 @@
+# User configurable options.
+# All relative paths are relative to the project root folder.
+deck type: plus
+general cache: cache/general/
+users cache: cache/users/
+deck path: WaniKani.apkg
+media dir: media/
+media formats:
+  audio:
+    subdir: audio
+    ext: mp3 # mp3 or ogg
+  font:
+    subdir: ''
+    ext: ttf # TTF is the only supported format.
+# Absolute path to the Firefox profile folder.
+# You should not use your main profile!
+# Use a secondary profile and login to WaniKani with it.
+firefox profile: ''
+# WaniKani config.
+api key: ''
+
+# Choose which subjects to process when deck building or website
+# scraping.
+# When scraping, stick to one subject at a time.
+subjects:
+  - radicals
+  - kanji
+  - vocabulary
+
+deck types:
+  classic:
+    burn years: 0
+    enable audio: true
+    separate meaning and reading: true
+  plus:
+    burn years: 5
+    enable audio: true
+    separate meaning and reading: false

@@ -6,32 +6,30 @@
 """
 import os
 
-from lib.wanikani2anki import WaniKani, WaniKani2Anki
+from lib.wanikani2anki import WaniKani2Anki
 
-from options import *
+wk2a = WaniKani2Anki()
 
-wk = WaniKani()
-wk2a = WaniKani2Anki(wk, mode='plus')
+options = wk2a.options
 
-apikey = options['apikey']
+apikey = options['api key']
 if not apikey:
     apikey = input('Please enter your WaniKani API V2 key (not V1!): ')
-user, userpath = wk.get_user(apikey, options['users_cache'])
+user = wk2a.get_user(apikey)
 
 print('''Fetching information for
       user:  {username}
       level: {level}
 '''.format(**user['wanikani']['data']))
 
-data = wk.get_data(user, userpath, options['general_cache'])
+data = wk2a.get_data(user)
 
+#TODO: Remove if CLI can't customize deck. Which it probably can't.
 deck_options = wk2a.create_deck_options(user)
 
 deck = wk2a.create_deck(user, data, deck_options)
 
-media = wk2a.get_media(options['media_formats'], options['media_dir'])
-
 print('Writing deck...')
-deck_path = os.path.join(userpath, options['deck_path'])
-wk2a.write_deck_to_file(deck_path, deck, media, override=True)
+deck_path = os.path.join(user['path'], options['deck path'])
+wk2a.write_deck_to_file(deck, deck_path, override=True)
 print('All done.')

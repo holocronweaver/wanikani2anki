@@ -1,8 +1,0 @@
-classic:
-  burn years: 100
-  enable audio: true
-  separate meaning and reading: true
-plus:
-  burn years: 5
-  enable audio: true
-  separate meaning and reading: false
