@@ -270,7 +270,7 @@
             cols: 2
 
             Label:
-                text: 'Number of years in the future to\nschedule burned items for review.\nIf set to zero, burned cards will be\nsuspended and can be manually\nunsuspended.'
+                text: 'Number of years in the future to\nschedule burned items for review.\nMust be an integer between 0 and 100.\nIf set to zero, burned cards will be\nsuspended and can later be manually\nunsuspended in Anki.'
                 color: dark_text_color
 
             BoxLayout:
@@ -387,11 +387,33 @@
 
 <FinishScreen>:
     WKBoxLayout:
-        Button:
-            text: 'Finished!\nTODO: help user import deck into anki.\nClick to exit.'
-            halign: 'center'
-            on_press: root.next_screen()
+        orientation: 'vertical'
+
+        Label:
+            text: 'All done!'
             font_size: 38
-            color: button_text_off_white
-            background_normal: ''
+            color: dark_text_color
+        Label:
+            text: "Please ensure Anki is installed, then import the deck.\n\nAlternatively you can open the deck folder, then open\n'WaniKani.apkg' after Anki is installed."
+            font_size: 25
+            color: dark_text_color
+        # Label:
+        #     id: deck_path
+        #     text: ''
+        #     font_size: 18
+        #     # text_size: self.size
+        #     # halign: 'center'
+        #     # valign: 'top'
+        #     color: dark_text_color
+        NavigationButton:
+            text: 'Import Deck Into Anki'
+            on_press: root.next_screen()
             background_color: light_blue
+        NavigationButton:
+            text: 'Open Deck Folder'
+            on_press: root.prev_screen()
+            background_color: purple
+        NavigationButton:
+            text: 'Done'
+            on_press: exit()
+            background_color: deep_pink

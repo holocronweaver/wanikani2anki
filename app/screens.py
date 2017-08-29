@@ -14,6 +14,7 @@ from kivy.uix.behaviors.togglebutton import ToggleButtonBehavior
 from lib.wanikani2anki import WaniKani, WaniKani2Anki
 # from options import *
 
+import utility
 
 class SequentialScreen(Screen):
     def on_enter(self):
@@ -213,9 +214,14 @@ class DownloadScreen(SequentialScreen):
 
 class FinishScreen(SequentialScreen):
     """Farewell screen letting user know what to do next."""
+    # def on_enter(self):
+    #     super().on_enter()
+    #     deck_path = App.get_running_app().deck_path
+    #     self.ids.deck_path.text = os.path.join('{wanikani2anki folder}', deck_path)
+
     def next_screen(self):
-        exit()
-        pass
+        utility.open_file_in_default_app(App.get_running_app().deck_path)
 
     def prev_screen(self):
-        pass
+        directory = os.path.dirname(App.get_running_app().deck_path)
+        utility.open_file_in_default_app(directory)
