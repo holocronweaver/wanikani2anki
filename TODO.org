@@ -49,8 +49,12 @@ Reduce file size, preferably below 10MB.
 ** Support mobile Anki (phone + tablet).
 *** AnkiDroid
 *** AnkiMobile (MacOS/iOS)
+** Groom library API.
+Clearly separate public vs. private interfaces.
+** WaniKani stats Anki addon
+A simple Anki addon which produces WaniKani-style stats.
 ** Write documentation.
-CLI, library, app.
+CLI, library, app, Anki addon.
 * Version 1.00
 ** Check if scraped data can be obtained from WK API.
 See issue [[https://github.com/holocronweaver/wanikani2anki/issues/3][#3]].
@@ -66,9 +70,11 @@ divergence between Anki and WaniKani.
 *** Ensure API is queried for updates.
 *** Ensure Anki updates deck correctly.
 Check cards, notes, models, deck options.
-** WaniKani stats Anki addon
-A simple Anki addon which produces WaniKani-style stats.
-** Document Anki addon.
+** Polish app.
+*** visuals
+Cross-platform!
+*** wording
+*** packaging
 ** Double check deck visuals.
 Use custom study to speed up deck updates and keep cards consistent.
 *** desktop (Win, Mac, Linux)
@@ -76,4 +82,5 @@ Use custom study to speed up deck updates and keep cards consistent.
 *** compare against Ganki (Wanki)
 *** ensure media and fonts properly embedded
 ** Proof read documentation.
+Don't forget to add images of cards and app!
 ** Study with deck daily for 2 weeks.
