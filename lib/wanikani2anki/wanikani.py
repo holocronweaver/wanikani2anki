@@ -139,6 +139,7 @@ class WaniKani:
         pause_secs = 0.25
         for subject in self.subjects:
             if self._download_canceled:
+                self._reset_download()
                 return None
 
             data[subject] = self.get(
@@ -174,6 +175,7 @@ class WaniKani:
             # object data of WaniKani API V1.
             for subjectable in subjectables:
                 if self._download_canceled:
+                    self._reset_download()
                     return None
 
                 subdata = self.get(
@@ -243,6 +245,10 @@ class WaniKani:
 
     def cancel_download(self):
         self._download_canceled = True
+
+    def _reset_download(self):
+        self._download_progress = 0
+        self._download_canceled = False
 
     @property
     def download_progress(self):
