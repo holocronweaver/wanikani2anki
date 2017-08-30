@@ -161,28 +161,31 @@ algorithm documentation]].
 | [[https://github.com/nigelkerr/wanikani2anki][wanikani2anki]]                |                    1 | Anki addon       | Python   | Same name, but very different! Anki addon, uses Anki's built-in Python interface.                                                               |
 | [[https://github.com/dendriticspine/WaniAnki-Python][WaniKani-Python]]              |                    1 | scripts          | Python   | Includes Kanji stroke order. Script interface split between mobile and desktop. Simple, but not very flexible.                                  |
 * Legal Notices
-This software is licensed under the Mozilla Public License 2.0
-(MPL-2.0).
+The library, command-line interface and GUI application software are
+licensed under the Mozilla Public License 2.0 (MPL-2.0).
+
+Card source code in the `cards` subfolder are licensed under the MIT
+License.
 
 /What is the MPL and how does it differ from the GPL?/ The MPL allows
 you to include this software in a project with any licensing scheme
-you wish so long as you openly share any changes you make to files
-from this project and leave its license intact. This is in contrast to
-the GPL which requires your whole project to have a GPL-compatible
-license.
+you wish. The main requirement is that you publicly share any changes
+you make to MPL-licensed files and leave their license intact. This is
+in contrast to the GPL which requires your whole project to have a
+GPL-compatible license.
 
 The [[http://wanakana.com/][WanaKana script]] is licensed from the WaniKani Community Github
 under the MIT license.
 
-The [[https://www.google.com/get/noto/help/cjk/][Noto CJK]] font is licensed from Google under the SIL Open Font
-License, Version 1.1. Its minified form is from [[https://github.com/hirofumii/Noto-Sans-CJK-JP.min][this repository]].
+The [[https://www.google.com/get/noto/help/cjk/][Noto CJK]] font is licensed from Google under the [[http://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=OFL][SIL Open Font
+License, Version 1.1]]. Its minified form is from [[https://github.com/hirofumii/Noto-Sans-CJK-JP.min][this repository]].
 
 The author is in no way associated with the maintainers of Tofugu or
 WaniKani. Just a happy user who wants offline access, greater
 customizability, and more control over their data.
 
 DO NOT PUBLICLY POST WANIKANI DECKS ON THE INTERNET. You do not have
-copyright for any of the content on WaniKani you did not personally
+copyright ownership of any content on WaniKani you did not personally
 create (i.e., you only own your notes).
 
 This software is meant to aid your studies. If you find WaniKani
