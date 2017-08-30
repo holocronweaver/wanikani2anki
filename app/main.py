@@ -36,7 +36,7 @@ class WaniKani2AnkiApp(App):
         sm = SequentialScreenManager()
         sm.add_widget(APIKeyScreen(name='api key'))
         sm.add_widget(PickDeckTypeScreen(name='pick deck type'))
-        sm.add_widget(AdvancedDeckOptionsScreen(name='advanced options'))
+        sm.add_widget(CustomDeckOptionsScreen(name='custom options'))
         sm.add_widget(DownloadScreen(name='download'))
         sm.add_widget(FinishScreen(name='finish'))
         sm.current = 'api key'

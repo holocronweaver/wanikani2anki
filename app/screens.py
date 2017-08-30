@@ -89,8 +89,8 @@ class PickDeckTypeScreen(SequentialScreen):
 
         app.deck_type = self.get_selected_deck_type()
         if app.deck_type:
-            if 'advanced' in app.deck_type:
-                self.manager.current = 'advanced options'
+            if 'custom' in app.deck_type:
+                self.manager.current = 'custom options'
             else:
                 self.manager.current = 'download'
             self.ids.error_label.error = ''
@@ -104,7 +104,7 @@ class PickDeckTypeScreen(SequentialScreen):
         return selection.deck_type if selection else None
 
 
-class AdvancedDeckOptionsScreen(SequentialScreen):
+class CustomDeckOptionsScreen(SequentialScreen):
     """Manually configure deck options."""
 
     def on_enter(self):
@@ -146,38 +146,49 @@ class DownloadScreen(SequentialScreen):
 
     progress = NumericProperty(0)
     download_thread = None
-    download_status = None # 'downloading', 'canceled', 'complete'
     create_deck_button = None
+    status = None
+
+    status_text = {
+        None: "Select 'Create Deck' to\nbegin download from WaniKani.",
+        'downloading': 'Downloading from WaniKani',
+        'building': 'Building Anki Deck',
+        'canceled': 'Cancelling',
+        'complete': 'Deck complete!'
+    }
 
     def next_screen(self):
         super().next_screen()
 
-        self.create_deck_button = self.ids.create_deck
+        self.create_deck_button = self.ids.create_deck.__self__
         self.ids.create_deck_container.remove_widget(self.ids.create_deck)
         self.download_thread = threading.Thread(
             target=self.download_wanikani_data)
 
-        self.download_status = 'downloading'
+        self.status = 'downloading'
         self.download_thread.start()
         Clock.schedule_interval(self.update_download_progress, 0.5)
 
     def prev_screen(self):
         app = App.get_running_app()
-        self.download_status = 'canceled'
+        self.status = 'canceled'
         if self.download_thread:
             app.cancel_download()
             self.download_thread.join()
-        if self.create_deck_button:
-            self.ids.create_deck_container.add_widget(self.create_deck_button)
 
-        # Reset state. TODO: Convert to function.
-        self.progress = 0
-        self.download_thread = None
-        self.download_status = None
-        self.create_deck_button = None
+        self.reset()
 
         self.manager.transition.direction = 'right'
         self.manager.current = 'pick deck type'
+
+    def reset(self):
+        if self.create_deck_button:
+            self.ids.create_deck_container.add_widget(self.create_deck_button)
+            self.create_deck_button = None
+        self.progress = 0
+        self.download_thread = None
+        self.status = None
+        self.create_deck_button = None
 
     def download_wanikani_data(self):
         app = App.get_running_app()
@@ -185,31 +196,41 @@ class DownloadScreen(SequentialScreen):
         self.progress = 10
         time.sleep(1)
 
-        if 'canceled' == self.download_status:
+        if 'canceled' == self.status:
             return
 
         data = app.get_data(app.user)
 
-        if 'canceled' == self.download_status:
+        if 'canceled' == self.status:
             return
 
         self.progress = 90
         time.sleep(1)
 
+        self.status = 'building'
         deck = app.create_deck(app.user, data)
 
         if deck:
-            self.download_status = 'complete'
+            self.status = 'complete'
             app.write_deck_to_file(deck)
             self.progress = 100
             time.sleep(2)
             self.manager.current = 'finish'
 
     def update_download_progress(self, time_delta):
-        downloading = 'downloading' == self.download_status
+        downloading = 'downloading' == self.status
         if downloading:
             self.progress = 10 + App.get_running_app().download_progress * 80
         return downloading
+
+    @property
+    def status(self):
+        return self._status
+    @status.setter
+    def status(self, value):
+        if value in self.status_text:
+            self.ids.status.text = self.status_text[value]
+        self._status = value
 
 
 class FinishScreen(SequentialScreen):

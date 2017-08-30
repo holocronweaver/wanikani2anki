@@ -235,8 +235,8 @@
         OptionDescription:
             text: 'Make a few improvements over WaniKani.'
         WKToggleButton:
-            text: 'Advanced'
-            deck_type: 'advanced'
+            text: 'Custom'
+            deck_type: 'custom'
             group: 'deck_type'
             height: 80
         OptionDescription:
@@ -246,7 +246,7 @@
         NavigationWidget:
 
 
-<AdvancedDeckOptionsScreen>:
+<CustomDeckOptionsScreen>:
     WKBoxLayout:
         orientation: 'vertical'
 
@@ -255,7 +255,7 @@
             height: 10
 
         Label:
-            text: 'Advanced Deck Options'
+            text: 'Custom Deck Options'
             color: dark_text_color
             font_size: 60
 
@@ -346,7 +346,8 @@
             height: 10
 
         Label:
-            text: "Select 'Create Deck' to\nbegin download from WaniKani."
+            id: status
+            text: ''
             font_size: 40
             color: dark_text_color
             halign: 'center'
