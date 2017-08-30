@@ -5,7 +5,7 @@ import os
 import re
 import threading
 import time
-from urllib.error import *
+from urllib.error import URLError
 import yaml
 
 from kivy.app import App
@@ -16,7 +16,6 @@ from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.uix.behaviors.togglebutton import ToggleButtonBehavior
 
 from lib.wanikani2anki import WaniKani, WaniKani2Anki
-# from options import *
 
 import utility
 
@@ -235,11 +234,6 @@ class DownloadScreen(SequentialScreen):
 
 class FinishScreen(SequentialScreen):
     """Farewell screen letting user know what to do next."""
-    # def on_enter(self):
-    #     super().on_enter()
-    #     deck_path = App.get_running_app().deck_path
-    #     self.ids.deck_path.text = os.path.join('{wanikani2anki folder}', deck_path)
-
     def next_screen(self):
         utility.open_file_in_default_app(App.get_running_app().deck_path)
 

@@ -4,8 +4,8 @@
 import copy
 import json
 import os
-from urllib.error import *
-from urllib.request import *
+from urllib.error import URLError, HTTPError
+from urllib.request import Request, urlopen
 
 import time
 
