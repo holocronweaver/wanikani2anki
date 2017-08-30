@@ -44,6 +44,10 @@ class WaniKani2Anki:
             os.remove(filepath)
         genanki.Package(deck, self.media).write_to_file(filepath)
 
+    def cancel_download(self):
+        self.wk.cancel_download()
+
+
     def combine_meanings(self, wk, user):
         """First WaniKani then user meanings in a comma-delim string."""
         wk_sort = sorted(wk, key=lambda x: x['primary'], reverse=True)
@@ -313,3 +317,7 @@ class WaniKani2Anki:
         deck_type = options['deck type']
         options.update(options['deck types'][deck_type])
         return options
+
+    @property
+    def download_progress(self):
+        return self.wk.download_progress

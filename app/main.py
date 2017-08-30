@@ -12,22 +12,26 @@ from kivy.app import App
 from screens import *
 from widgets import *
 
-
 class WaniKani2AnkiApp(App):
-    wk2a_options = None
-
-    wk = WaniKani()
-    wk2a = None
-    general_cache = 'cache/general/'
-    users_cache = 'cache/users/'
     user = None
-    userpath = None
+    deck_path = ''
+    user_path = None
 
-    deck_type = ''
+    app_options = {}
+    app_options_path = 'app_options.yaml'
 
     def build(self):
         self.title = 'WaniKani 2 Anki'
         self.icon = 'media/images/WaniKaniLogoSite.png'
+
+        self.wk2a = WaniKani2Anki()
+
+        if os.path.isfile(self.app_options_path):
+            with open(self.app_options_path, 'r') as f:
+                self.app_options = yaml.load(f)
+                self.wk2a.options['deck types']['user'] = self.app_options
+                self.wk2a.options.update(
+                    self.wk2a.options['deck types']['user'])
 
         sm = SequentialScreenManager()
         sm.add_widget(APIKeyScreen(name='api key'))
@@ -40,27 +44,29 @@ class WaniKani2AnkiApp(App):
         return sm
 
     def get_user(self, apikey):
-        self.user, self.userpath = self.wk.get_user(apikey, self.users_cache)
-        return (self.user, self.userpath)
+        self.user = self.wk2a.get_user(apikey)
+        return self.user
 
-    def get_data(self):
-        deck_type = self.deck_type
-        self.wk2a = WaniKani2Anki(
-            self.wk,
-            mode=deck_type if not 'advanced' in deck_type else 'plus',
-            options=self.wk2a_options)
-        data = self.wk.get_data(self.user, self.userpath, self.general_cache)
+    def get_data(self, user):
+        data = self.wk2a.get_data(user)
         return data
 
-    def create_deck(self, data):
-        deck_options = self.wk2a.create_deck_options(self.user)
-        deck = self.wk2a.create_deck(self.user, data, deck_options)
+    def create_deck(self, user, data):
+        deck_options = self.wk2a.create_deck_options(user)
+        deck = self.wk2a.create_deck(user, data, deck_options)
         return deck
 
     def write_deck_to_file(self, deck):
-        deckpath = os.path.join(self.userpath, 'WaniKani.apkg')
-        # self.wk2a.write_deck_to_file(deckpath, deck, media, override=True)
+        self.deck_path = os.path.join(self.user['path'],
+                                      self.wk2a.options['deck path'])
+        self.wk2a.write_deck_to_file(deck, self.deck_path, override=True)
 
+    def cancel_download(self):
+        self.wk2a.cancel_download()
+
+    @property
+    def download_progress(self):
+        return self.wk2a.download_progress
 
 if __name__ == '__main__':
     WaniKani2AnkiApp().run()

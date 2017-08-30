@@ -24,7 +24,7 @@ print('''Fetching information for
 
 data = wk2a.get_data(user)
 
-#TODO: Remove if CLI can't customize deck. Which it probably can't.
+#TODO: Remove if CLI can't customize deck SRS. Which it probably can't.
 deck_options = wk2a.create_deck_options(user)
 
 deck = wk2a.create_deck(user, data, deck_options)

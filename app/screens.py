@@ -46,6 +46,7 @@ class SequentialScreenManager(ScreenManager):
 class APIKeyScreen(SequentialScreen):
     """Get user's WaniKani API V2 key."""
     def next_screen(self):
+        super().next_screen()
         self.process_apikey()
 
     def process_apikey(self):
@@ -60,7 +61,7 @@ class APIKeyScreen(SequentialScreen):
 
         app = App.get_running_app()
         try:
-            user, _ = app.get_user(apikey)
+            user = app.get_user(apikey)
         except Exception as e:
             error_label.error = 'WaniKani did not accept API key. Please check key and try again.'
             print(e)
@@ -100,14 +101,9 @@ class PickDeckTypeScreen(SequentialScreen):
 class AdvancedDeckOptionsScreen(SequentialScreen):
     """Manually configure deck options."""
 
-    filename = 'user_options.yaml'
-
     def on_enter(self):
         super().on_enter()
-        if os.path.isfile(self.filename):
-            with open(self.filename, 'r') as f:
-                self.wk2a_options = yaml.load(f)
-            self.restore_options()
+        self.app_options = App.get_running_app().app_options
 
     def next_screen(self):
         super().next_screen()
@@ -121,23 +117,21 @@ class AdvancedDeckOptionsScreen(SequentialScreen):
             return
 
         # Save options.
-        app = App.get_running_app()
-
-        app.wk2a_options = {
+        self.app_options.update({
             'burn years': burn_years,
             'enable audio': self.ids.enable_audio.state == 'down',
             'separate meaning and reading': self.ids.separate_meaning_and_reading.state == 'down',
-        }
+        })
 
-        with open(self.filename, 'w') as f:
-            yaml.dump(app.wk2a_options, f)
+        with open(App.get_running_app().app_options_path, 'w') as f:
+            yaml.dump(self.app_options, f)
 
         self.manager.current = 'download'
 
     def restore_options(self):
-        self.ids.burn_years.text = str(self.wk2a_options['burn years'])
-        self.ids.enable_audio.state = 'down' if self.wk2a_options['enable audio'] else 'normal'
-        self.ids.separate_meaning_and_reading.state = 'down' if self.wk2a_options['separate meaning and reading'] else 'normal'
+        self.ids.burn_years.text = str(self.app_options['burn years'])
+        self.ids.enable_audio.state = 'down' if self.app_options['enable audio'] else 'normal'
+        self.ids.separate_meaning_and_reading.state = 'down' if self.app_options['separate meaning and reading'] else 'normal'
 
 
 class DownloadScreen(SequentialScreen):
@@ -150,7 +144,6 @@ class DownloadScreen(SequentialScreen):
 
     def next_screen(self):
         super().next_screen()
-        self.wk = App.get_running_app().wk
 
         self.create_deck_button = self.ids.create_deck
         self.ids.create_deck_container.remove_widget(self.ids.create_deck)
@@ -162,9 +155,10 @@ class DownloadScreen(SequentialScreen):
         Clock.schedule_interval(self.update_download_progress, 0.5)
 
     def prev_screen(self):
+        app = App.get_running_app()
         self.download_status = 'canceled'
         if self.download_thread:
-            self.wk.cancel_download()
+            app.cancel_download()
             self.download_thread.join()
         if self.create_deck_button:
             self.ids.create_deck_container.add_widget(self.create_deck_button)
@@ -179,7 +173,6 @@ class DownloadScreen(SequentialScreen):
         self.manager.current = 'pick deck type'
 
     def download_wanikani_data(self):
-        #TODO: Figure out nice way to centralize options.
         app = App.get_running_app()
 
         self.progress = 10
@@ -188,7 +181,7 @@ class DownloadScreen(SequentialScreen):
         if 'canceled' == self.download_status:
             return
 
-        data = app.get_data()
+        data = app.get_data(app.user)
 
         if 'canceled' == self.download_status:
             return
@@ -196,7 +189,7 @@ class DownloadScreen(SequentialScreen):
         self.progress = 90
         time.sleep(1)
 
-        deck = app.create_deck(data)
+        deck = app.create_deck(app.user, data)
 
         if deck:
             self.download_status = 'complete'
@@ -208,7 +201,7 @@ class DownloadScreen(SequentialScreen):
     def update_download_progress(self, time_delta):
         downloading = 'downloading' == self.download_status
         if downloading:
-            self.progress = 10 + self.wk.download_progress * 80
+            self.progress = 10 + App.get_running_app().download_progress * 80
         return downloading
 
 
