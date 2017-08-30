@@ -18,17 +18,7 @@ class WaniKani:
     _download_canceled = False
     _download_progress = 0
 
-    def get_json(self, request, description):
-        """Make a GET request and return resulting JSON."""
-        try: response = urlopen(request)
-        except URLError as error:
-            print('Error while fetching {}!'.format(description))
-            raise error
-        # print(response.getcode())
-        # print(response.info())
-        return json.loads(response.read().decode())
-
-    def get_from_api(self, resource, url_ext, headers):
+    def _get_from_api(self, resource, url_ext, headers):
         """Make a WaniKani API request and return the result.
 
         Make as many GET requests as needed to obtain all the data for
@@ -39,7 +29,7 @@ class WaniKani:
         next_url = self.rooturl + url_ext
         while next_url and next_url != 'null':
             request = Request(next_url, headers=headers)
-            pages.append(self.get_json(request, resource))
+            pages.append(self._get_page_from_api(request, resource))
             if 'pages' in pages[-1]:
                 next_url = pages[-1]['pages']['next_url']
             else:
@@ -48,6 +38,16 @@ class WaniKani:
         for page in pages[1:]:
             data['data'] += page['data']
         return data
+
+    def _get_page_from_api(self, request, description):
+        """Make a GET request and return resulting JSON."""
+        try: response = urlopen(request)
+        except URLError as error:
+            print('Error while fetching {}!'.format(description))
+            raise error
+        # print(response.getcode())
+        # print(response.info())
+        return json.loads(response.read().decode())
 
     def get(self, resource, url_ext, headers, path, do_update=False):
         """Retrieve cached WaniKani data or, if none, retrieve it via WaniKani API.
@@ -63,7 +63,7 @@ class WaniKani:
                 url_ext_addendum = '&updated_after={}'.format(data['data_updated_at'])
                 if '?' not in url_ext: url_ext_addendum[0] = '?'
                 url_ext += url_ext_addendum
-                update = self.get_from_api(resource, url_ext, headers)
+                update = self._get_from_api(resource, url_ext, headers)
                 if int(update['total_count']) > 0:
                     data['data'].update(update['data'])
                     with open(filename, 'w') as f:
@@ -73,7 +73,7 @@ class WaniKani:
         else:
             if not os.path.isdir(path):
                 os.makedirs(path)
-            data = self.get_from_api(resource, url_ext, headers)
+            data = self._get_from_api(resource, url_ext, headers)
             with open(filename, 'x') as f:
                 json.dump(data, f)
             data['from_cache'] = False
@@ -206,7 +206,7 @@ class WaniKani:
 
         headers = self.create_headers(user)
         try:
-            user['wanikani'] = self.get_from_api('userdata', '/user', headers)
+            user['wanikani'] = self._get_from_api('userdata', '/user', headers)
         except HTTPError as e:
             if 401 == e.code:
                 e.message = 'WaniKani did not accept API V2 key. Please check key and try again.'
