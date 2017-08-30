@@ -22,12 +22,20 @@ print('''Fetching information for
       level: {level}
 '''.format(**user['wanikani']['data']))
 
-data = wk2a.get_data(user)
+try:
+    data = wk2a.get_data(user)
+except KeyboardInterrupt:
+    print('\nDownload canceled. Exiting.')
+    exit()
 
 #TODO: Remove if CLI can't customize deck SRS. Which it probably can't.
 deck_options = wk2a.create_deck_options(user)
 
-deck = wk2a.create_deck(user, data, deck_options)
+try:
+    deck = wk2a.create_deck(user, data, deck_options)
+except KeyboardInterrupt:
+    print('\nDeck building canceled. Exiting.')
+    exit()
 
 print('Writing deck...')
 deck_path = os.path.join(user['path'], options['deck path'])
