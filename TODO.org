@@ -40,12 +40,12 @@ Classic mode attempts to match WaniKani as closely as possible.
 Plus mode tries to improve upon WaniKani.
 ** Create cross-platform app and core Python library.
 Maybe better to do an Anki addon?
-*** Support export filters.
-*** Add export filters to CLI.
-*** Periodically cleanup old decks.
 *** Bundle for desktop platforms.
 ~pyinstall --onefile whatever_has_main.py~
 Reduce file size, preferably below 10MB.
+** Support export filters.
+*** Add filters to CLI.
+*** Add filters to app.
 ** Support mobile Anki (phone + tablet).
 *** AnkiDroid
 *** AnkiMobile (MacOS/iOS)
@@ -63,8 +63,12 @@ Context sentences, meaning and reading mnemonics, and audio.
 ** Ensure deck updates properly.
 Need to figure out how to update Anki decks without disrupting SRS
 divergence between Anki and WaniKani.
+*** Ensure API is queried for updates.
+*** Ensure Anki updates deck correctly.
+Check cards, notes, models, deck options.
 ** WaniKani stats Anki addon
 A simple Anki addon which produces WaniKani-style stats.
+** Document Anki addon.
 ** Double check deck visuals.
 Use custom study to speed up deck updates and keep cards consistent.
 *** desktop (Win, Mac, Linux)

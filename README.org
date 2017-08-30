@@ -3,6 +3,7 @@ Export WaniKani data to an Anki deck using Python 3.
 Uses [[https://community.wanikani.com/t/API-V2-Alpha-Documentation/18987][WaniKani API v2.0 alpha]] (updated to spec as of 2017-08-04).
 
 TODO: Give example images of WaniKani card on Anki desktop and AnkiDroid.
+TODO: Give example images of app.
 * Features
 ** Export radicals, kanji, vocabulary
 Each card has the following data (when relevant):
