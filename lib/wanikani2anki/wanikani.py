@@ -207,10 +207,12 @@ class WaniKani:
         headers = self.create_headers(user)
         try:
             user['wanikani'] = self.get_from_api('userdata', '/user', headers)
+        except HTTPError as e:
+            if 401 == e.code:
+                e.message = 'WaniKani did not accept API V2 key. Please check key and try again.'
+            raise
         except URLError as e:
-            msg = '\nIs your API V2 key correct? {}\n'.format(user['apikey'])
-            if e.hasattr(message): e.message += msg
-            else: e.message = msg
+            e.message = 'Could not contact WaniKani. Please check your Internet connection and try again.'
             raise e
 
         username = user['wanikani']['data']['username']

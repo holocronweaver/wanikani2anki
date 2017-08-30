@@ -2,6 +2,7 @@ import os
 import re
 import threading
 import time
+from urllib.error import *
 import yaml
 
 from kivy.app import App
@@ -62,9 +63,11 @@ class APIKeyScreen(SequentialScreen):
         app = App.get_running_app()
         try:
             user = app.get_user(apikey)
-        except Exception as e:
-            error_label.error = 'WaniKani did not accept API key. Please check key and try again.'
-            print(e)
+        except URLError as e:
+            if hasattr(e, 'message'):
+                error_label.error = e.message
+            else:
+                error_label.error = 'Unknown error. Please check key and internet connection, then try again.'
             return
 
         error_label.error = None
@@ -104,6 +107,7 @@ class AdvancedDeckOptionsScreen(SequentialScreen):
     def on_enter(self):
         super().on_enter()
         self.app_options = App.get_running_app().app_options
+        self.restore_options()
 
     def next_screen(self):
         super().next_screen()
@@ -111,9 +115,9 @@ class AdvancedDeckOptionsScreen(SequentialScreen):
         # Validate options.
         try:
             burn_years = int(self.ids.burn_years.text)
-            if not 1 <= burn_years <= 100: raise Exception()
+            if not 0 <= burn_years <= 100: raise Exception()
         except:
-            self.ids.error_label.error = 'Burn years must be an integer between 1 and 100.'
+            self.ids.error_label.error = 'Burn years must be an integer between 0 and 100.'
             return
 
         # Save options.
