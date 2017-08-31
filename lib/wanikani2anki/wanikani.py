@@ -124,6 +124,7 @@ class WaniKani:
         then most likely the WaniKani API doesn't provide it yet or
         you haven't reviewed the item on WaniKani at least once.
         """
+        self._reset_download()
         if not os.path.isdir(general_cache): os.makedirs(general_cache)
 
         headers = self.create_headers(user)
@@ -196,6 +197,7 @@ class WaniKani:
                         except StopIteration: print(errmsg.format(
                                 subdatum['data']['subject_id']))
                     datum['data'].update(subdatum['data'])
+
         return data
 
     def create_headers(self, user):

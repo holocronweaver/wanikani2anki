@@ -156,6 +156,10 @@ class DownloadScreen(SequentialScreen):
         'complete': 'Deck complete!'
     }
 
+    def on_enter(self):
+        super().on_enter()
+        self.reset()
+
     def next_screen(self):
         super().next_screen()
 
@@ -166,6 +170,7 @@ class DownloadScreen(SequentialScreen):
 
         self.status = 'downloading'
         self.download_thread.start()
+        time.sleep(0.1)
         Clock.schedule_interval(self.update_download_progress, 0.5)
 
     def prev_screen(self):
@@ -199,15 +204,19 @@ class DownloadScreen(SequentialScreen):
             return
 
         data = app.get_data(app.user)
+        if not data:
+            print('data is garbage')
 
         if 'canceled' == self.status:
             return
 
-        self.progress = 90
         time.sleep(1)
 
         self.status = 'building'
         deck = app.create_deck(app.user, data)
+
+        if 'canceled' == self.status:
+            return
 
         if deck:
             self.status = 'complete'
@@ -220,6 +229,8 @@ class DownloadScreen(SequentialScreen):
         downloading = 'downloading' == self.status
         if downloading:
             self.progress = 10 + App.get_running_app().download_progress * 80
+        else:
+            self.progress = 90
         return downloading
 
     @property
