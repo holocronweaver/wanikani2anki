@@ -2,6 +2,7 @@
 # License, v2.0. If a copy of the MPL was not distributed with this
 # file, you can obtain one at http://mozilla.org/MPL/2.0/.
 import copy
+import itertools
 import json
 import os
 from urllib.error import URLError, HTTPError
@@ -10,15 +11,28 @@ from urllib.request import Request, urlopen
 import time
 
 class WaniKani:
+    """Encapsulate WaniKani V2 API.
+
+    Typical usage to retrieve WaniKani user and their data:
+
+    wk = WaniKani()
+    user = wk.get_user(apikey, 'cache/users/')
+    data = wk.get_data(user, 'cache/general/')
+
+    If multi-threading, download progress of `get_data` can be checked
+    via the read-only `download_progress` property.
+    """
+
     rooturl = 'https://www.wanikani.com/api/v2'
     subjects = ('radicals', 'kanji', 'vocabulary')
     srs_stage_to_days = [0, 4/24, 8/24, 1, 3, 7, 14, 28, 56]
     timestamp_fmt = '%Y-%m-%dT%H:%M:%SZ'
 
-    _download_canceled = False
-    _download_progress = 0
+    def __init__(self):
+        self._download_canceled = False
+        self._download_progress = 0
 
-    def _get_from_api(self, resource, url_ext, headers):
+    def _get_resource_from_api(self, resource, url_ext, headers):
         """Make a WaniKani API request and return the result.
 
         Make as many GET requests as needed to obtain all the data for
@@ -29,28 +43,27 @@ class WaniKani:
         next_url = self.rooturl + url_ext
         while next_url and next_url != 'null':
             request = Request(next_url, headers=headers)
-            pages.append(self._get_page_from_api(request, resource))
-            if 'pages' in pages[-1]:
-                next_url = pages[-1]['pages']['next_url']
+            try: response = urlopen(request)
+            except URLError as error:
+                print('Error while fetching {}!'.format(resource))
+                raise error
+            # print(response.getcode())
+            # print(response.info())
+            page = json.loads(response.read().decode())
+            if 'pages' in page:
+                next_url = page['pages']['next_url']
             else:
                 next_url = None
-        data = pages[0]
-        for page in pages[1:]:
-            data['data'] += page['data']
+            pages.append(page)
+        data = list(itertools.chain.from_iterable(pages))
         return data
 
-    def _get_page_from_api(self, request, description):
-        """Make a GET request and return resulting JSON."""
-        try: response = urlopen(request)
-        except URLError as error:
-            print('Error while fetching {}!'.format(description))
-            raise error
-        # print(response.getcode())
-        # print(response.info())
-        return json.loads(response.read().decode())
-
     def get(self, resource, url_ext, headers, path, do_update=False):
-        """Retrieve cached WaniKani data or, if none, retrieve it via WaniKani API.
+        """Retrieve WaniKani API resource from local cache or, if none, query
+        WaniKani API and cache JSON result in `path` dir.
+
+        If `do_update` and cached data available, request an update
+        from WaniKani API and overwrite outdated cache.
         """
         filename = os.path.join(path, resource + '.json')
         if os.path.isfile(filename):
@@ -58,14 +71,14 @@ class WaniKani:
             with open(filename, 'r') as f:
                  data = json.load(f)
 
-            # Check for updates and update as needed.
             if do_update:
                 url_ext_addendum = '&updated_after={}'.format(data['data_updated_at'])
                 if '?' not in url_ext: url_ext_addendum[0] = '?'
                 url_ext += url_ext_addendum
-                update = self._get_from_api(resource, url_ext, headers)
+                update = self._get_resource_from_api(resource, url_ext, headers)
                 if int(update['total_count']) > 0:
                     data['data'].update(update['data'])
+                    data['data_updated_at'] = update['data_updated_at']
                     with open(filename, 'w') as f:
                         json.dump(data, f)
 
@@ -73,13 +86,61 @@ class WaniKani:
         else:
             if not os.path.isdir(path):
                 os.makedirs(path)
-            data = self._get_from_api(resource, url_ext, headers)
+            data = self._get_resource_from_api(resource, url_ext, headers)
             with open(filename, 'x') as f:
                 json.dump(data, f)
             data['from_cache'] = False
         return data
 
-    def get_data(self, user, general_cache):
+    def get_user(self, apikey, users_cache):
+        """Get user data from WaniKani API and per-user UUIDs from cache.
+        Cache result after removing sensitive data.
+        """
+        user = {'apikey': apikey}
+
+        headers = self.create_headers(user)
+        try:
+            user['wanikani'] = self._get_resource_from_api('userdata', '/user', headers)
+        except HTTPError as e:
+            if 401 == e.code:
+                e.message = 'WaniKani did not accept API V2 key. Please check key and try again.'
+            raise
+        except URLError as e:
+            e.message = 'Could not contact WaniKani. Please check your Internet connection and try again.'
+            raise e
+
+        username = user['wanikani']['data']['username']
+
+        user['path'] = os.path.join(users_cache, username)
+        userfile = os.path.join(user['path'], 'user.json')
+        if os.path.isfile(userfile):
+            with open(userfile, 'r') as f:
+                user.update(json.load(f))
+        else:
+            if not os.path.isdir(user['path']):
+                os.makedirs(user['path'])
+
+            user['ids'] = {
+                'deck': self.anki.generate_id(),
+                'options': self.anki.generate_id(),
+            }
+            user['ids'].update(
+                {subject:self.anki.generate_id()
+                 for subject in self.wk.subjects})
+
+            with open(userfile, 'w') as f:
+                clean_user = copy.deepcopy(user)
+                del clean_user['apikey']
+                json.dump(clean_user, f)
+
+        return user
+
+    def get_data(self, user, general_cache,
+                 subjectables = (
+                     'study_materials',
+                     'review_statistics',
+                     'assignments',
+                 )):
         """Gather all WaniKani data for user.
         Data is downloaded/updated as necessary from the web and
         cached for future use.
@@ -129,11 +190,6 @@ class WaniKani:
 
         headers = self.create_headers(user)
         data = {}
-        subjectables = (
-            'study_materials',
-            'review_statistics',
-            'assignments',
-        )
         items_downloaded = 0
         num_download_items = len(self.subjects)
         num_download_items += len(self.subjects) * len(subjectables)
@@ -201,57 +257,21 @@ class WaniKani:
         return data
 
     def create_headers(self, user):
+        """Headers used for WaniKani API GET requests."""
         headers = {}
         headers['Authorization'] = 'Token token=' + user['apikey']
         return headers
 
-    def get_user(self, apikey, users_cache):
-        user = {'apikey': apikey}
-
-        headers = self.create_headers(user)
-        try:
-            user['wanikani'] = self._get_from_api('userdata', '/user', headers)
-        except HTTPError as e:
-            if 401 == e.code:
-                e.message = 'WaniKani did not accept API V2 key. Please check key and try again.'
-            raise
-        except URLError as e:
-            e.message = 'Could not contact WaniKani. Please check your Internet connection and try again.'
-            raise e
-
-        username = user['wanikani']['data']['username']
-
-        user['path'] = os.path.join(users_cache, username)
-        userfile = os.path.join(user['path'], 'user.json')
-        if os.path.isfile(userfile):
-            with open(userfile, 'r') as f:
-                user.update(json.load(f))
-        else:
-            if not os.path.isdir(user['path']):
-                os.makedirs(user['path'])
-
-            user['ids'] = {
-                'deck': self.anki.generate_id(),
-                'options': self.anki.generate_id(),
-            }
-            user['ids'].update(
-                {subject:self.anki.generate_id()
-                 for subject in self.wk.subjects})
-
-            with open(userfile, 'w') as f:
-                clean_user = copy.deepcopy(user)
-                del clean_user['apikey']
-                json.dump(clean_user, f)
-
-        return user
-
     def cancel_download(self):
+        """Cancel in-progress data download."""
         self._download_canceled = True
 
     def _reset_download(self):
+        """Reset download data after completion or cancellation."""
         self._download_progress = 0
         self._download_canceled = False
 
     @property
     def download_progress(self):
+        """Current data download progress as fractional percentage."""
         return self._download_progress

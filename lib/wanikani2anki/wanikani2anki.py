@@ -146,14 +146,14 @@ class WaniKani2Anki:
             anki_srs['stage'] = 1
             anki_srs['interval'] = -int(
                 60 * 60 * 24 * wk.srs_stage_to_days[wk_srs_stage])
-            anki_srs['reps_til_grad'] = 3 - wk_srs_stage
+            anki_srs['reps_left_til_grad'] = 3 - wk_srs_stage
 
             due = datetime.strptime(data['available_at'], wk.timestamp_fmt)
             anki_srs['due'] = due.timestamp()
         elif wk_srs_stage < 9: # review
             anki_srs['stage'] = 2
             anki_srs['interval'] = wk.srs_stage_to_days[wk_srs_stage]
-            anki_srs['ease'] = deck.options.starting_ease
+            anki_srs['ease_factor'] = deck.options.starting_ease
 
             due = datetime.strptime(data['available_at'], wk.timestamp_fmt)
             relative_due = due - deck.creation_time
@@ -175,7 +175,7 @@ class WaniKani2Anki:
                 # Suspended, requires manual unsuspension.
                 anki_srs['status'] = 1
 
-            anki_srs['ease'] = deck.options.starting_ease
+            anki_srs['ease_factor'] = deck.options.starting_ease
         return anki_srs
 
     def create_anki_note(self, datum, deck, model, subject):
@@ -191,33 +191,23 @@ class WaniKani2Anki:
         note.guid = genanki.guid_for(
             *[fields_dict['Characters'], subject])
         note.tags = ['WKLevel_' + fields_dict['Level']]
-
-        note.stage = srs['stage']
-        if note.stage == 0: # new
-            pass
-        elif note.stage == 1: # learning
-            note.due = srs['due']
-            note.interval = srs['interval']
-            note.reps_til_grad = srs['reps_til_grad']
-        elif note.stage == 2: # review
-            note.due = srs['due']
-            note.interval = srs['interval']
-            note.ease = srs['ease']
-            note.status = srs['status']
-        else:
-            raise ValueError('Illegal SRS level: ' + note.level)
+        note.set_card_options(srs)
 
         return note
 
     def create_deck_options(self, user):
-        """Create an Anki options group that mimics the WaniKani SRS."""
-        options = genanki.OptionsGroup(user['ids']['options'], 'WaniKani')
-        options.new_steps = [1, 10, 4 * 60, 8 * 60]
-        options.new_cards_per_day = 20
-        options.max_reviews_per_day = 200
-        options.starting_ease = 2250
-        options.bury_related_new_cards = False
-        options.bury_related_review_cards = False
+        """Create an Anki options group that mimics the WaniKani SRS
+        algorithm."""
+        options = genanki.OptionsGroup(
+            user['ids']['options'], 'WaniKani',
+            new_steps = [1, 10, 4 * 60, 8 * 60],
+            new_cards_per_day = 20,
+            max_reviews_per_day = 200,
+            starting_ease = 2250,
+            bury_related_new_cards = False,
+            bury_related_review_cards = False,
+        )
+
         return options
 
     def create_models(self, user):
@@ -227,15 +217,14 @@ class WaniKani2Anki:
             css = f.read()
 
         models = {}
+        if self.options['separate meaning and reading']:
+            f = lambda x: not 'and' in x['name']
+        else:
+            f = lambda x: 'and' in x['name']
         for subject, model in cards.items():
             templates = copy.deepcopy(model['templates'])
             if not 'radical' in subject:
-                if self.options['separate meaning and reading']:
-                    templates = list(filter(
-                        lambda x: not 'and' in x['name'], templates))
-                else:
-                    templates = list(filter(
-                        lambda x: 'and' in x['name'], templates))
+                templates = list(filter(f, templates))
 
             models[subject] = genanki.Model(
                 user['ids'][subject],
