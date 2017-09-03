@@ -55,7 +55,9 @@ class WaniKani:
             else:
                 next_url = None
             pages.append(page)
-        data = list(itertools.chain.from_iterable(pages))
+        data = pages[0]
+        for page in pages[1:]:
+            data['data'].update(page['data'])
         return data
 
     def get(self, resource, url_ext, headers, path, do_update=False):
