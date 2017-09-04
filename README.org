@@ -12,8 +12,8 @@ Each card has the following data (when relevant):
 - user meanings
 - all user notes
 - SRS status (optional)^
-- TODO: vocabulary audio
-- TODO: example sentences
+- vocabulary audio (optional)
+- example sentences (optional)
 - WaniKani level number
 
 ^ Anik deck retains WaniKani ordering. Cards are first ordered by
@@ -32,7 +32,7 @@ Filter what content gets exported from WaniKani.
 - burned items
 - low success items
 ** Multiple Ways to Use
-Includes a website, Python library, and CLI.
+Includes a app, Python library, and CLI.
 * Instructions
 ** TODO: Installation
 Depends genanki.

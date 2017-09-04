@@ -28,6 +28,10 @@ class WaniKani:
     srs_stage_to_days = [0, 4/24, 8/24, 1, 3, 7, 14, 28, 56]
     timestamp_fmt = '%Y-%m-%dT%H:%M:%SZ'
 
+    max_level = 60
+    srs_stages = ('lessons', 'apprentice', 'guru',
+                  'master', 'enlightened', 'burned')
+
     def __init__(self):
         self._download_canceled = False
         self._download_progress = 0
@@ -137,12 +141,38 @@ class WaniKani:
 
         return user
 
-    def get_data(self, user, general_cache,
-                 subjectables = (
-                     'study_materials',
-                     'review_statistics',
-                     'assignments',
-                 )):
+    def validate_filters(filters):
+        #TODO: Create filter parser, handling missing keys or None values.
+        if not filters:
+            # In general, if key missing or set to None, don't filter
+            # on this (i.e., include all).
+            filters = {
+                #TODO: Some filters require querying certain
+                # subjectables BEFORE querying subjects. Probably
+                # better not to filter on this, instead do it on srs,
+                # notes, audio, context sentences, etc., then let this
+                # lib decide what subjectables are needed.
+
+                # Single subject or list of subjects.
+                'subjects': self.subjects,
+                # Single level or list/range of levels.
+                'levels': range(1, self.max_level + 1),
+                # Results which were unlocked N days in past.
+                # Currently V2 API does not seem to support this.
+                'recent': None,
+                # Max correct answer percentage to include.
+                'success_rate': 100,
+                # A stage can be written 0 - 9 (0 learning, 1 first
+                # apprentice stage, 9 burned) or string (e.g.,
+                # 'enlightened'). Either single stage, list of stage
+                # string names, or list/range of stage numbers.
+                'srs_stages': range(0, len(self.srs_stages_days) + 1),
+            }
+        else:
+            pass
+        return filters
+
+    def get_data(self, user, general_cache, filters=None):
         """Gather all WaniKani data for user.
         Data is downloaded/updated as necessary from the web and
         cached for future use.
@@ -189,6 +219,10 @@ class WaniKani:
         """
         self._reset_download()
         if not os.path.isdir(general_cache): os.makedirs(general_cache)
+
+        filters = self.validate_filters(filters)
+        #TODO: Filter on this?
+        subjectables = ('study_materials', 'review_statistics', 'assignments')
 
         headers = self.create_headers(user)
         data = {}

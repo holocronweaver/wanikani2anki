@@ -38,14 +38,35 @@ Useful for reducing file size requirements.
 Classic mode attempts to match WaniKani as closely as possible.
 ***** plus
 Plus mode tries to improve upon WaniKani.
-** Create cross-platform app and core Python library.
+** DONE Create cross-platform app and core Python library.
+CLOSED: [2017-09-04 Mon 13:35]
 Maybe better to do an Anki addon?
-*** Bundle for desktop platforms.
+** Support export filters.
+Add to library, support in CLI.
+Should support positive or negative.
+*** burned items
+*** subjects
+radicals, kanji, vocabulary
+*** levels
+range, single value, current and below, all
+*** low success items
+Set failure rate.
+*** recent unlocks
+** Allow SRS translation bypass
+Cards are shown in level -> subject order, starting from lowest to
+highest.
+** Consider converting everything to Anki addon
+Doubt the CLI would be used much.
+Library be made Anki addon compatible, comes bundled.
+Genanki could probably be dropped.
+App could be ditched for Anki addon GUI, or they could coexist.
+
+Installing Anki addons is a little fugly, but not too bad: enter code,
+auto-installs.
+** Bundle app for desktop platforms.
 ~pyinstall --onefile whatever_has_main.py~
 Reduce file size, preferably below 10MB.
-** Support export filters.
-*** Add filters to CLI.
-*** Add filters to app.
+** Add exprot filters to app.
 ** Support mobile Anki (phone + tablet).
 *** AnkiDroid
 *** AnkiMobile (MacOS/iOS)
