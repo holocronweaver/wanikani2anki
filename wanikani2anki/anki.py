@@ -5,7 +5,7 @@ import os
 import re
 import yaml
 
-import lib.genanki.genanki as genanki
+import genanki
 
 class Anki:
     def generate_id():

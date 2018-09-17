@@ -8,7 +8,7 @@ import glob
 import os
 import yaml
 
-import lib.genanki.genanki as genanki
+import genanki
 
 from .anki import Anki
 from .wanikani import WaniKani

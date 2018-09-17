@@ -6,7 +6,7 @@
 """
 import os
 
-from lib.wanikani2anki import WaniKani2Anki
+from wanikani2anki import WaniKani2Anki
 
 wk2a = WaniKani2Anki()
 

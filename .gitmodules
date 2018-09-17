@@ -1,4 +1,4 @@
-[submodule "lib/genanki"]
-	path = lib/genanki
+[submodule "genanki"]
+	path = genanki
 	url = https://github.com/holocronweaver/genanki
 	branch = options

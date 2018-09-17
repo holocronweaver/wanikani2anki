@@ -15,7 +15,7 @@ from kivy.properties import NumericProperty
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.uix.behaviors.togglebutton import ToggleButtonBehavior
 
-from lib.wanikani2anki import WaniKani, WaniKani2Anki
+from wanikani2anki import WaniKani, WaniKani2Anki
 
 import utility
 

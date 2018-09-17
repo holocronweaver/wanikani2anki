@@ -13,7 +13,8 @@ setup(name='wanikani2anki',
       packages=['wanikani2anki'],
       zip_safe=False,
       install_requires=[
-        'genanki'
+          'genanki',
+          'kivy'
       ],
       keywords=[
         'anki',

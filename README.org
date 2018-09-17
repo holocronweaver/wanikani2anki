@@ -34,8 +34,10 @@ Filter what content gets exported from WaniKani.
 ** Multiple Ways to Use
 Includes a app, Python library, and CLI.
 * Instructions
-** TODO: Installation
-Depends genanki.
+** Installation
+1. Unzip the ZIP file to wherever you want to install the application.
+2. Go to the extracted =wanikani2anki= folder.
+3. Open =w2a= to start the app.
 ** TODO: Create Anki Deck
 ** TODO: Update Anki Deck
 ** TODO: Change Card Type / Merge Into Existing Deck
@@ -52,6 +54,26 @@ Another option is to edit the WaniKani card.
 Note that the mapping will need to be repeated in the future if you
 re-export WaniKani to Anki to keep your deck synchronized with any
 changes.
+* Development
+Here's how to hack around in the source and/or create a distribution.
+** Prereqs
+*** genanki dependencies
+~pip3 install cached-property frozendict pystache pyyaml --user~
+*** kivy and its dependencies
+~sudo apt-get install libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev xclip enchant~
+
+~pip3 install kivy pygame --user~
+** Run app from source directory
+Simply run ~run.py~.
+** Build a redistributable package
+Make sure you can run the app using ~run.py~ first.
+
+Now install PyInstaller: ~pip3 install pyinstaller~
+
+Run ~build.py~, which will produce a redistributable folder and its
+ZIP compressed file in =build/dist=.
+
+If you want to rebuild from scratch, first run ~clean.py~.
 * WaniKani
 ** Base Data
 Non-user specific data rarely changes and is thus cached separate from
